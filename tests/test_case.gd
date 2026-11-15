@@ -14,6 +14,9 @@ const TEST_SOUL_PATH := "user://soul_test.json"
 ## Set true before start_main() to have the level spawn its creatures,
 ## harvestables and motes; by default tests get an empty cave.
 var populate := false
+## Set false before start_main() to begin sightless, as a newborn slime does.
+## By default tests are given Mana Perception so they can see.
+var sighted := true
 
 var main: Node3D
 var player: Player
@@ -41,6 +44,8 @@ func start_main() -> void:
 	main = MAIN_SCENE.instantiate()
 	add_child(main)
 	player = main.get_node("Player")
+	if sighted:
+		Game.grant_skill("mana_perception", true)
 	await frames(10)
 
 

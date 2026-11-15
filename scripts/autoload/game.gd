@@ -43,6 +43,18 @@ func can_control() -> bool:
 	return is_alive() and ui_locks == 0 and not Voice.is_confirm_open()
 
 
+## Whether the body perceives the world at a distance. A sightless race
+## (the slime) needs a skill whose passive sense is sight: Mana Perception.
+func is_sighted() -> bool:
+	if life == null or not Database.get_race(life.race_id).get("sightless", false):
+		return true
+	for skill_id in life.skills:
+		var passive: Variant = Database.get_skill(skill_id).get("passive")
+		if passive is Dictionary and str(passive.get("sense", "")) == "sight":
+			return true
+	return false
+
+
 ## Damage multiplier of the player's body: EP is quantity, so it scales with
 ## the square root and leaves room for skill and technique to matter.
 func get_power() -> float:
@@ -72,6 +84,8 @@ func _process(delta: float) -> void:
 	life.magicules = minf(life.max_magicules, life.magicules + regen * delta)
 	if vitals.fraction() < Database.tune("death", "low_health_fraction", 0.3):
 		count("seconds_at_low_health", delta)
+	if not is_sighted():
+		count("seconds_blind", delta)
 
 
 ## Starts a new life. Until the reincarnation spin exists, every life is the

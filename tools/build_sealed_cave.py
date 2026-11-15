@@ -60,6 +60,10 @@ MARKS = [
     (37, 27, "point", "SpawnPoint"),
     (23, 4, "point", "VeldoraSpot"),
     (23, 9, "point", "VeldoraAudience"),
+    # where Veldora's voice seems to come from, leading a sightless slime to him
+    (32, 27, "point", "VoicePath1"), (25, 27, "point", "VoicePath2"),
+    (22, 19, "point", "VoicePath3"), (22, 12, "point", "VoicePath4"),
+    (21, 43, "point", "LakeSound"),
     # hipokute herbs
     (33, 24, "harvest", "hipokute_herb"), (40, 31, "harvest", "hipokute_herb"),
     (16, 20, "harvest", "hipokute_herb"), (24, 35, "harvest", "hipokute_herb"),
@@ -91,7 +95,7 @@ MARKS = [
     # crystal lights
     (32, 23, "light", "cyan"), (41, 32, "light", "cyan"),
     (15, 19, "light", "cyan"), (26, 36, "light", "cyan"), (20, 28, "light", "white"),
-    (17, 2, "light", "violet"), (29, 2, "light", "violet"), (23, 13, "light", "violet"),
+    (17, 2, "light", "violet"), (29, 2, "light", "violet"), (17, 13, "light", "violet"),
     (14, 41, "light", "cyan"), (30, 53, "light", "cyan"), (21, 49, "light", "white"),
     (2, 34, "light", "green"), (9, 21, "light", "green"),
     (4, 15, "light", "red"), (10, 6, "light", "red"),

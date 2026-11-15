@@ -36,7 +36,7 @@ func _fade_veil(alpha: float, duration: float) -> void:
 
 func _build_controls_hint() -> void:
 	var hint := UiStyle.label(14, UiStyle.MUTED_COLOR)
-	hint.text = "WASD move  ·  Space hop  ·  LMB tackle  ·  RMB skill (Q next)  ·  F devour  ·  R scan  ·  Z form  ·  H potion  ·  Tab status"
+	hint.text = "WASD move  ·  Space hop  ·  LMB tackle  ·  RMB skill (Q next)  ·  F devour  ·  E speak  ·  R scan  ·  Z form  ·  H potion  ·  Tab status"
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	hint.anchor_left = 1.0
 	hint.anchor_right = 1.0

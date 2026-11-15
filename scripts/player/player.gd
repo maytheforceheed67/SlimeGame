@@ -188,6 +188,21 @@ func form_upkeep() -> float:
 			Database.tune("predator", "form_upkeep_min", 0.2), Database.tune("predator", "form_upkeep_max", 12.0))
 
 
+## The nearest thing in reach that can be spoken to or used, or null.
+func interact_target() -> Node3D:
+	var best: Node3D = null
+	var best_distance := INF
+	for node in get_tree().get_nodes_in_group("interactable"):
+		var thing := node as Node3D
+		if thing == null or not thing.can_interact():
+			continue
+		var distance := global_position.distance_to(thing.global_position)
+		if distance <= float(thing.interact_range()) and distance < best_distance:
+			best = thing
+			best_distance = distance
+	return best
+
+
 func enter_water(volume: WaterVolume) -> void:
 	_water = volume
 
@@ -241,6 +256,13 @@ func _physics_process(delta: float) -> void:
 			Game.use_potion()
 		if Input.is_action_just_pressed("form_next"):
 			cycle_form()
+		if Input.is_action_just_pressed("interact"):
+			var thing := interact_target()
+			if thing != null:
+				thing.interact(self)
+		# Feeling for magicules: hold still and hold the sense button.
+		if Input.is_action_pressed("scan") and not Game.is_sighted() and input.length() < 0.1:
+			Game.practice("sensing_seconds", delta)
 	if not _form.is_empty() and Game.is_alive():
 		life.magicules -= form_upkeep() * delta
 		if life.magicules <= 0.0:

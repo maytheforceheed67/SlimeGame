@@ -94,6 +94,11 @@ func remembers(topic: String) -> bool:
 	return lore.has(topic)
 
 
+## Whether a topic was first learned in a life before `life_number`.
+func remembers_from_before(topic: String, life_number: int) -> bool:
+	return lore.has(topic) and int(lore[topic].get("first_life", life_number)) < life_number
+
+
 func _codex_section(kind: String) -> String:
 	return "species" if kind == "species" else "materials"
 

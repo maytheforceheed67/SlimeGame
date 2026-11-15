@@ -15,7 +15,40 @@ static var populate_enabled := true
 
 @export var region_id := ""
 
+var _environment: Environment
+var _normal_fog_density := 0.0
+var _normal_fog_color := Color.BLACK
+var _sighted := true
+
 @onready var _spawned: Node3D = $Spawned
+
+
+func _ready() -> void:
+	# This level's own copy, so darkening it never touches the saved scene.
+	_environment = ($WorldEnvironment.environment as Environment).duplicate()
+	$WorldEnvironment.environment = _environment
+	_normal_fog_density = _environment.fog_density
+	_normal_fog_color = _environment.fog_light_color
+
+
+## A sightless body perceives only what is close enough to touch: the world
+## beyond a few metres of it is swallowed by darkness.
+func _process(_delta: float) -> void:
+	var sighted := Game.is_sighted()
+	if sighted and not _sighted:
+		_environment.fog_mode = Environment.FOG_MODE_EXPONENTIAL
+		_environment.fog_density = _normal_fog_density
+		_environment.fog_light_color = _normal_fog_color
+	elif not sighted:
+		var camera := get_viewport().get_camera_3d()
+		var player := get_tree().get_first_node_in_group(Player.GROUP) as Node3D
+		if camera != null and player != null:
+			var reach := camera.global_position.distance_to(player.global_position)
+			_environment.fog_mode = Environment.FOG_MODE_DEPTH
+			_environment.fog_light_color = Color.BLACK
+			_environment.fog_depth_begin = reach + 1.0
+			_environment.fog_depth_end = reach + 4.0
+	_sighted = sighted
 
 
 func spawn_position() -> Vector3:
@@ -39,6 +72,7 @@ func populate(life: LifeState) -> void:
 	clear()
 	if not populate_enabled:
 		return
+	_place_fixtures()
 	var region := Database.get_region(region_id)
 	var rules: Dictionary = region.get("spawn", {})
 	var rng := RandomNumberGenerator.new()
@@ -65,6 +99,26 @@ func populate(life: LifeState) -> void:
 		var mote := MOTE_SCENE.instantiate() as MagiculeOrb
 		mote.ep_value = int(density.get("ambient_ep", 0))
 		_place(mote, motes[i])
+
+
+## Characters and sounds that belong to the place itself, the same in every
+## life: geography and major characters are fixed.
+func _place_fixtures() -> void:
+	if has_node("Points/VeldoraSpot"):
+		var veldora := Veldora.new()
+		_spawned.add_child(veldora)
+		veldora.global_position = point("VeldoraSpot") - Vector3(0.0, 0.6, 0.0)
+		veldora.rotation.y = -PI * 0.5
+		var index := 1
+		while has_node("Points/VoicePath%d" % index):
+			veldora.voice_path.append(point("VoicePath%d" % index))
+			index += 1
+	if has_node("Points/LakeSound"):
+		var drip := SoundSource.new()
+		drip.label = "dripping water"
+		drip.audible_range = 30.0
+		_spawned.add_child(drip)
+		drip.global_position = point("LakeSound")
 
 
 func _place(node: Node3D, marker: Node) -> void:

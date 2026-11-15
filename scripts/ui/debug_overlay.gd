@@ -52,6 +52,8 @@ func _process(delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("debug_overlay"):
 		_panel.visible = not _panel.visible
+	elif Game.ui_locks > 0:
+		return
 	elif event.is_action_pressed("debug_add_ep"):
 		Game.add_ep(500, "debug")
 	elif event.is_action_pressed("debug_double_ep"):

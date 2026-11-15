@@ -8,6 +8,9 @@
 [ext_resource type="Script" path="res://scripts/ui/predator_panel.gd" id="6_predator"]
 [ext_resource type="Script" path="res://scripts/ui/scan_panel.gd" id="7_scan"]
 [ext_resource type="Script" path="res://scripts/ui/status_sheet.gd" id="8_sheet"]
+[ext_resource type="Script" path="res://scripts/ui/senses_overlay.gd" id="9_senses"]
+[ext_resource type="Script" path="res://scripts/ui/dialogue_panel.gd" id="10_dialogue"]
+[ext_resource type="Script" path="res://scripts/ui/name_panel.gd" id="11_name"]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_hud")
@@ -19,6 +22,10 @@ color = Color(0, 0, 0, 0)
 [node name="WorldOverlay" type="Control" parent="."]
 mouse_filter = 2
 script = ExtResource("5_world")
+
+[node name="SensesOverlay" type="Control" parent="."]
+mouse_filter = 2
+script = ExtResource("9_senses")
 
 [node name="StatusPanel" type="Control" parent="."]
 mouse_filter = 2
@@ -35,6 +42,14 @@ script = ExtResource("7_scan")
 [node name="VoicePanel" type="Control" parent="."]
 mouse_filter = 2
 script = ExtResource("3_voice")
+
+[node name="DialoguePanel" type="Control" parent="."]
+mouse_filter = 2
+script = ExtResource("10_dialogue")
+
+[node name="NamePanel" type="Control" parent="."]
+mouse_filter = 2
+script = ExtResource("11_name")
 
 [node name="StatusSheet" type="Control" parent="."]
 mouse_filter = 2

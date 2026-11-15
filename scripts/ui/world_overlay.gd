@@ -36,7 +36,7 @@ func _draw() -> void:
 	var camera := get_viewport().get_camera_3d()
 	if camera == null:
 		return
-	if plates_visible:
+	if plates_visible and Game.is_sighted():
 		for node in get_tree().get_nodes_in_group(Creature.NAMEPLATE_GROUP):
 			var creature := node as Creature
 			if creature != null:

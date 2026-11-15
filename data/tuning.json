@@ -80,6 +80,9 @@
     "water_per_gulp": 5,
     "water_capacity": 40
   },
+  "naming": {
+    "veldora_ep_gift": 200
+  },
   "death": {
     "cards_min": 6,
     "cards_max": 8,

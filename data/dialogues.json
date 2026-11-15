@@ -1,0 +1,145 @@
+{
+  "_meta": {
+    "table": "dialogues",
+    "source": "Original wording for this project (design document, sections 9.3, 10 and 18 act 1)",
+    "notes": [
+      "The events are canon (label on each dialogue); every line of text is written for this project and quotes nothing from the books.",
+      "mode 'thought' is thought-speech and always works. mode 'speech' needs the player to have a voice skill.",
+      "A node has text and either next (the following node), options, or end. An option may carry requires_memory (a topic the soul must remember from an earlier life), requires_skill or requires_flag; it is hidden otherwise.",
+      "effects name hooks handled by the character's script (for example teach_mana_perception). remember stores a topic in the soul.",
+      "{name} and {family} are replaced with the player's names."
+    ]
+  },
+  "dialogues": [
+    {
+      "id": "veldora_first",
+      "speaker": "Veldora",
+      "mode": "thought",
+      "label": "CANON",
+      "start": "hello",
+      "nodes": {
+        "hello": {
+          "text": "...Can you hear me, little one? Do not go looking for a mouth. I am speaking straight into what you are.",
+          "remember": "met_veldora",
+          "options": [
+            {"text": "Who is there? I can't see anything.", "next": "who"},
+            {"text": "(Stay quiet and edge away.)", "next": "shy"},
+            {"text": "(You know this voice. You have stood here before.)", "next": "remembered", "requires_memory": "met_veldora"}
+          ]
+        },
+        "shy": {
+          "text": "Ha! Wait, wait. I will not eat you. I could not if I wanted to. I am sealed, and thoroughly. Stay a while.",
+          "next": "who"
+        },
+        "who": {
+          "text": "Of course you cannot see. A slime has no eyes. I am Veldora, the Storm Dragon, and you have been bumping against my prison for some time now.",
+          "next": "lonely"
+        },
+        "lonely": {
+          "text": "Three hundred years in this cave, and you are the first thing in all of them to answer back.",
+          "options": [
+            {"text": "Can you help me see?", "next": "teach"},
+            {"text": "Why are you sealed?", "next": "why"}
+          ]
+        },
+        "why": {
+          "text": "A Hero beat me. Fairly. Then bound me in a prison with no end to it. I have had three centuries to admit that it was fair.",
+          "next": "teach"
+        },
+        "teach": {
+          "text": "Listen, then. The world is full of magicules, and they touch everything. Stop straining with a body that has no eyes. Hold still, and feel what the magicules around you are touching.",
+          "effects": ["teach_mana_perception"],
+          "end": true
+        },
+        "remembered": {
+          "text": "...Strange. You hold yourself like someone who has heard me before. No matter. Then you know what to do: be still, and feel the magicules.",
+          "effects": ["teach_mana_perception"],
+          "end": true
+        }
+      }
+    },
+    {
+      "id": "veldora_waiting",
+      "speaker": "Veldora",
+      "mode": "thought",
+      "label": "DESIGN",
+      "start": "wait",
+      "nodes": {
+        "wait": {
+          "text": "Stillness. Do not look. Feel.",
+          "end": true
+        }
+      }
+    },
+    {
+      "id": "veldora_second",
+      "speaker": "Veldora",
+      "mode": "thought",
+      "label": "CANON",
+      "start": "seen",
+      "nodes": {
+        "seen": {
+          "text": "There. Now you see me. And I see that you are a good deal smaller than I had pictured.",
+          "next": "company"
+        },
+        "company": {
+          "text": "It is good to have company. I have counted every crystal in this chamber. Twice.",
+          "options": [
+            {"text": "Would you be my friend?", "next": "friend"},
+            {"text": "I should get going.", "next": "later"}
+          ]
+        },
+        "later": {
+          "text": "Go, then. You know where to find me. I am not going anywhere.",
+          "end": true
+        },
+        "friend": {
+          "text": "...A dragon and a slime. Hah! Very well. I accept. But friends ought to have something to show for it.",
+          "next": "names"
+        },
+        "names": {
+          "text": "Give me a name for the two of us to share, and I will give you one of your own. Named by each other, neither of us stands above the other.",
+          "effects": ["ask_names"],
+          "end": true
+        }
+      }
+    },
+    {
+      "id": "veldora_named",
+      "speaker": "Veldora",
+      "mode": "thought",
+      "label": "CANON",
+      "start": "named",
+      "nodes": {
+        "named": {
+          "text": "{name} {family}. Yes. It sits well. And I am Veldora {family} from this day.",
+          "options": [
+            {"text": "Is there a way to get you out?", "next": "offer", "requires_skill": "predator"},
+            {"text": "Is there a way to get you out?", "next": "no_way", "requires_skill": "!predator"},
+            {"text": "I'll come back.", "next": "later"}
+          ]
+        },
+        "no_way": {
+          "text": "Not from where I sit, and not with what you carry. If you ever find a way to hold a dragon, come back for me.",
+          "end": true
+        },
+        "later": {
+          "text": "I will be here. Obviously.",
+          "end": true
+        },
+        "offer": {
+          "text": "This prison cannot be broken from inside. But you take things in and take them apart. Carry me within you, seal and all, and we can work at it from both sides.",
+          "options": [
+            {"text": "Come with me.", "next": "agree"},
+            {"text": "Not yet.", "next": "later"}
+          ]
+        },
+        "agree": {
+          "text": "Then it is settled. Do not dawdle about it. I have waited long enough.",
+          "effects": ["offer_swallow"],
+          "end": true
+        }
+      }
+    }
+  ]
+}

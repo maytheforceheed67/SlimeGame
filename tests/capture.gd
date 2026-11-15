@@ -18,7 +18,8 @@ func _run() -> void:
 		elif argument.begins_with("--stage="):
 			_stage = argument.trim_prefix("--stage=")
 	DirAccess.make_dir_recursive_absolute(_out_dir)
-	populate = _stage.begins_with("cave")
+	populate = _stage.begins_with("cave") or _stage.begins_with("veldora") or _stage == "blind"
+	sighted = _stage != "blind"
 	await start_main()
 	if has_method("_stage_" + _stage):
 		await call("_stage_" + _stage)
@@ -149,3 +150,30 @@ func _stage_forms() -> void:
 		await hold("move_left", 20)
 		await seconds(0.4)
 		await shot("form_" + id)
+
+
+func _stage_blind() -> void:
+	Game.grant_skill("predator", true)
+	Game.grant_skill("great_sage", true)
+	await seconds(5.0)
+	await hold("move_forward", 40)
+	await shot("blind")
+
+
+func _stage_veldora() -> void:
+	player._invulnerable = 9999.0
+	Game.grant_skill("predator", true)
+	player.respawn(main.level.point("VeldoraAudience") + Vector3(4.0, 0.0, 0.0))
+	await frames(10)
+	player._camera_rig._yaw = PI * 0.5
+	player._camera_rig._pitch = -0.12
+	player._camera_rig._apply()
+	await seconds(6.0)
+	await shot("veldora")
+	await tap("interact")
+	await seconds(2.0)
+	var dialogue: DialoguePanel = main.get_node("HUD/DialoguePanel")
+	dialogue.advance()
+	dialogue.advance()
+	await seconds(1.5)
+	await shot("veldora_dialogue")

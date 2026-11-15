@@ -34,6 +34,7 @@ var fusions: Dictionary = {}
 var creatures: Dictionary = {}
 var items: Dictionary = {}
 var recipes: Dictionary = {}
+var dialogues: Dictionary = {}
 
 var races: Dictionary = {}
 var regions: Dictionary = {}
@@ -82,6 +83,7 @@ func reload() -> void:
 	creatures = _by_id(_read("creatures.json"), "creatures", "creatures.json")
 	items = _by_id(_read("items.json"), "items", "items.json")
 	recipes = _by_id(_read("recipes.json"), "recipes", "recipes.json")
+	dialogues = _by_id(_read("dialogues.json"), "dialogues", "dialogues.json")
 
 	var race_file := _read("races.json")
 	races = _by_id(race_file, "races", "races.json")
@@ -202,6 +204,10 @@ func get_item(item_id: String) -> Dictionary:
 
 func item_name(item_id: String) -> String:
 	return str(get_item(item_id).get("name", item_id))
+
+
+func get_dialogue(dialogue_id: String) -> Dictionary:
+	return dialogues.get(dialogue_id, {})
 
 
 func get_recipe(recipe_id: String) -> Dictionary:
@@ -382,6 +388,17 @@ func _cross_check() -> void:
 			if parts is Dictionary:
 				for item_id: String in parts:
 					_need(items, item_id, "recipes.json: '%s' %s" % [id, side])
+
+	for id: String in dialogues:
+		var nodes: Variant = dialogues[id].get("nodes", {})
+		if not (nodes is Dictionary) or not nodes.has(str(dialogues[id].get("start", ""))):
+			_problem("dialogues.json: '%s' needs nodes and a start node" % id)
+			continue
+		for node_id: String in nodes:
+			var node: Dictionary = nodes[node_id]
+			_need(nodes, node.get("next"), "dialogues.json: '%s' node '%s' next" % [id, node_id])
+			for option: Variant in node.get("options", []):
+				_need(nodes, option.get("next"), "dialogues.json: '%s' node '%s' option" % [id, node_id])
 
 	var fusion_inputs: Dictionary = skills.duplicate()
 	fusion_inputs.merge(sub_functions)

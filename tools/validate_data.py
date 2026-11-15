@@ -300,6 +300,43 @@ def check_items(creatures: dict) -> None:
             problem(f"{where}: learned_from must be 'item:<id>' or 'species:<id>'")
 
 
+def check_dialogues(skills: dict) -> None:
+    file_name = "dialogues.json"
+    dialogues = by_id(read(file_name), "dialogues", file_name)
+    for dialogue_id, dialogue in dialogues.items():
+        where = f"{file_name}: '{dialogue_id}'"
+        nodes = dialogue.get("nodes")
+        if dialogue.get("mode") not in ("thought", "speech"):
+            problem(f"{where}: mode must be thought or speech")
+        if not isinstance(nodes, dict) or dialogue.get("start") not in nodes:
+            problem(f"{where}: needs nodes and a start node that exists")
+            continue
+        reachable, frontier = set(), [dialogue["start"]]
+        while frontier:
+            node_id = frontier.pop()
+            if node_id in reachable or node_id not in nodes:
+                continue
+            reachable.add(node_id)
+            node = nodes[node_id]
+            frontier.extend([node["next"]] if node.get("next") else [])
+            frontier.extend(option.get("next") for option in node.get("options", []) if option.get("next"))
+        for node_id, node in nodes.items():
+            spot = f"{where} node '{node_id}'"
+            if not isinstance(node.get("text"), str) or not node["text"].strip():
+                problem(f"{spot}: needs text")
+            ways = [bool(node.get("next")), bool(node.get("options")), bool(node.get("end"))]
+            if sum(ways) != 1:
+                problem(f"{spot}: needs exactly one of next, options or end")
+            need(nodes, node.get("next"), f"{spot} next")
+            for option in node.get("options", []):
+                if not isinstance(option.get("text"), str):
+                    problem(f"{spot}: every option needs text")
+                need(nodes, option.get("next") or "<missing>", f"{spot} option")
+                need(skills, str(option.get("requires_skill", "")).lstrip("!"), f"{spot} option requires_skill")
+            if node_id not in reachable:
+                problem(f"{spot}: cannot be reached from the start node")
+
+
 def check_tuning() -> None:
     file_name = "tuning.json"
     root = read(file_name)
@@ -419,6 +456,7 @@ def main() -> int:
     skills = check_skills(damage, statuses)
     creatures = check_creatures(ranks, skills, resistances, damage, statuses)
     check_items(creatures)
+    check_dialogues(skills)
     check_tuning()
     check_world(ranks, skills, damage, statuses)
     check_voice()

@@ -40,7 +40,7 @@ func level() -> int:
 func _physics_process(delta: float) -> void:
 	if not Game.is_alive() or level() == 0:
 		return
-	if Game.can_control() and Input.is_action_just_pressed("scan"):
+	if Game.can_control() and Input.is_action_just_pressed("scan") and Game.is_sighted():
 		scan()
 	_hint_timer -= delta
 	if _hint_timer <= 0.0:
@@ -153,6 +153,9 @@ func _hint_once(flag: String, key: String, params: Dictionary = {}) -> void:
 func _give_hints() -> void:
 	var life := Game.life
 	var origin := _player.get_aim_origin()
+	if not Game.is_sighted():
+		_hint_once("hint_blind", "advisor_blind")
+		return
 
 	if life.vitals.fraction() < Database.tune("death", "low_health_fraction", 0.3):
 		if not life.flags.get("hint_low_health_active", false):
