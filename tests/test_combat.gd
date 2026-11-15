@@ -105,7 +105,9 @@ func _test_creatures() -> void:
 	check(life.vitals.hp < life.vitals.max_hp, "a giant bat hunts and bites the slime")
 	check(player.soft_target() == bat, "the nearest creature ahead is the soft target")
 
-	# The slime's tackle hurts it back.
+	# The slime's tackle hurts it back. (The slime is made untouchable for
+	# the scripted parts so a lucky monster cannot end the test early.)
+	player._invulnerable = 9999.0
 	life.vitals.hp = life.vitals.max_hp
 	var bat_hp := bat.get_vitals().hp
 	for i in 12:
@@ -167,8 +169,13 @@ func _test_creatures() -> void:
 
 	# The apex predator kills a newborn slime; the cause is recorded.
 	await _reset()
+	player._invulnerable = 0.0
 	var serpent := _spawn("tempest_serpent", Vector3(0.0, 0.5, -5.0))
-	await seconds(8.0)
+	for i in 600:
+		if not life.alive:
+			break
+		await frames(1)
+	serpent.set_physics_process(false)
 	check(not life.alive, "the tempest serpent kills a 100 EP slime")
 	check(Soul.lives_lived == 1 and Soul.past_lives[0]["cause"] in ["blade", "poison", "impact"],
 			"the soul records the cause of death")

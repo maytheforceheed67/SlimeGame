@@ -63,7 +63,7 @@ func _run() -> void:
 	await tap("voice_no")
 	check(answers == [true, false], "N answers no")
 
-	player.global_position = Vector3(200.0, -30.0, 0.0)
+	player.global_position = Vector3(200.0, -80.0, 0.0)
 	await frames(5)
 	check(player.global_position.distance_to(Vector3(0.0, 1.0, 8.0)) < 2.0, "falling out of the world returns to spawn")
 	await frames(60)
