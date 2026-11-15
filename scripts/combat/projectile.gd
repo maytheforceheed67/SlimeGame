@@ -37,17 +37,11 @@ func _ready() -> void:
 	add_child(shape)
 
 	var color := Combat.attack_color(attack)
-	var material := StandardMaterial3D.new()
-	material.albedo_color = color
-	material.emission_enabled = true
-	material.emission = color
-	material.emission_energy_multiplier = 2.0
-	var mesh := SphereMesh.new()
-	mesh.radius = radius
-	mesh.height = radius * 0.7
-	mesh.material = material
 	var instance := MeshInstance3D.new()
-	instance.mesh = mesh
+	instance.mesh = MeshKit.sphere(16)
+	instance.scale = Vector3(radius * 2.0, radius * 0.7, radius * 2.0)
+	instance.material_override = Toon.shared({"color": color, "emission": color, "emission_energy": "props.projectile_glow"})
+	instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(instance)
 
 	body_entered.connect(_on_body_entered)

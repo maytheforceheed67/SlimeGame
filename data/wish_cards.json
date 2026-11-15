@@ -7,6 +7,7 @@
       "when decides how strongly a card fits the life that just ended: stat/at_least scores a tally of that life against a threshold; cause lists damage types that fit the death; always puts the card in every offer. Cards that fit come first; if fewer than six fit, the nearest misses fill the offer (what you lacked).",
       "prologue marks the thoughts read at the very first death, before the first life. They are granted without a choice, as a nod to canon and as the tutorial for this screen.",
       "result.kind: skill (granted at birth; stacks_into upgrades it when two chosen cards grant the same skill), resistance, reel_weight (extra weight on a spin reel; the spin arrives in Milestone 1), or nothing.",
+      "Two cards grant Sage, and choosing both grants Great Sage instead (the design document's second wisdom card). So that they never read as two copies of one result, the second is marked reads_as_upgrade: its face says it deepens Sage into Great Sage, and the Voice says so when both are chosen. Chosen alone it still grants Sage, and says so.",
       "A card's result is shown only once the soul has seen it happen. Until then the card shows a question mark.",
       "Most results are utility, in line with the rule that only about one Unique skill in ten is an obvious combat skill."
     ]
@@ -33,11 +34,11 @@
     },
     {
       "id": "more_to_understand",
-      "thought": "There was so much I never worked out.",
+      "thought": "And there was still so much more to work out.",
       "reason": "You analysed what you ate.",
       "when": {"stat": "analyses", "at_least": 3},
       "prologue": true,
-      "result": {"kind": "skill", "skill": "sage", "stacks_into": "great_sage"},
+      "result": {"kind": "skill", "skill": "sage", "stacks_into": "great_sage", "reads_as_upgrade": true},
       "label": "DESIGN"
     },
     {

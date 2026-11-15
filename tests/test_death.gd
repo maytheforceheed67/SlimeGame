@@ -20,6 +20,16 @@ func _run() -> void:
 	await seconds(2.5)
 	check(spoken().contains("A wish is heard. Unique skill: Predator.") and spoken().contains("Nothing comes of it"),
 			"the Voice says what comes of each thought, including nothing")
+	check(spoken().contains("A wish is heard. Extra skill: Sage.") and spoken().contains("A wish is heard. Sage deepens into Great Sage."),
+			"the second wish for wisdom is read as the step up, not as the same result again")
+	var faces: Array[String] = []
+	for card in death.offered():
+		faces.append(Wishes.describe(card))
+	var distinct := {}
+	for face in faces:
+		distinct[face] = true
+	check(distinct.size() == faces.size() and faces.has("Deepens Sage into Great Sage\n(alone: Extra skill: Sage)"),
+			"no two cards in a hand show the same result")
 	death.confirm()
 	await _until(func() -> bool: return Game.life != null)
 	var life := Game.life
@@ -93,6 +103,9 @@ func _run() -> void:
 	await _until(func() -> bool: return Game.life != life)
 	life = Game.life
 	check(life.has_skill("mana_perception") and Game.is_sighted(), "wishing to see grants Mana Perception: born sighted")
+	var alone: Array[Dictionary] = [Database.wish_cards["more_to_understand"]]
+	check(Wishes.outcome(alone[0], alone) == "Extra skill: Sage" and Wishes.grants(alone)["skills"] == ["sage"],
+			"chosen alone, the second wisdom card grants Sage and says so")
 	check(not life.has_skill("predator"), "a wish not made again is not granted again")
 	check(life.resistances == ["heat_resistance"], "and the imprint follows the latest death")
 	check(Wishes.is_known(Database.wish_cards["wanted_to_see"]), "the soul now knows what that card leads to")

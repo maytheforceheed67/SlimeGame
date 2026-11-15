@@ -18,7 +18,9 @@ else
 fi
 for scene in "${scenes[@]}"; do
 	echo "== $scene"
-	if ! "$GODOT" --headless --fixed-fps 60 --path . "res://$scene" 2>&1 | grep -v '^Godot Engine\|^$\|^\[Database\]'; then
+	# A scene whose script fails to load never quits by itself; the time
+	# limit turns that into a failure instead of a hang.
+	if ! timeout "${TEST_TIMEOUT:-600}" "$GODOT" --headless --fixed-fps 60 --path . "res://$scene" 2>&1 | grep -v '^Godot Engine\|^$\|^\[Database\]'; then
 		:
 	fi
 	[ "${PIPESTATUS[0]}" -eq 0 ] || failed=1

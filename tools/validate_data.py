@@ -342,6 +342,7 @@ def check_wish_cards(skills: dict, resistances: dict, damage: dict) -> None:
     cards = by_id(read(file_name), "cards", file_name)
     if not any(card.get("when", {}).get("always") for card in cards.values()):
         problem(f"{file_name}: at least one card must always be offered")
+    faces: dict[tuple, list[str]] = {}
     for card_id, card in cards.items():
         where = f"{file_name}: '{card_id}'"
         for key in ("thought", "reason"):
@@ -362,6 +363,7 @@ def check_wish_cards(skills: dict, resistances: dict, damage: dict) -> None:
         if kind == "skill":
             need(skills, result.get("skill") or "<missing>", f"{where} skill")
             need(skills, result.get("stacks_into"), f"{where} stacks_into")
+            faces.setdefault((result.get("skill"), bool(result.get("reads_as_upgrade"))), []).append(card_id)
         elif kind == "resistance":
             need(resistances, result.get("resistance") or "<missing>", f"{where} resistance")
         elif kind == "reel_weight":
@@ -369,12 +371,16 @@ def check_wish_cards(skills: dict, resistances: dict, damage: dict) -> None:
                 problem(f"{where}: reel_weight needs reel 'race' and a numeric weight")
         elif kind != "nothing":
             problem(f"{where}: result kind must be skill, resistance, reel_weight or nothing")
+    # No two cards may show the same result: where two grant one skill, one
+    # of them is worded as the step up (reads_as_upgrade).
+    for (skill, _upgrade), ids in faces.items():
+        if len(ids) > 1:
+            problem(f"{file_name}: {', '.join(ids)} would show the same result ({skill}); mark one reads_as_upgrade")
 
 
 HEX_COLOUR = re.compile(r"^#[0-9A-Fa-f]{6}$")
 TONE_MAPPERS = {"linear", "reinhard", "filmic", "aces", "agx"}
 ANTIALIASING = {"off", "fxaa", "msaa2x", "msaa4x"}
-
 
 def check_visual() -> None:
     """The visual config and the asset manifest (docs/VISUAL_STYLE.md)."""

@@ -166,16 +166,11 @@ func _show_cone(reach: float, arc_degrees: float, flat: bool) -> void:
 	mesh.bottom_radius = reach * tan(deg_to_rad(minf(arc_degrees, 150.0) * 0.5))
 	mesh.height = reach
 	mesh.radial_segments = 16
-	var material := StandardMaterial3D.new()
 	var color := Combat.attack_color(current)
-	material.albedo_color = Color(color.r, color.g, color.b, 0.28)
-	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	material.cull_mode = BaseMaterial3D.CULL_DISABLED
-	mesh.material = material
-
 	var instance := MeshInstance3D.new()
 	instance.mesh = mesh
+	instance.material_override = Toon.veil({"face": color, "face_alpha": "props.telegraph_alpha",
+			"edge": color, "edge_alpha": "props.telegraph_edge_alpha", "edge_start": 0.5})
 	instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var up := -direction
 	var side := up.cross(Vector3.UP)

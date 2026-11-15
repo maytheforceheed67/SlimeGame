@@ -14,450 +14,325 @@ fog_enabled = true
 fog_light_color = Color(0.04, 0.07, 0.12, 1)
 fog_density = 0.008
 
-[sub_resource type="StandardMaterial3D" id="Mat_floor"]
-albedo_color = Color(0.3, 0.33, 0.4, 1)
-roughness = 0.95
-
-[sub_resource type="StandardMaterial3D" id="Mat_wall"]
-albedo_color = Color(0.22, 0.24, 0.31, 1)
-roughness = 1.0
-
-[sub_resource type="StandardMaterial3D" id="Mat_ledge"]
-albedo_color = Color(0.36, 0.38, 0.47, 1)
-roughness = 0.9
-
-[sub_resource type="StandardMaterial3D" id="Mat_bed"]
-albedo_color = Color(0.16, 0.22, 0.3, 1)
-roughness = 1.0
-
-[sub_resource type="StandardMaterial3D" id="Mat_water"]
-transparency = 1
-cull_mode = 2
-albedo_color = Color(0.2, 0.5, 0.75, 0.5)
-roughness = 0.08
-emission_enabled = true
-emission = Color(0.05, 0.2, 0.35, 1)
-emission_energy_multiplier = 0.5
-
-[sub_resource type="StandardMaterial3D" id="Mat_crystal_cyan"]
-albedo_color = Color(0.4, 0.85, 1.0, 1)
-emission_enabled = true
-emission = Color(0.4, 0.85, 1.0, 1)
-emission_energy_multiplier = 2.5
-
-[sub_resource type="BoxMesh" id="Mesh_crystal_cyan"]
-material = SubResource("Mat_crystal_cyan")
-size = Vector3(0.5, 1.8, 0.5)
-
-[sub_resource type="StandardMaterial3D" id="Mat_crystal_white"]
-albedo_color = Color(0.75, 0.82, 1.0, 1)
-emission_enabled = true
-emission = Color(0.75, 0.82, 1.0, 1)
-emission_energy_multiplier = 2.5
-
-[sub_resource type="BoxMesh" id="Mesh_crystal_white"]
-material = SubResource("Mat_crystal_white")
-size = Vector3(0.5, 1.8, 0.5)
-
-[sub_resource type="StandardMaterial3D" id="Mat_crystal_violet"]
-albedo_color = Color(0.7, 0.5, 1.0, 1)
-emission_enabled = true
-emission = Color(0.7, 0.5, 1.0, 1)
-emission_energy_multiplier = 2.5
-
-[sub_resource type="BoxMesh" id="Mesh_crystal_violet"]
-material = SubResource("Mat_crystal_violet")
-size = Vector3(0.5, 1.8, 0.5)
-
-[sub_resource type="StandardMaterial3D" id="Mat_crystal_green"]
-albedo_color = Color(0.45, 1.0, 0.6, 1)
-emission_enabled = true
-emission = Color(0.45, 1.0, 0.6, 1)
-emission_energy_multiplier = 2.5
-
-[sub_resource type="BoxMesh" id="Mesh_crystal_green"]
-material = SubResource("Mat_crystal_green")
-size = Vector3(0.5, 1.8, 0.5)
-
-[sub_resource type="StandardMaterial3D" id="Mat_crystal_red"]
-albedo_color = Color(1.0, 0.45, 0.4, 1)
-emission_enabled = true
-emission = Color(1.0, 0.45, 0.4, 1)
-emission_energy_multiplier = 2.5
-
-[sub_resource type="BoxMesh" id="Mesh_crystal_red"]
-material = SubResource("Mat_crystal_red")
+[sub_resource type="BoxMesh" id="Mesh_crystal"]
 size = Vector3(0.5, 1.8, 0.5)
 
 [sub_resource type="BoxShape3D" id="WaterShape_0"]
 size = Vector3(20, 2.4, 10)
 
 [sub_resource type="PlaneMesh" id="WaterMesh_0"]
-material = SubResource("Mat_water")
 size = Vector2(20, 10)
 
 [sub_resource type="BoxShape3D" id="WaterShape_1"]
 size = Vector3(8, 2.4, 18)
 
 [sub_resource type="PlaneMesh" id="WaterMesh_1"]
-material = SubResource("Mat_water")
 size = Vector2(8, 18)
 
 [sub_resource type="BoxShape3D" id="WaterShape_2"]
 size = Vector3(6, 2.4, 18)
 
 [sub_resource type="PlaneMesh" id="WaterMesh_2"]
-material = SubResource("Mat_water")
 size = Vector2(6, 18)
 
 [sub_resource type="BoxShape3D" id="WaterShape_3"]
 size = Vector3(6, 2.4, 12)
 
 [sub_resource type="PlaneMesh" id="WaterMesh_3"]
-material = SubResource("Mat_water")
 size = Vector2(6, 12)
 
 [sub_resource type="BoxShape3D" id="Shape_0"]
 size = Vector3(112, 14, 2)
 
 [sub_resource type="BoxMesh" id="Mesh_0"]
-material = SubResource("Mat_wall")
 size = Vector3(112, 14, 2)
 
 [sub_resource type="BoxShape3D" id="Shape_1"]
 size = Vector3(40, 14, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_1"]
-material = SubResource("Mat_wall")
 size = Vector3(40, 14, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_2"]
 size = Vector3(40, 14, 22)
 
 [sub_resource type="BoxMesh" id="Mesh_2"]
-material = SubResource("Mat_wall")
 size = Vector3(40, 14, 22)
 
 [sub_resource type="BoxShape3D" id="Shape_3"]
 size = Vector3(10, 14, 26)
 
 [sub_resource type="BoxMesh" id="Mesh_3"]
-material = SubResource("Mat_wall")
 size = Vector3(10, 14, 26)
 
 [sub_resource type="BoxShape3D" id="Shape_4"]
 size = Vector3(6, 14, 14)
 
 [sub_resource type="BoxMesh" id="Mesh_4"]
-material = SubResource("Mat_wall")
 size = Vector3(6, 14, 14)
 
 [sub_resource type="BoxShape3D" id="Shape_5"]
 size = Vector3(12, 14, 8)
 
 [sub_resource type="BoxMesh" id="Mesh_5"]
-material = SubResource("Mat_wall")
 size = Vector3(12, 14, 8)
 
 [sub_resource type="BoxShape3D" id="Shape_6"]
 size = Vector3(26, 14, 8)
 
 [sub_resource type="BoxMesh" id="Mesh_6"]
-material = SubResource("Mat_wall")
 size = Vector3(26, 14, 8)
 
 [sub_resource type="BoxShape3D" id="Shape_7"]
 size = Vector3(8, 14, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_7"]
-material = SubResource("Mat_wall")
 size = Vector3(8, 14, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_8"]
 size = Vector3(2, 14, 64)
 
 [sub_resource type="BoxMesh" id="Mesh_8"]
-material = SubResource("Mat_wall")
 size = Vector3(2, 14, 64)
 
 [sub_resource type="BoxShape3D" id="Shape_9"]
 size = Vector3(4, 14, 10)
 
 [sub_resource type="BoxMesh" id="Mesh_9"]
-material = SubResource("Mat_wall")
 size = Vector3(4, 14, 10)
 
 [sub_resource type="BoxShape3D" id="Shape_10"]
 size = Vector3(2, 14, 56)
 
 [sub_resource type="BoxMesh" id="Mesh_10"]
-material = SubResource("Mat_wall")
 size = Vector3(2, 14, 56)
 
 [sub_resource type="BoxShape3D" id="Shape_11"]
 size = Vector3(6, 14, 8)
 
 [sub_resource type="BoxMesh" id="Mesh_11"]
-material = SubResource("Mat_wall")
 size = Vector3(6, 14, 8)
 
 [sub_resource type="BoxShape3D" id="Shape_12"]
 size = Vector3(4, 14, 20)
 
 [sub_resource type="BoxMesh" id="Mesh_12"]
-material = SubResource("Mat_wall")
 size = Vector3(4, 14, 20)
 
 [sub_resource type="BoxShape3D" id="Shape_13"]
 size = Vector3(6, 14, 40)
 
 [sub_resource type="BoxMesh" id="Mesh_13"]
-material = SubResource("Mat_wall")
 size = Vector3(6, 14, 40)
 
 [sub_resource type="BoxShape3D" id="Shape_14"]
 size = Vector3(16, 14, 8)
 
 [sub_resource type="BoxMesh" id="Mesh_14"]
-material = SubResource("Mat_wall")
 size = Vector3(16, 14, 8)
 
 [sub_resource type="BoxShape3D" id="Shape_15"]
 size = Vector3(28, 14, 26)
 
 [sub_resource type="BoxMesh" id="Mesh_15"]
-material = SubResource("Mat_wall")
 size = Vector3(28, 14, 26)
 
 [sub_resource type="BoxShape3D" id="Shape_16"]
 size = Vector3(8, 14, 26)
 
 [sub_resource type="BoxMesh" id="Mesh_16"]
-material = SubResource("Mat_wall")
 size = Vector3(8, 14, 26)
 
 [sub_resource type="BoxShape3D" id="Shape_17"]
 size = Vector3(8, 14, 10)
 
 [sub_resource type="BoxMesh" id="Mesh_17"]
-material = SubResource("Mat_wall")
 size = Vector3(8, 14, 10)
 
 [sub_resource type="BoxShape3D" id="Shape_18"]
 size = Vector3(30, 14, 2)
 
 [sub_resource type="BoxMesh" id="Mesh_18"]
-material = SubResource("Mat_wall")
 size = Vector3(30, 14, 2)
 
 [sub_resource type="BoxShape3D" id="Shape_19"]
 size = Vector3(12, 14, 24)
 
 [sub_resource type="BoxMesh" id="Mesh_19"]
-material = SubResource("Mat_wall")
 size = Vector3(12, 14, 24)
 
 [sub_resource type="BoxShape3D" id="Shape_20"]
 size = Vector3(8, 14, 14)
 
 [sub_resource type="BoxMesh" id="Mesh_20"]
-material = SubResource("Mat_wall")
 size = Vector3(8, 14, 14)
 
 [sub_resource type="BoxShape3D" id="Shape_21"]
 size = Vector3(24, 14, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_21"]
-material = SubResource("Mat_wall")
 size = Vector3(24, 14, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_22"]
 size = Vector3(22, 14, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_22"]
-material = SubResource("Mat_wall")
 size = Vector3(22, 14, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_23"]
 size = Vector3(32, 5, 18)
 
 [sub_resource type="BoxMesh" id="Mesh_23"]
-material = SubResource("Mat_floor")
 size = Vector3(32, 5, 18)
 
 [sub_resource type="BoxShape3D" id="Shape_24"]
 size = Vector3(24, 5, 18)
 
 [sub_resource type="BoxMesh" id="Mesh_24"]
-material = SubResource("Mat_floor")
 size = Vector3(24, 5, 18)
 
 [sub_resource type="BoxShape3D" id="Shape_25"]
 size = Vector3(6, 5, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_25"]
-material = SubResource("Mat_floor")
 size = Vector3(6, 5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_26"]
 size = Vector3(8, 5, 64)
 
 [sub_resource type="BoxMesh" id="Mesh_26"]
-material = SubResource("Mat_floor")
 size = Vector3(8, 5, 64)
 
 [sub_resource type="BoxShape3D" id="Shape_27"]
 size = Vector3(4, 5, 30)
 
 [sub_resource type="BoxMesh" id="Mesh_27"]
-material = SubResource("Mat_floor")
 size = Vector3(4, 5, 30)
 
 [sub_resource type="BoxShape3D" id="Shape_28"]
 size = Vector3(30, 10, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_28"]
-material = SubResource("Mat_ledge")
 size = Vector3(30, 10, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_29"]
 size = Vector3(12, 5, 26)
 
 [sub_resource type="BoxMesh" id="Mesh_29"]
-material = SubResource("Mat_floor")
 size = Vector3(12, 5, 26)
 
 [sub_resource type="BoxShape3D" id="Shape_30"]
 size = Vector3(16, 6.5, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_30"]
-material = SubResource("Mat_ledge")
 size = Vector3(16, 6.5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_31"]
 size = Vector3(30, 5, 2)
 
 [sub_resource type="BoxMesh" id="Mesh_31"]
-material = SubResource("Mat_floor")
 size = Vector3(30, 5, 2)
 
 [sub_resource type="BoxShape3D" id="Shape_32"]
 size = Vector3(8, 5, 32)
 
 [sub_resource type="BoxMesh" id="Mesh_32"]
-material = SubResource("Mat_floor")
 size = Vector3(8, 5, 32)
 
 [sub_resource type="BoxShape3D" id="Shape_33"]
 size = Vector3(2, 3.8, 28)
 
 [sub_resource type="BoxMesh" id="Mesh_33"]
-material = SubResource("Mat_bed")
 size = Vector3(2, 3.8, 28)
 
 [sub_resource type="BoxShape3D" id="Shape_34"]
 size = Vector3(18, 2, 10)
 
 [sub_resource type="BoxMesh" id="Mesh_34"]
-material = SubResource("Mat_bed")
 size = Vector3(18, 2, 10)
 
 [sub_resource type="BoxShape3D" id="Shape_35"]
 size = Vector3(2, 5, 32)
 
 [sub_resource type="BoxMesh" id="Mesh_35"]
-material = SubResource("Mat_floor")
 size = Vector3(2, 5, 32)
 
 [sub_resource type="BoxShape3D" id="Shape_36"]
 size = Vector3(28, 5, 30)
 
 [sub_resource type="BoxMesh" id="Mesh_36"]
-material = SubResource("Mat_floor")
 size = Vector3(28, 5, 30)
 
 [sub_resource type="BoxShape3D" id="Shape_37"]
 size = Vector3(16, 5, 22)
 
 [sub_resource type="BoxMesh" id="Mesh_37"]
-material = SubResource("Mat_floor")
 size = Vector3(16, 5, 22)
 
 [sub_resource type="BoxShape3D" id="Shape_38"]
 size = Vector3(4, 5, 6)
 
 [sub_resource type="BoxMesh" id="Mesh_38"]
-material = SubResource("Mat_floor")
 size = Vector3(4, 5, 6)
 
 [sub_resource type="BoxShape3D" id="Shape_39"]
 size = Vector3(6, 5, 8)
 
 [sub_resource type="BoxMesh" id="Mesh_39"]
-material = SubResource("Mat_floor")
 size = Vector3(6, 5, 8)
 
 [sub_resource type="BoxShape3D" id="Shape_40"]
 size = Vector3(6, 2, 18)
 
 [sub_resource type="BoxMesh" id="Mesh_40"]
-material = SubResource("Mat_bed")
 size = Vector3(6, 2, 18)
 
 [sub_resource type="BoxShape3D" id="Shape_41"]
 size = Vector3(6, 5, 6)
 
 [sub_resource type="BoxMesh" id="Mesh_41"]
-material = SubResource("Mat_floor")
 size = Vector3(6, 5, 6)
 
 [sub_resource type="BoxShape3D" id="Shape_42"]
 size = Vector3(6, 2, 12)
 
 [sub_resource type="BoxMesh" id="Mesh_42"]
-material = SubResource("Mat_bed")
 size = Vector3(6, 2, 12)
 
 [sub_resource type="BoxShape3D" id="Shape_43"]
 size = Vector3(20, 5, 4)
 
 [sub_resource type="BoxMesh" id="Mesh_43"]
-material = SubResource("Mat_floor")
 size = Vector3(20, 5, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_44"]
 size = Vector3(8, 5, 22)
 
 [sub_resource type="BoxMesh" id="Mesh_44"]
-material = SubResource("Mat_floor")
 size = Vector3(8, 5, 22)
 
 [sub_resource type="BoxShape3D" id="Shape_45"]
 size = Vector3(22, 5, 20)
 
 [sub_resource type="BoxMesh" id="Mesh_45"]
-material = SubResource("Mat_floor")
 size = Vector3(22, 5, 20)
 
 [sub_resource type="BoxShape3D" id="Shape_46"]
 size = Vector3(8, 5, 2)
 
 [sub_resource type="BoxMesh" id="Mesh_46"]
-material = SubResource("Mat_floor")
 size = Vector3(8, 5, 2)
 
 [sub_resource type="BoxShape3D" id="Shape_47"]
 size = Vector3(8, 8.4, 2)
 
 [sub_resource type="BoxMesh" id="Mesh_47"]
-material = SubResource("Mat_wall")
 size = Vector3(8, 8.4, 2)
 
 [sub_resource type="BoxShape3D" id="Shape_48"]
 size = Vector3(112, 1, 88)
 
 [sub_resource type="BoxMesh" id="Mesh_48"]
-material = SubResource("Mat_wall")
 size = Vector3(112, 1, 88)
 
 [node name="SealedCave" type="Node3D"]
@@ -471,7 +346,9 @@ environment = SubResource("Environment_cave")
 
 [node name="Wall000" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -43)
+cast_shadow = 0
 mesh = SubResource("Mesh_0")
+metadata/look = "rock"
 
 [node name="Wall000Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -43)
@@ -479,7 +356,9 @@ shape = SubResource("Shape_0")
 
 [node name="Wall001" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36, 2, -40)
+cast_shadow = 0
 mesh = SubResource("Mesh_1")
+metadata/look = "rock"
 
 [node name="Wall001Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36, 2, -40)
@@ -487,7 +366,9 @@ shape = SubResource("Shape_1")
 
 [node name="Wall002" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 2, -31)
+cast_shadow = 0
 mesh = SubResource("Mesh_2")
+metadata/look = "rock"
 
 [node name="Wall002Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 2, -31)
@@ -495,7 +376,9 @@ shape = SubResource("Shape_2")
 
 [node name="Wall003" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -51, 2, -25)
+cast_shadow = 0
 mesh = SubResource("Mesh_3")
+metadata/look = "rock"
 
 [node name="Wall003Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -51, 2, -25)
@@ -503,7 +386,9 @@ shape = SubResource("Shape_3")
 
 [node name="Wall004" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19, 2, -31)
+cast_shadow = 0
 mesh = SubResource("Mesh_4")
+metadata/look = "rock"
 
 [node name="Wall004Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19, 2, -31)
@@ -511,7 +396,9 @@ shape = SubResource("Shape_4")
 
 [node name="Wall005" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 2, -20)
+cast_shadow = 0
 mesh = SubResource("Mesh_5")
+metadata/look = "rock"
 
 [node name="Wall005Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 2, -20)
@@ -519,7 +406,9 @@ shape = SubResource("Shape_5")
 
 [node name="Wall006" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 2, -20)
+cast_shadow = 0
 mesh = SubResource("Mesh_5")
+metadata/look = "rock"
 
 [node name="Wall006Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 2, -20)
@@ -527,7 +416,9 @@ shape = SubResource("Shape_5")
 
 [node name="Wall007" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33, 2, -16)
+cast_shadow = 0
 mesh = SubResource("Mesh_6")
+metadata/look = "rock"
 
 [node name="Wall007Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33, 2, -16)
@@ -535,7 +426,9 @@ shape = SubResource("Shape_6")
 
 [node name="Wall008" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 2, -18)
+cast_shadow = 0
 mesh = SubResource("Mesh_7")
+metadata/look = "rock"
 
 [node name="Wall008Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 2, -18)
@@ -543,7 +436,9 @@ shape = SubResource("Shape_7")
 
 [node name="Wall009" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 2, 12)
+cast_shadow = 0
 mesh = SubResource("Mesh_8")
+metadata/look = "rock"
 
 [node name="Wall009Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 2, 12)
@@ -551,7 +446,9 @@ shape = SubResource("Shape_8")
 
 [node name="Wall010" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 2, -11)
+cast_shadow = 0
 mesh = SubResource("Mesh_9")
+metadata/look = "rock"
 
 [node name="Wall010Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 2, -11)
@@ -559,7 +456,9 @@ shape = SubResource("Shape_9")
 
 [node name="Wall011" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -55, 2, 16)
+cast_shadow = 0
 mesh = SubResource("Mesh_10")
+metadata/look = "rock"
 
 [node name="Wall011Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -55, 2, 16)
@@ -567,7 +466,9 @@ shape = SubResource("Shape_10")
 
 [node name="Wall012" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23, 2, -8)
+cast_shadow = 0
 mesh = SubResource("Mesh_11")
+metadata/look = "rock"
 
 [node name="Wall012Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23, 2, -8)
@@ -575,7 +476,9 @@ shape = SubResource("Shape_11")
 
 [node name="Wall013" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 2, 10)
+cast_shadow = 0
 mesh = SubResource("Mesh_12")
+metadata/look = "rock"
 
 [node name="Wall013Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 2, 10)
@@ -583,7 +486,9 @@ shape = SubResource("Shape_12")
 
 [node name="Wall014" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23, 2, 24)
+cast_shadow = 0
 mesh = SubResource("Mesh_13")
+metadata/look = "rock"
 
 [node name="Wall014Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23, 2, 24)
@@ -591,7 +496,9 @@ shape = SubResource("Shape_13")
 
 [node name="Wall015" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 2, 14)
+cast_shadow = 0
 mesh = SubResource("Mesh_14")
+metadata/look = "rock"
 
 [node name="Wall015Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 2, 14)
@@ -599,7 +506,9 @@ shape = SubResource("Shape_14")
 
 [node name="Wall016" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 2, 14)
+cast_shadow = 0
 mesh = SubResource("Mesh_14")
+metadata/look = "rock"
 
 [node name="Wall016Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 2, 14)
@@ -607,7 +516,9 @@ shape = SubResource("Shape_14")
 
 [node name="Wall017" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 2, 31)
+cast_shadow = 0
 mesh = SubResource("Mesh_15")
+metadata/look = "rock"
 
 [node name="Wall017Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 2, 31)
@@ -615,7 +526,9 @@ shape = SubResource("Shape_15")
 
 [node name="Wall018" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 2, 31)
+cast_shadow = 0
 mesh = SubResource("Mesh_16")
+metadata/look = "rock"
 
 [node name="Wall018Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 2, 31)
@@ -623,7 +536,9 @@ shape = SubResource("Shape_16")
 
 [node name="Wall019" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 2, 23)
+cast_shadow = 0
 mesh = SubResource("Mesh_17")
+metadata/look = "rock"
 
 [node name="Wall019Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 2, 23)
@@ -631,7 +546,9 @@ shape = SubResource("Shape_17")
 
 [node name="Wall020" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39, 2, 19)
+cast_shadow = 0
 mesh = SubResource("Mesh_18")
+metadata/look = "rock"
 
 [node name="Wall020Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39, 2, 19)
@@ -639,7 +556,9 @@ shape = SubResource("Shape_18")
 
 [node name="Wall021" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 2, 32)
+cast_shadow = 0
 mesh = SubResource("Mesh_19")
+metadata/look = "rock"
 
 [node name="Wall021Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 2, 32)
@@ -647,7 +566,9 @@ shape = SubResource("Shape_19")
 
 [node name="Wall022" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 2, 37)
+cast_shadow = 0
 mesh = SubResource("Mesh_20")
+metadata/look = "rock"
 
 [node name="Wall022Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 2, 37)
@@ -655,7 +576,9 @@ shape = SubResource("Shape_20")
 
 [node name="Wall023" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 42)
+cast_shadow = 0
 mesh = SubResource("Mesh_21")
+metadata/look = "rock"
 
 [node name="Wall023Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 42)
@@ -663,7 +586,9 @@ shape = SubResource("Shape_21")
 
 [node name="Wall024" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31, 2, 42)
+cast_shadow = 0
 mesh = SubResource("Mesh_22")
+metadata/look = "rock"
 
 [node name="Wall024Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31, 2, 42)
@@ -671,7 +596,9 @@ shape = SubResource("Shape_22")
 
 [node name="Floor000" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.5, -33)
+cast_shadow = 0
 mesh = SubResource("Mesh_23")
+metadata/look = "rock"
 
 [node name="Floor000Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.5, -33)
@@ -679,7 +606,9 @@ shape = SubResource("Shape_23")
 
 [node name="Floor001" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34, -2.5, -29)
+cast_shadow = 0
 mesh = SubResource("Mesh_24")
+metadata/look = "rock"
 
 [node name="Floor001Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34, -2.5, -29)
@@ -687,7 +616,9 @@ shape = SubResource("Shape_24")
 
 [node name="Floor002" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19, -2.5, -22)
+cast_shadow = 0
 mesh = SubResource("Mesh_25")
+metadata/look = "rock"
 
 [node name="Floor002Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19, -2.5, -22)
@@ -695,7 +626,9 @@ shape = SubResource("Shape_25")
 
 [node name="Floor003" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.5, 8)
+cast_shadow = 0
 mesh = SubResource("Mesh_26")
+metadata/look = "rock"
 
 [node name="Floor003Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.5, 8)
@@ -703,7 +636,9 @@ shape = SubResource("Shape_26")
 
 [node name="Floor004" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, -2.5, -5)
+cast_shadow = 0
 mesh = SubResource("Mesh_27")
+metadata/look = "rock"
 
 [node name="Floor004Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, -2.5, -5)
@@ -712,6 +647,7 @@ shape = SubResource("Shape_27")
 [node name="Floor005" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39, 0, -18)
 mesh = SubResource("Mesh_28")
+metadata/look = "rock"
 
 [node name="Floor005Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39, 0, -18)
@@ -719,7 +655,9 @@ shape = SubResource("Shape_28")
 
 [node name="Floor006" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, -2.5, -3)
+cast_shadow = 0
 mesh = SubResource("Mesh_29")
+metadata/look = "rock"
 
 [node name="Floor006Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, -2.5, -3)
@@ -728,6 +666,7 @@ shape = SubResource("Shape_29")
 [node name="Floor007" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, -1.75, -14)
 mesh = SubResource("Mesh_30")
+metadata/look = "rock"
 
 [node name="Floor007Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, -1.75, -14)
@@ -735,7 +674,9 @@ shape = SubResource("Shape_30")
 
 [node name="Floor008" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39, -2.5, -15)
+cast_shadow = 0
 mesh = SubResource("Mesh_31")
+metadata/look = "rock"
 
 [node name="Floor008Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39, -2.5, -15)
@@ -743,7 +684,9 @@ shape = SubResource("Shape_31")
 
 [node name="Floor009" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, -2.5, 2)
+cast_shadow = 0
 mesh = SubResource("Mesh_32")
+metadata/look = "rock"
 
 [node name="Floor009Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, -2.5, 2)
@@ -751,7 +694,9 @@ shape = SubResource("Shape_32")
 
 [node name="Floor010" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33, -3.1, 0)
+cast_shadow = 0
 mesh = SubResource("Mesh_33")
+metadata/look = "lake_bed"
 
 [node name="Floor010Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33, -3.1, 0)
@@ -759,7 +704,9 @@ shape = SubResource("Shape_33")
 
 [node name="Floor011" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, -4, -9)
+cast_shadow = 0
 mesh = SubResource("Mesh_34")
+metadata/look = "lake_bed"
 
 [node name="Floor011Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, -4, -9)
@@ -767,7 +714,9 @@ shape = SubResource("Shape_34")
 
 [node name="Floor012" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 53, -2.5, 2)
+cast_shadow = 0
 mesh = SubResource("Mesh_35")
+metadata/look = "rock"
 
 [node name="Floor012Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 53, -2.5, 2)
@@ -775,7 +724,9 @@ shape = SubResource("Shape_35")
 
 [node name="Floor013" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, -2.5, 3)
+cast_shadow = 0
 mesh = SubResource("Mesh_36")
+metadata/look = "rock"
 
 [node name="Floor013Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, -2.5, 3)
@@ -783,7 +734,9 @@ shape = SubResource("Shape_36")
 
 [node name="Floor014" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, -2.5, -1)
+cast_shadow = 0
 mesh = SubResource("Mesh_37")
+metadata/look = "rock"
 
 [node name="Floor014Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, -2.5, -1)
@@ -791,7 +744,9 @@ shape = SubResource("Shape_37")
 
 [node name="Floor015" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, -2.5, -3)
+cast_shadow = 0
 mesh = SubResource("Mesh_38")
+metadata/look = "rock"
 
 [node name="Floor015Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, -2.5, -3)
@@ -799,7 +754,9 @@ shape = SubResource("Shape_38")
 
 [node name="Floor016" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23, -2.5, 0)
+cast_shadow = 0
 mesh = SubResource("Mesh_39")
+metadata/look = "rock"
 
 [node name="Floor016Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23, -2.5, 0)
@@ -807,7 +764,9 @@ shape = SubResource("Shape_39")
 
 [node name="Floor017" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37, -4, 5)
+cast_shadow = 0
 mesh = SubResource("Mesh_40")
+metadata/look = "lake_bed"
 
 [node name="Floor017Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37, -4, 5)
@@ -815,7 +774,9 @@ shape = SubResource("Shape_40")
 
 [node name="Floor018" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, -2.5, -1)
+cast_shadow = 0
 mesh = SubResource("Mesh_41")
+metadata/look = "rock"
 
 [node name="Floor018Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, -2.5, -1)
@@ -823,7 +784,9 @@ shape = SubResource("Shape_41")
 
 [node name="Floor019" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49, -4, 5)
+cast_shadow = 0
 mesh = SubResource("Mesh_40")
+metadata/look = "lake_bed"
 
 [node name="Floor019Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49, -4, 5)
@@ -831,7 +794,9 @@ shape = SubResource("Shape_40")
 
 [node name="Floor020" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, -4, 8)
+cast_shadow = 0
 mesh = SubResource("Mesh_42")
+metadata/look = "lake_bed"
 
 [node name="Floor020Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, -4, 8)
@@ -839,7 +804,9 @@ shape = SubResource("Shape_42")
 
 [node name="Floor021" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42, -2.5, 16)
+cast_shadow = 0
 mesh = SubResource("Mesh_43")
+metadata/look = "rock"
 
 [node name="Floor021Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42, -2.5, 16)
@@ -847,7 +814,9 @@ shape = SubResource("Shape_43")
 
 [node name="Floor022" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, -2.5, 29)
+cast_shadow = 0
 mesh = SubResource("Mesh_44")
+metadata/look = "rock"
 
 [node name="Floor022Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, -2.5, 29)
@@ -855,7 +824,9 @@ shape = SubResource("Shape_44")
 
 [node name="Floor023" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, -2.5, 29)
+cast_shadow = 0
 mesh = SubResource("Mesh_44")
+metadata/look = "rock"
 
 [node name="Floor023Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, -2.5, 29)
@@ -863,7 +834,9 @@ shape = SubResource("Shape_44")
 
 [node name="Floor024" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31, -2.5, 30)
+cast_shadow = 0
 mesh = SubResource("Mesh_45")
+metadata/look = "rock"
 
 [node name="Floor024Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31, -2.5, 30)
@@ -871,7 +844,9 @@ shape = SubResource("Shape_45")
 
 [node name="Floor025" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, -2.5, 29)
+cast_shadow = 0
 mesh = SubResource("Mesh_46")
+metadata/look = "rock"
 
 [node name="Floor025Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, -2.5, 29)
@@ -879,7 +854,9 @@ shape = SubResource("Shape_46")
 
 [node name="Lintel025" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 4.8, 29)
+cast_shadow = 0
 mesh = SubResource("Mesh_47")
+metadata/look = "rock"
 
 [node name="Lintel025Shape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 4.8, 29)
@@ -887,7 +864,9 @@ shape = SubResource("Shape_47")
 
 [node name="Ceiling" type="MeshInstance3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.5, 0)
+cast_shadow = 0
 mesh = SubResource("Mesh_48")
+metadata/look = "rock"
 
 [node name="CeilingShape" type="CollisionShape3D" parent="Rock"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.5, 0)
@@ -1134,7 +1113,7 @@ omni_range = 17.0
 
 [node name="Crystal" type="MeshInstance3D" parent="Lights/cyan__01"]
 transform = Transform3D(0.94, -0.34, 0, 0.34, 0.94, 0, 0, 0, 1, 0, -2.4, 0)
-mesh = SubResource("Mesh_crystal_cyan")
+mesh = SubResource("Mesh_crystal")
 
 [node name="cyan__02" type="OmniLight3D" parent="Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 3.2, 39)
@@ -1144,7 +1123,7 @@ omni_range = 17.0
 
 [node name="Crystal" type="MeshInstance3D" parent="Lights/cyan__02"]
 transform = Transform3D(0.94, -0.34, 0, 0.34, 0.94, 0, 0, 0, 1, 0, -2.4, 0)
-mesh = SubResource("Mesh_crystal_cyan")
+mesh = SubResource("Mesh_crystal")
 
 [node name="cyan__03" type="OmniLight3D" parent="Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, 3.2, -13)
@@ -1154,7 +1133,7 @@ omni_range = 17.0
 
 [node name="Crystal" type="MeshInstance3D" parent="Lights/cyan__03"]
 transform = Transform3D(0.94, -0.34, 0, 0.34, 0.94, 0, 0, 0, 1, 0, -2.4, 0)
-mesh = SubResource("Mesh_crystal_cyan")
+mesh = SubResource("Mesh_crystal")
 
 [node name="cyan__04" type="OmniLight3D" parent="Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 3.2, 9)
@@ -1164,7 +1143,7 @@ omni_range = 17.0
 
 [node name="Crystal" type="MeshInstance3D" parent="Lights/cyan__04"]
 transform = Transform3D(0.94, -0.34, 0, 0.34, 0.94, 0, 0, 0, 1, 0, -2.4, 0)
-mesh = SubResource("Mesh_crystal_cyan")
+mesh = SubResource("Mesh_crystal")
 
 [node name="white__01" type="OmniLight3D" parent="Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 3.2, -3)
@@ -1174,7 +1153,7 @@ omni_range = 17.0
 
 [node name="Crystal" type="MeshInstance3D" parent="Lights/white__01"]
 transform = Transform3D(0.94, -0.34, 0, 0.34, 0.94, 0, 0, 0, 1, 0, -2.4, 0)
-mesh = SubResource("Mesh_crystal_white")
+mesh = SubResource("Mesh_crystal")
 
 [node name="violet__01" type="OmniLight3D" parent="Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -51, 3.2, -9)
@@ -1184,7 +1163,7 @@ omni_range = 17.0
 
 [node name="Crystal" type="MeshInstance3D" parent="Lights/violet__01"]
 transform = Transform3D(0.94, -0.34, 0, 0.34, 0.94, 0, 0, 0, 1, 0, -2.4, 0)
-mesh = SubResource("Mesh_crystal_violet")
+mesh = SubResource("Mesh_crystal")
 
 [node name="violet__02" type="OmniLight3D" parent="Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -51, 3.2, 15)
@@ -1194,7 +1173,7 @@ omni_range = 17.0
 
 [node name="Crystal" type="MeshInstance3D" parent="Lights/violet__02"]
 transform = Transform3D(0.94, -0.34, 0, 0.34, 0.94, 0, 0, 0, 1, 0, -2.4, 0)
-mesh = SubResource("Mesh_crystal_violet")
+mesh = SubResource("Mesh_crystal")
 
 [node name="violet__03" type="OmniLight3D" parent="Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29, 3.2, -9)
@@ -1204,7 +1183,7 @@ omni_range = 17.0
 
 [node name="Crystal" type="MeshInstance3D" parent="Lights/violet__03"]
 transform = Transform3D(0.94, -0.34, 0, 0.34, 0.94, 0, 0, 0, 1, 0, -2.4, 0)
-mesh = SubResource("Mesh_crystal_violet")
+mesh = SubResource("Mesh_crystal")
 
 [node name="cyan__05" type="OmniLight3D" parent="Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 3.2, -15)
@@ -1214,7 +1193,7 @@ omni_range = 17.0
 
 [node name="Crystal" type="MeshInstance3D" parent="Lights/cyan__05"]
 transform = Transform3D(0.94, -0.34, 0, 0.34, 0.94, 0, 0, 0, 1, 0, -2.4, 0)
-mesh = SubResource("Mesh_crystal_cyan")
+mesh = SubResource("Mesh_crystal")
 
 [node name="cyan__06" type="OmniLight3D" parent="Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 3.2, 17)
@@ -1224,7 +1203,7 @@ omni_range = 17.0
 
 [node name="Crystal" type="MeshInstance3D" parent="Lights/cyan__06"]
 transform = Transform3D(0.94, -0.34, 0, 0.34, 0.94, 0, 0, 0, 1, 0, -2.4, 0)
-mesh = SubResource("Mesh_crystal_cyan")
+mesh = SubResource("Mesh_crystal")
 
 [node name="white__02" type="OmniLight3D" parent="Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 3.2, -1)
@@ -1234,7 +1213,7 @@ omni_range = 17.0
 
 [node name="Crystal" type="MeshInstance3D" parent="Lights/white__02"]
 transform = Transform3D(0.94, -0.34, 0, 0.34, 0.94, 0, 0, 0, 1, 0, -2.4, 0)
-mesh = SubResource("Mesh_crystal_white")
+mesh = SubResource("Mesh_crystal")
 
 [node name="green__01" type="OmniLight3D" parent="Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 3.2, -39)
@@ -1244,7 +1223,7 @@ omni_range = 17.0
 
 [node name="Crystal" type="MeshInstance3D" parent="Lights/green__01"]
 transform = Transform3D(0.94, -0.34, 0, 0.34, 0.94, 0, 0, 0, 1, 0, -2.4, 0)
-mesh = SubResource("Mesh_crystal_green")
+mesh = SubResource("Mesh_crystal")
 
 [node name="green__02" type="OmniLight3D" parent="Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 3.2, -25)
@@ -1254,7 +1233,7 @@ omni_range = 17.0
 
 [node name="Crystal" type="MeshInstance3D" parent="Lights/green__02"]
 transform = Transform3D(0.94, -0.34, 0, 0.34, 0.94, 0, 0, 0, 1, 0, -2.4, 0)
-mesh = SubResource("Mesh_crystal_green")
+mesh = SubResource("Mesh_crystal")
 
 [node name="red__01" type="OmniLight3D" parent="Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 3.2, -35)
@@ -1264,7 +1243,7 @@ omni_range = 17.0
 
 [node name="Crystal" type="MeshInstance3D" parent="Lights/red__01"]
 transform = Transform3D(0.94, -0.34, 0, 0.34, 0.94, 0, 0, 0, 1, 0, -2.4, 0)
-mesh = SubResource("Mesh_crystal_red")
+mesh = SubResource("Mesh_crystal")
 
 [node name="red__02" type="OmniLight3D" parent="Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -43, 3.2, -23)
@@ -1274,7 +1253,7 @@ omni_range = 17.0
 
 [node name="Crystal" type="MeshInstance3D" parent="Lights/red__02"]
 transform = Transform3D(0.94, -0.34, 0, 0.34, 0.94, 0, 0, 0, 1, 0, -2.4, 0)
-mesh = SubResource("Mesh_crystal_red")
+mesh = SubResource("Mesh_crystal")
 
 [node name="green__03" type="OmniLight3D" parent="Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39, 3.2, 23)
@@ -1284,7 +1263,7 @@ omni_range = 17.0
 
 [node name="Crystal" type="MeshInstance3D" parent="Lights/green__03"]
 transform = Transform3D(0.94, -0.34, 0, 0.34, 0.94, 0, 0, 0, 1, 0, -2.4, 0)
-mesh = SubResource("Mesh_crystal_green")
+mesh = SubResource("Mesh_crystal")
 
 [node name="green__04" type="OmniLight3D" parent="Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 3.2, 39)
@@ -1294,6 +1273,6 @@ omni_range = 17.0
 
 [node name="Crystal" type="MeshInstance3D" parent="Lights/green__04"]
 transform = Transform3D(0.94, -0.34, 0, 0.34, 0.94, 0, 0, 0, 1, 0, -2.4, 0)
-mesh = SubResource("Mesh_crystal_green")
+mesh = SubResource("Mesh_crystal")
 
 [node name="Spawned" type="Node3D" parent="."]

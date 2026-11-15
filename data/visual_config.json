@@ -7,8 +7,13 @@
       "Every value is a starting point to tune by eye. Press F4 in a debug build to edit any of them live; Save writes your changes to user://visual_overrides.json, which is laid over this file at start-up.",
       "Colours are #RRGGBB strings. A value is addressed by its dotted path, for example palette.cave.fog.",
       "renderer.tonemap: linear keeps flat colours exactly as authored and is the default. agx needs Godot 4.4 or newer. Godot has no Khronos Neutral tone mapper; aces is deliberately not offered as a default because it shifts hand-picked hues.",
-      "renderer.antialiasing: off, fxaa, msaa2x or msaa4x.",
-      "Consumed now (Pass 0): renderer, post, fog, lights.fill_*, palette.cave.fog, accessibility (stored). The toon, outline and tiers sections and the rest of the palette are the style document's starting values, read from Pass 1 onward."
+      "renderer.antialiasing: off, fxaa, msaa2x or msaa4x. The project runs on Godot's Compatibility renderer, which has no fxaa; there fxaa means msaa2x.",
+      "Read since Pass 0: renderer, post, fog, palette.cave.fog; accessibility is stored. Read since Pass 1: lights, toon, outline, blob_shadow, seal, water, props and the palette groups cave, slime, veldora, seal, herb and ore. The ui and elements palettes, slime.face_enabled, quality and tiers are read by later passes.",
+      "lights.fill_* is the ambient light of the scene. Toon surfaces ignore it (their shade tint does that job), so it only touches a model that has not been given the toon material.",
+      "lights.shadow_splits is 1, 2 or 4 (more splits keep near shadows sharp); lights.shadow_filter is 0 (hard) to 5 (softest), re-thresholded to a crisp edge by shadow_edge_low and shadow_edge_high.",
+      "lights.key_pitch and key_yaw aim the one key light, in degrees: pitch -90 is straight down. toon.character_light_* is the direction characters are lit from, relative to the camera (x right, y up, z toward the viewer).",
+      "outline widths are pixels at a screen height of outline.reference_height. An asset's own width is outline_px in data/asset_manifest.json; outline.scale multiplies them all.",
+      "shade tints are multiplied onto a surface's colour in its shaded band. An asset that names its own shade colour (the palette pairs) uses that instead."
     ]
   },
   "renderer": {
@@ -38,6 +43,17 @@
     "fill_energy": 0.5,
     "key_color": "#FFFFFF",
     "key_energy": 1.0,
+    "key_pitch": -58.0,
+    "key_yaw": 35.0,
+    "shadow_enabled": true,
+    "shadow_distance": 36.0,
+    "shadow_splits": 2.0,
+    "shadow_filter": 3.0,
+    "shadow_map_size": 2048.0,
+    "shadow_bias": 0.05,
+    "shadow_normal_bias": 1.5,
+    "shadow_edge_low": 0.45,
+    "shadow_edge_high": 0.55,
     "point_light_pool": 4
   },
   "toon": {
@@ -48,20 +64,71 @@
     "character_rim_soft": 0.02,
     "character_rim_strength": 0.5,
     "character_spec_gloss": 64.0,
+    "character_band2": false,
+    "character_band2_threshold": 0.75,
+    "character_light_x": -0.45,
+    "character_light_y": 0.75,
+    "character_light_z": 0.5,
+    "rim_light_x": 0.45,
+    "rim_light_y": 0.75,
+    "rim_light_z": -0.5,
     "environment_shade_tint": "#A69ED1",
     "environment_band_threshold": 0.45,
     "environment_band_softness": 0.1,
-    "environment_rim_strength": 0.1,
+    "environment_rim_strength": 0.0,
+    "environment_band2": false,
+    "environment_band2_threshold": 0.75,
+    "environment_cap_threshold": 0.7,
+    "environment_lamp_tint": 0.015,
+    "environment_lamp_threshold": 0.3,
     "rim_color": "#8FE8FF"
   },
   "outline": {
+    "enabled": true,
+    "scale": 1.0,
     "width_px": 2.0,
-    "slime_px": 2.5,
-    "large_px": 3.0,
     "detail_px": 1.5,
+    "reference_height": 1080.0,
     "color_factor": 0.4,
+    "hue_shift": 0.12,
+    "saturation_boost": 1.25,
+    "min_value": 0.08,
     "max_growth_distance": 25.0,
     "fade_below_px": 12.0
+  },
+  "blob_shadow": {
+    "enabled": true,
+    "tint": "#2E2A66",
+    "opacity": 0.55,
+    "softness": 0.45,
+    "radius_factor": 1.25,
+    "grow_with_height": 0.12,
+    "fade_height": 7.0
+  },
+  "slime": {
+    "face_enabled": true,
+    "highlight": 1.0
+  },
+  "seal": {
+    "face_alpha": 0.1,
+    "edge_alpha": 0.55,
+    "edge_start": 0.55,
+    "energy": 1.3
+  },
+  "water": {
+    "near_alpha": 0.45,
+    "far_alpha": 0.8,
+    "edge_start": 0.72
+  },
+  "props": {
+    "pickup_glow": 0.6,
+    "crystal_glow": 1.5,
+    "mote_glow": 1.6,
+    "eye_glow": 1.6,
+    "accent_glow": 1.0,
+    "projectile_glow": 1.6,
+    "telegraph_alpha": 0.24,
+    "telegraph_edge_alpha": 0.5
   },
   "palette": {
     "cave": {

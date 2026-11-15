@@ -108,7 +108,7 @@ func play_prologue() -> void:
 		await _wait(0.9)
 		_chosen.append(i)
 		_refresh(true)
-		_announce(_cards[i])
+		_announce(_cards[i], _cards.slice(0, i + 1))
 	_footer.text = "What was wished for is what the next life is born with."
 	_confirm.text = "Be born  [Enter]"
 	_confirm.visible = true
@@ -162,7 +162,8 @@ func _run(ended_life: LifeState, cause: String) -> void:
 	var chosen: Array[Dictionary] = []
 	for index in _chosen:
 		chosen.append(_cards[index])
-		_announce(_cards[index])
+	for card in chosen:
+		_announce(card, chosen)
 	await _fade(1.0, 0.4, 1.0, 1.0, 1.4)
 
 	# 4. Rebirth.
@@ -172,11 +173,12 @@ func _run(ended_life: LifeState, cause: String) -> void:
 	_busy = false
 
 
-func _announce(card: Dictionary) -> void:
+## The Voice says what a card came to. `chosen` is every card chosen with it.
+func _announce(card: Dictionary, chosen: Array[Dictionary]) -> void:
 	if str(card.get("result", {}).get("kind", "nothing")) == "nothing":
 		Voice.say("wish_nothing")
 	else:
-		Voice.say("wish_result", {"result": Wishes.describe(card).get_slice("\n", 0)})
+		Voice.say("wish_result", {"result": Wishes.outcome(card, chosen)})
 
 
 func _unhandled_input(event: InputEvent) -> void:

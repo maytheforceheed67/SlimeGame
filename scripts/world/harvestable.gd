@@ -29,7 +29,7 @@ func _ready() -> void:
 	add_child(_visual)
 
 	var light := OmniLight3D.new()
-	light.light_color = color
+	light.light_color = _visual.get_meta("glow_color", color)
 	light.light_energy = 0.5
 	light.omni_range = 2.5
 	light.position.y = 0.5

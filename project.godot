@@ -13,13 +13,14 @@ config_version=5
 config/name="SlimeGame"
 config/description="A 3D open-world reincarnation roguelike. Personal, non-commercial fan project."
 run/main_scene="res://scenes/main.tscn"
-config/features=PackedStringArray("4.3", "Forward Plus")
+config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
 
 Database="*res://scripts/autoload/database.gd"
 Visual="*res://scripts/visual/visual_config.gd"
+Toon="*res://scripts/visual/toon.gd"
 Assets="*res://scripts/visual/asset_manager.gd"
 Voice="*res://scripts/autoload/voice_of_world.gd"
 Soul="*res://scripts/autoload/soul.gd"
@@ -34,4 +35,17 @@ window/stretch/aspect="expand"
 
 [rendering]
 
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
 anti_aliasing/quality/msaa_3d=1
+
+[shader_globals]
+
+toon_fog_color={
+"type": "color",
+"value": Color(0.165, 0.141, 0.4, 1)
+}
+toon_fog={
+"type": "vec4",
+"value": Vector4(0.018, 0, 1, 0)
+}

@@ -5,9 +5,11 @@ extends Node
 ##   var body := Assets.instantiate("giant_bat")
 ##
 ## If the manifest names a file and the file is there, a copy of it is
-## returned, scaled to the manifest's height. Otherwise the entry's procedural
-## stand-in is built, so the game never shows a hole. A file that is named
-## but missing logs one warning, once.
+## returned, scaled to the manifest's height and, unless its entry says
+## "toonify": false, given the toon material and an ink line of the entry's
+## "outline_px". Otherwise the entry's procedural stand-in is built, so the
+## game never shows a hole. A file that is named but missing logs one
+## warning, once. "cast_shadow" applies to both.
 
 const MANIFEST_PATH := "res://data/asset_manifest.json"
 
@@ -65,11 +67,20 @@ func instantiate(id: String, params: Dictionary = {}) -> Node3D:
 			holder.name = str(loaded.name)
 			holder.add_child(loaded)
 			fit_height(loaded, float(record.get("target_height", 0.0)))
+			if bool(record.get("toonify", true)):
+				Toon.dress_model(loaded, {"outline_px": float(record.get("outline_px", 0.0)),
+						"height": maxf(float(record.get("target_height", 1.0)), 0.1)})
+			_set_cast_shadow(holder, bool(record.get("cast_shadow", true)))
 			return holder
 		_warn(id, "'%s': %s is missing or unreadable; using its stand-in" % [id, file])
 
 	var placeholder: Dictionary = record.get("placeholder", {})
-	return StandIns.build(str(placeholder.get("builder", "missing")), id, params)
+	var stand_in_params := params.duplicate()
+	stand_in_params["outline_px"] = float(record.get("outline_px", 0.0))
+	var stand_in := StandIns.build(str(placeholder.get("builder", "missing")), id, stand_in_params)
+	if not bool(record.get("cast_shadow", true)):
+		_set_cast_shadow(stand_in, false)
+	return stand_in
 
 
 ## Scales a model so it stands `target_height` metres tall and rests on
@@ -83,6 +94,15 @@ func fit_height(model: Node3D, target_height: float) -> void:
 	var factor := target_height / bounds.size.y
 	model.scale *= factor
 	model.position.y -= bounds.position.y * factor
+
+
+func _set_cast_shadow(node: Node, casts: bool) -> void:
+	var geometry := node as GeometryInstance3D
+	if geometry != null:
+		geometry.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON if casts \
+				else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	for child in node.get_children():
+		_set_cast_shadow(child, casts)
 
 
 func _load_file(path: String) -> Node3D:

@@ -1,8 +1,9 @@
 class_name CreatureVisual
 extends Node3D
-## Original placeholder bodies assembled from primitives. A creature's
-## "model" record picks the builder and its colours; the same visual is reused
-## for the player's Mimicry forms. Forward is -Z; the feet are at y = 0.
+## Original placeholder bodies assembled from simple shapes, drawn with the
+## toon material and an ink line. A creature's "model" record picks the
+## builder and its colours; the same visual is reused for the player's
+## Mimicry forms. Forward is -Z; the feet are at y = 0.
 ##
 ##   kind "blob"       the slime
 ##   kind "bat"        body, ears, two flapping wings
@@ -16,34 +17,32 @@ var _time := 0.0
 var _segments: Array[Node3D] = []
 var _wings: Array[Node3D] = []
 var _legs: Array[Node3D] = []
-var _materials: Array[StandardMaterial3D] = []
 var _flash := 0.0
 var _dead := false
-var _body_material: StandardMaterial3D
-var _accent_material: StandardMaterial3D
+var _body_material: ShaderMaterial
+var _accent_material: ShaderMaterial
+var _accent := Color.WHITE
 
 
-## Builds the body. `mimic` tints it toward the slime's colour and makes it
-## slightly translucent, so a mimicked form still reads as the player.
-func build(model: Dictionary, mimic: bool = false) -> void:
+## Builds the body. `mimic` tints it toward the slime's colour, so a
+## mimicked form still reads as the player. `line` is the ink width in pixels.
+func build(model: Dictionary, mimic: bool = false, line: float = 0.0) -> void:
 	for child in get_children():
 		child.queue_free()
 	_segments.clear()
 	_wings.clear()
 	_legs.clear()
-	_materials.clear()
 	_kind = str(model.get("kind", "blob"))
 	_size = float(model.get("size", 1.0))
 
 	var color := Color(str(model.get("color", "5cc7db")))
-	var accent := Color(str(model.get("accent", "ffffff")))
+	_accent = Color(str(model.get("accent", "ffffff")))
 	if mimic:
-		color = color.lerp(Color(0.36, 0.78, 0.86), 0.45)
-	_body_material = _material(color, mimic)
-	_accent_material = _material(accent, false)
-	_accent_material.emission_enabled = true
-	_accent_material.emission = accent
-	_accent_material.emission_energy_multiplier = 1.6
+		color = color.lerp(Visual.color("palette.slime.body"), 0.45)
+	# Each creature has materials of its own: they flash and change with it.
+	_body_material = Toon.make({"color": color, "outline_px": line, "height": _size})
+	_accent_material = Toon.make({"color": _accent, "emission": _accent, "emission_energy": "props.accent_glow",
+			"outline_px": "outline.detail_px", "height": _size})
 
 	match _kind:
 		"bat":
@@ -77,30 +76,30 @@ func animate(delta: float, speed: float) -> void:
 
 	if _flash > 0.0:
 		_flash = maxf(0.0, _flash - delta * 5.0)
-		_body_material.emission_energy_multiplier = _flash * 3.0
-		if _flash == 0.0:
-			_body_material.emission_enabled = false
+		Toon.set_flash(_body_material, _flash)
 
 
 ## Brief white flash when struck.
 func flash() -> void:
 	_flash = 1.0
-	_body_material.emission_enabled = true
-	_body_material.emission = Color(1.0, 1.0, 1.0)
+	Toon.set_flash(_body_material, 1.0)
 
 
-## Tints the body while staggered so the devour window is readable.
+## Tints the accents while staggered so the devour window is readable.
 func set_staggered(staggered: bool) -> void:
-	_accent_material.emission = Color(1.0, 0.9, 0.3) if staggered else _accent_material.albedo_color
+	Toon.update(_accent_material, {"emission": Visual.color("palette.ui.accent_ready") if staggered else _accent})
 
 
-## Collapses and darkens the body into remains.
+## Collapses the body into remains and drains its colour toward the cave's
+## deepest shade: dark in hue, not grey.
 func set_dead() -> void:
 	_dead = true
-	_body_material.emission_enabled = false
-	_body_material.albedo_color = _body_material.albedo_color.darkened(0.55)
-	_accent_material.emission_enabled = false
-	_accent_material.albedo_color = _accent_material.albedo_color.darkened(0.7)
+	_flash = 0.0
+	Toon.set_flash(_body_material, 0.0)
+	var crevice := Visual.color("palette.cave.crevice")
+	var body: Color = Toon.options_of(_body_material).get("color", Color.WHITE)
+	Toon.update(_body_material, {"color": body.lerp(crevice, 0.55)})
+	Toon.update(_accent_material, {"color": _accent.lerp(crevice, 0.7), "emission_energy": 0.0})
 	var tween := create_tween()
 	tween.tween_property(self, "scale", Vector3(1.1, 0.45, 1.1), 0.35)
 
@@ -179,46 +178,23 @@ func _build_spider() -> void:
 			_legs.append(pivot)
 
 
-func _material(color: Color, translucent: bool) -> StandardMaterial3D:
-	var material := StandardMaterial3D.new()
-	material.albedo_color = Color(color.r, color.g, color.b, 0.85 if translucent else 1.0)
-	material.roughness = 0.75
-	if translucent:
-		material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	_materials.append(material)
-	return material
-
-
-func _add(mesh: Mesh, at: Vector3, material: Material, parent: Node3D) -> MeshInstance3D:
+func _add(mesh: Mesh, at: Vector3, size: Vector3, material: Material, parent: Node3D) -> MeshInstance3D:
 	var instance := MeshInstance3D.new()
 	instance.mesh = mesh
 	instance.material_override = material
 	instance.position = at
+	instance.scale = size
 	(parent if parent != null else self).add_child(instance)
 	return instance
 
 
 func _sphere(at: Vector3, size: Vector3, material: Material, parent: Node3D = null) -> MeshInstance3D:
-	var mesh := SphereMesh.new()
-	mesh.radius = 0.5
-	mesh.height = 1.0
-	mesh.radial_segments = 16
-	mesh.rings = 8
-	var instance := _add(mesh, at, material, parent)
-	instance.scale = size
-	return instance
+	return _add(MeshKit.sphere(16), at, size, material, parent)
 
 
 func _box(at: Vector3, size: Vector3, material: Material, parent: Node3D = null) -> MeshInstance3D:
-	var mesh := BoxMesh.new()
-	mesh.size = size.abs()
-	return _add(mesh, at, material, parent)
+	return _add(MeshKit.cube(), at, size.abs(), material, parent)
 
 
 func _cone(at: Vector3, radius: float, height: float, material: Material, parent: Node3D = null) -> MeshInstance3D:
-	var mesh := CylinderMesh.new()
-	mesh.top_radius = 0.0
-	mesh.bottom_radius = radius
-	mesh.height = height
-	mesh.radial_segments = 8
-	return _add(mesh, at, material, parent)
+	return _add(MeshKit.cone(8), at, Vector3(radius * 2.0, height, radius * 2.0), material, parent)

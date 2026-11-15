@@ -84,15 +84,38 @@ static func describe(card: Dictionary) -> String:
 	match str(result.get("kind", "nothing")):
 		"skill":
 			var skill_id := str(result.get("skill", ""))
-			var text := "%s: %s" % [Database.skill_category_name(skill_id), Database.skill_name(skill_id)]
-			if result.has("stacks_into"):
-				text += "\n(wished twice: %s)" % Database.skill_name(str(result["stacks_into"]))
-			return text
+			var plain := "%s: %s" % [Database.skill_category_name(skill_id), Database.skill_name(skill_id)]
+			if not result.has("stacks_into"):
+				return plain
+			var stronger := Database.skill_name(str(result["stacks_into"]))
+			# Two cards lead to the same skill. One of them is worded as the
+			# step up, so the pair never reads as the same result twice.
+			if result.get("reads_as_upgrade", false):
+				return "Deepens %s into %s\n(alone: %s)" % [Database.skill_name(skill_id), stronger, plain]
+			return "%s\n(with a second wish for it: %s)" % [plain, stronger]
 		"resistance":
 			return Database.resistance_name(str(result.get("resistance", "")))
 		"reel_weight":
 			return "The next vessel leans toward %s" % str(Database.get_race(str(result.get("value", ""))).get("name", ""))
 	return "Nothing"
+
+
+## What a chosen card came to, in a few words, given everything chosen
+## with it: a card that is the step up says so only when the other card that
+## grants its skill was chosen too.
+static func outcome(card: Dictionary, chosen: Array[Dictionary]) -> String:
+	var result: Dictionary = card.get("result", {})
+	if str(result.get("kind", "")) == "skill" and result.has("stacks_into"):
+		var skill_id := str(result.get("skill", ""))
+		var wishes_for_it := 0
+		for other in chosen:
+			var other_result: Dictionary = other.get("result", {})
+			if str(other_result.get("kind", "")) == "skill" and str(other_result.get("skill", "")) == skill_id:
+				wishes_for_it += 1
+		if wishes_for_it >= 2 and result.get("reads_as_upgrade", false):
+			return "%s deepens into %s" % [Database.skill_name(skill_id), Database.skill_name(str(result["stacks_into"]))]
+		return "%s: %s" % [Database.skill_category_name(skill_id), Database.skill_name(skill_id)]
+	return describe(card).get_slice("\n", 0)
 
 
 ## Whether the soul has seen this card's result before.

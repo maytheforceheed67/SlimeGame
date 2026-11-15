@@ -168,7 +168,9 @@ class Scene:
         self.shapes: dict[tuple, str] = {}
         self.meshes: dict[tuple, str] = {}
 
-    def box(self, name: str, center: tuple[float, float, float], size: tuple[float, float, float], material: str) -> None:
+    def box(self, name: str, center: tuple[float, float, float], size: tuple[float, float, float], look: str,
+            casts_shadow: bool = True) -> None:
+        """A solid box. `look` is a tag; scripts/world/level.gd turns it into a material."""
         key = tuple(round(v, 4) for v in size)
         if key not in self.shapes:
             shape_id = f"Shape_{len(self.shapes)}"
@@ -176,19 +178,20 @@ class Scene:
             self.resources.append(
                 f'[sub_resource type="BoxShape3D" id="{shape_id}"]\nsize = Vector3({", ".join(number(v) for v in size)})\n'
             )
-        mesh_key = key + (material,)
+        mesh_key = key
         if mesh_key not in self.meshes:
             mesh_id = f"Mesh_{len(self.meshes)}"
             self.meshes[mesh_key] = mesh_id
             self.resources.append(
-                f'[sub_resource type="BoxMesh" id="{mesh_id}"]\nmaterial = SubResource("{material}")\n'
+                f'[sub_resource type="BoxMesh" id="{mesh_id}"]\n'
                 f'size = Vector3({", ".join(number(v) for v in size)})\n'
             )
         origin = ", ".join(number(v) for v in center)
         transform = f"Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, {origin})"
         self.nodes.append(
             f'[node name="{name}" type="MeshInstance3D" parent="Rock"]\ntransform = {transform}\n'
-            f'mesh = SubResource("{self.meshes[mesh_key]}")\n'
+            + ('' if casts_shadow else 'cast_shadow = 0\n')
+            + f'mesh = SubResource("{self.meshes[mesh_key]}")\nmetadata/look = "{look}"\n'
         )
         self.nodes.append(
             f'[node name="{name}Shape" type="CollisionShape3D" parent="Rock"]\ntransform = {transform}\n'
@@ -207,24 +210,10 @@ def main() -> None:
         'background_color = Color(0.01, 0.014, 0.025, 1)\nambient_light_source = 2\n'
         'ambient_light_color = Color(0.36, 0.44, 0.6, 1)\nambient_light_energy = 0.55\nglow_enabled = true\n'
         'fog_enabled = true\nfog_light_color = Color(0.04, 0.07, 0.12, 1)\nfog_density = 0.008\n',
-        '[sub_resource type="StandardMaterial3D" id="Mat_floor"]\nalbedo_color = Color(0.3, 0.33, 0.4, 1)\nroughness = 0.95\n',
-        '[sub_resource type="StandardMaterial3D" id="Mat_wall"]\nalbedo_color = Color(0.22, 0.24, 0.31, 1)\nroughness = 1.0\n',
-        '[sub_resource type="StandardMaterial3D" id="Mat_ledge"]\nalbedo_color = Color(0.36, 0.38, 0.47, 1)\nroughness = 0.9\n',
-        '[sub_resource type="StandardMaterial3D" id="Mat_bed"]\nalbedo_color = Color(0.16, 0.22, 0.3, 1)\nroughness = 1.0\n',
-        '[sub_resource type="StandardMaterial3D" id="Mat_water"]\ntransparency = 1\ncull_mode = 2\n'
-        'albedo_color = Color(0.2, 0.5, 0.75, 0.5)\nroughness = 0.08\nemission_enabled = true\n'
-        'emission = Color(0.05, 0.2, 0.35, 1)\nemission_energy_multiplier = 0.5\n',
+        # No materials here: the level gives every piece its toon material
+        # from the visual config (scripts/world/level.gd, _dress).
+        '[sub_resource type="BoxMesh" id="Mesh_crystal"]\nsize = Vector3(0.5, 1.8, 0.5)\n',
     ]
-    for name, (red, green, blue) in LIGHT_COLORS.items():
-        header.append(
-            f'[sub_resource type="StandardMaterial3D" id="Mat_crystal_{name}"]\n'
-            f'albedo_color = Color({red}, {green}, {blue}, 1)\nemission_enabled = true\n'
-            f'emission = Color({red}, {green}, {blue}, 1)\nemission_energy_multiplier = 2.5\n'
-        )
-        header.append(
-            f'[sub_resource type="BoxMesh" id="Mesh_crystal_{name}"]\nmaterial = SubResource("Mat_crystal_{name}")\n'
-            'size = Vector3(0.5, 1.8, 0.5)\n'
-        )
 
     scene.nodes.append('[node name="SealedCave" type="Node3D"]\nscript = ExtResource("1_level")\nregion_id = "sealed_cave"\n')
     scene.nodes.append('[node name="WorldEnvironment" type="WorldEnvironment" parent="."]\nenvironment = SubResource("Environment_cave")\n')
@@ -234,20 +223,24 @@ def main() -> None:
     for r, c, rows, cols, kind in rectangles(grid, {"#"}):
         size = (cols * CELL, CEILING - BOTTOM, rows * CELL)
         center = (cell_x(c) + size[0] / 2, (CEILING + BOTTOM) / 2, cell_z(r) + size[2] / 2)
-        scene.box(f"Wall{count:03d}", center, size, "Mat_wall")
+        # Walls, lintels and the ceiling do not cast: the key light is a
+        # stylistic choice underground, and solid rock would shade everything.
+        scene.box(f"Wall{count:03d}", center, size, "rock", casts_shadow=False)
         count += 1
     count = 0
-    materials = {".": "Mat_floor", "g": "Mat_floor", "l": "Mat_ledge", "L": "Mat_ledge", "w": "Mat_bed", "u": "Mat_bed"}
+    looks = {".": "rock", "g": "rock", "l": "rock", "L": "rock", "w": "lake_bed", "u": "lake_bed"}
     for r, c, rows, cols, kind in rectangles(grid, set(FLOOR_Y)):
         top = FLOOR_Y[kind]
         size = (cols * CELL, top - BOTTOM, rows * CELL)
         center = (cell_x(c) + size[0] / 2, (top + BOTTOM) / 2, cell_z(r) + size[2] / 2)
-        scene.box(f"Floor{count:03d}", center, size, materials[kind])
+        # Only raised ledges cast: a floor has nothing below it to shade,
+        # and as a caster it speckles the foot of the walls beside it.
+        scene.box(f"Floor{count:03d}", center, size, looks[kind], casts_shadow=kind in "lL")
         if kind == "g":
             lintel = (size[0], CEILING - GAP_HEIGHT, size[2])
-            scene.box(f"Lintel{count:03d}", (center[0], (CEILING + GAP_HEIGHT) / 2, center[2]), lintel, "Mat_wall")
+            scene.box(f"Lintel{count:03d}", (center[0], (CEILING + GAP_HEIGHT) / 2, center[2]), lintel, "rock", casts_shadow=False)
         count += 1
-    scene.box("Ceiling", (0.0, CEILING + 0.5, 0.0), (COLS * CELL, 1.0, ROWS * CELL), "Mat_wall")
+    scene.box("Ceiling", (0.0, CEILING + 0.5, 0.0), (COLS * CELL, 1.0, ROWS * CELL), "rock", casts_shadow=False)
 
     # Water: one volume per merged rectangle of water cells.
     water_grid = [["w" if cell in "wu" else "#" for cell in row] for row in grid]
@@ -258,7 +251,7 @@ def main() -> None:
         x, z = cell_x(c) + width / 2, cell_z(r) + depth / 2
         shape_id, mesh_id = f"WaterShape_{index}", f"WaterMesh_{index}"
         header.append(f'[sub_resource type="BoxShape3D" id="{shape_id}"]\nsize = Vector3({number(width)}, {number(height)}, {number(depth)})\n')
-        header.append(f'[sub_resource type="PlaneMesh" id="{mesh_id}"]\nmaterial = SubResource("Mat_water")\nsize = Vector2({number(width)}, {number(depth)})\n')
+        header.append(f'[sub_resource type="PlaneMesh" id="{mesh_id}"]\nsize = Vector2({number(width)}, {number(depth)})\n')
         scene.nodes.append(
             f'[node name="Lake{index}" type="Area3D" parent="Water"]\n'
             f'transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, {number(x)}, {number(WATER_SURFACE - height / 2)}, {number(z)})\n'
@@ -295,7 +288,7 @@ def main() -> None:
             )
             scene.nodes.append(
                 f'[node name="Crystal" type="MeshInstance3D" parent="Lights/{name}"]\n'
-                f'transform = Transform3D(0.94, -0.34, 0, 0.34, 0.94, 0, 0, 0, 1, 0, -2.4, 0)\nmesh = SubResource("Mesh_crystal_{ident}")\n'
+                f'transform = Transform3D(0.94, -0.34, 0, 0.34, 0.94, 0, 0, 0, 1, 0, -2.4, 0)\nmesh = SubResource("Mesh_crystal")\n'
             )
             continue
         lift = {"spawn": 0.3, "harvest": 0.0, "mote": 0.7}[kind]

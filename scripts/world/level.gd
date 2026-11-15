@@ -15,9 +15,15 @@ static var populate_enabled := true
 
 @export var region_id := ""
 
+## How each tagged piece of the cave is drawn ("look" metadata written by
+## tools/build_sealed_cave.py).
+const LOOKS := {
+	"rock": {"kind": "environment", "color": "palette.cave.rock_lit", "shade": "palette.cave.rock_shade", "cap": "palette.cave.rock_cap"},
+	"lake_bed": {"kind": "environment", "color": "palette.cave.rock_shade", "shade": "palette.cave.crevice", "cap": "palette.cave.lake_deep"},
+}
+
 var _environment: Environment
-var _normal_fog_density := 0.0
-var _normal_fog_color := Color.BLACK
+var _key_light: DirectionalLight3D
 var _sighted := true
 
 @onready var _spawned: Node3D = $Spawned
@@ -27,6 +33,13 @@ func _ready() -> void:
 	# This level's own copy, so darkening it never touches the saved scene.
 	_environment = ($WorldEnvironment.environment as Environment).duplicate()
 	$WorldEnvironment.environment = _environment
+	_key_light = DirectionalLight3D.new()
+	_key_light.name = "KeyLight"
+	add_child(_key_light)
+	var blobs := BlobShadows.new()
+	blobs.name = "BlobShadows"
+	add_child(blobs)
+	_dress()
 	Visual.changed.connect(_apply_look)
 	_apply_look("")
 
@@ -35,11 +48,35 @@ func _ready() -> void:
 ## config, now and whenever a value is edited.
 func _apply_look(_path: String) -> void:
 	WorldLook.apply(_environment, get_viewport())
-	_normal_fog_density = _environment.fog_density
-	_normal_fog_color = _environment.fog_light_color
+	WorldLook.apply_key_light(_key_light)
 	_sighted = true
 	# Applied at once, not on the next frame: the level may be paused.
 	_apply_sight()
+
+
+## Gives the cave's fixed geometry its materials. The scene holds only
+## shapes and tags; every colour comes from the visual config.
+func _dress() -> void:
+	for node in $Rock.get_children():
+		var part := node as MeshInstance3D
+		if part != null:
+			part.material_override = Toon.shared(LOOKS.get(str(part.get_meta("look", "rock")), LOOKS["rock"]))
+	var water := Toon.veil({"face": "palette.cave.lake_shallow", "face_alpha": "water.near_alpha",
+			"edge": "palette.cave.lake_deep", "edge_alpha": "water.far_alpha", "edge_start": "water.edge_start"})
+	for lake in $Water.get_children():
+		var surface := lake.get_node_or_null("Surface") as MeshInstance3D
+		if surface != null:
+			surface.material_override = water
+			surface.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	for lamp in $Lights.get_children():
+		var crystal := lamp.get_node_or_null("Crystal") as MeshInstance3D
+		if crystal == null:
+			continue
+		var color: Color = (lamp as Light3D).light_color
+		crystal.mesh = MeshKit.cube()
+		crystal.scale = Vector3(0.5, 1.8, 0.5)
+		crystal.material_override = Toon.shared({"color": color, "emission": color,
+				"emission_energy": "props.crystal_glow", "outline_px": "outline.detail_px", "height": 1.8})
 
 
 ## A sightless body perceives only what is close enough to touch: the world
@@ -51,20 +88,13 @@ func _process(_delta: float) -> void:
 func _apply_sight() -> void:
 	var sighted := Game.is_sighted()
 	if sighted and not _sighted:
-		_environment.fog_mode = Environment.FOG_MODE_EXPONENTIAL
-		_environment.fog_density = _normal_fog_density
-		_environment.fog_light_color = _normal_fog_color
-		_environment.background_color = _normal_fog_color
+		WorldLook.apply_fog(_environment)
 	elif not sighted:
 		var camera := get_viewport().get_camera_3d()
 		var player := get_tree().get_first_node_in_group(Player.GROUP) as Node3D
 		if camera != null and player != null:
 			var reach := camera.global_position.distance_to(player.global_position)
-			_environment.fog_mode = Environment.FOG_MODE_DEPTH
-			_environment.fog_light_color = Color.BLACK
-			_environment.background_color = Color.BLACK
-			_environment.fog_depth_begin = reach + 1.0
-			_environment.fog_depth_end = reach + 4.0
+			WorldLook.apply_fog(_environment, reach + 1.0)
 	_sighted = sighted
 
 
