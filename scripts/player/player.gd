@@ -15,6 +15,7 @@ const GROUP := "player"
 
 var attacker: Attacker
 var predator: Predator
+var advisor: Advisor
 
 var _move_speed := 5.5
 var _jump_velocity := 7.0
@@ -34,6 +35,8 @@ func _ready() -> void:
 	add_child(attacker)
 	predator = Predator.new()
 	add_child(predator)
+	advisor = Advisor.new()
+	add_child(advisor)
 	add_to_group(GROUP)
 	add_to_group(Combat.GROUP)
 	Game.life_began.connect(_on_life_began)

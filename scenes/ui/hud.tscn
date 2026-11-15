@@ -6,6 +6,8 @@
 [ext_resource type="Script" path="res://scripts/ui/debug_overlay.gd" id="4_debug"]
 [ext_resource type="Script" path="res://scripts/ui/world_overlay.gd" id="5_world"]
 [ext_resource type="Script" path="res://scripts/ui/predator_panel.gd" id="6_predator"]
+[ext_resource type="Script" path="res://scripts/ui/scan_panel.gd" id="7_scan"]
+[ext_resource type="Script" path="res://scripts/ui/status_sheet.gd" id="8_sheet"]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_hud")
@@ -26,9 +28,17 @@ script = ExtResource("2_status")
 mouse_filter = 2
 script = ExtResource("6_predator")
 
+[node name="ScanPanel" type="Control" parent="."]
+mouse_filter = 2
+script = ExtResource("7_scan")
+
 [node name="VoicePanel" type="Control" parent="."]
 mouse_filter = 2
 script = ExtResource("3_voice")
+
+[node name="StatusSheet" type="Control" parent="."]
+mouse_filter = 2
+script = ExtResource("8_sheet")
 
 [node name="DebugOverlay" type="Control" parent="."]
 mouse_filter = 2

@@ -68,29 +68,33 @@ func _push(column: VBoxContainer, text: String, color: Color, font_size: int,
 	label.horizontal_alignment = alignment
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.visible_ratio = 0.0
-	column.add_child(label)
+	var strip := PanelContainer.new()
+	strip.add_theme_stylebox_override("panel", UiStyle.line_box())
+	strip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	strip.add_child(label)
+	column.add_child(strip)
 	while column.get_child_count() > limit:
 		var oldest := column.get_child(0)
 		column.remove_child(oldest)
 		oldest.queue_free()
 
-	var tween := label.create_tween()
+	var tween := strip.create_tween()
 	tween.tween_property(label, "visible_ratio", 1.0, REVEAL_TIME)
 	tween.tween_interval(HOLD_TIME)
-	tween.tween_property(label, "modulate:a", 0.0, FADE_TIME)
-	tween.tween_callback(label.queue_free)
+	tween.tween_property(strip, "modulate:a", 0.0, FADE_TIME)
+	tween.tween_callback(strip.queue_free)
 
 
 func _build_world_column() -> void:
 	_world_column = VBoxContainer.new()
 	_world_column.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_world_column.add_theme_constant_override("separation", 6)
+	_world_column.add_theme_constant_override("separation", 3)
 	_world_column.anchor_left = 0.5
 	_world_column.anchor_right = 0.5
 	_world_column.offset_left = -330.0
 	_world_column.offset_right = 330.0
-	_world_column.offset_top = 36.0
-	_world_column.offset_bottom = 36.0
+	_world_column.offset_top = 24.0
+	_world_column.offset_bottom = 24.0
 	add_child(_world_column)
 
 

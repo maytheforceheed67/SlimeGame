@@ -69,7 +69,10 @@ func _draw_plate(camera: Camera3D, creature: Creature) -> void:
 	var danger := Database.danger_class_name(str(rank.get("danger_class", "")))
 	if danger != "":
 		parts.append(danger)
-	if Game.life != null and Game.life.appraised.has(creature.creature_id):
+	# EP is shown for species the advisor appraised in this life, and for
+	# species the soul's codex already holds from an earlier one.
+	if Game.life != null and (Game.life.appraised.has(creature.creature_id) \
+			or Soul.knows("species", creature.creature_id)):
 		parts.append("%s EP" % UiStyle.format_int(creature.get_ep()))
 
 	_text(at - Vector2(0.0, 34.0), creature.display_name(), 15, Color(UiStyle.WORLD_COLOR, alpha))

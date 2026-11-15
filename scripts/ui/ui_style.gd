@@ -22,6 +22,26 @@ static func panel_box(border: Color = PANEL_BORDER) -> StyleBoxFlat:
 	return box
 
 
+## An opaque box for full screens that must hide the HUD behind them.
+static func screen_box() -> StyleBoxFlat:
+	var box := panel_box(Color(0.6, 0.7, 0.8, 0.6))
+	box.bg_color = Color(0.035, 0.05, 0.08, 0.97)
+	box.set_content_margin_all(20.0)
+	return box
+
+
+## A faint strip behind a line of text so it stays readable over the world.
+static func line_box() -> StyleBoxFlat:
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(0.0, 0.0, 0.0, 0.42)
+	box.set_corner_radius_all(2)
+	box.content_margin_left = 12.0
+	box.content_margin_right = 12.0
+	box.content_margin_top = 2.0
+	box.content_margin_bottom = 3.0
+	return box
+
+
 static func label(font_size: int, color: Color = WORLD_COLOR) -> Label:
 	var node := Label.new()
 	node.add_theme_font_size_override("font_size", font_size)

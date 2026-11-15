@@ -48,8 +48,8 @@ func _ready() -> void:
 	_queue_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_queue_box.anchor_left = 1.0
 	_queue_box.anchor_right = 1.0
-	_queue_box.anchor_top = 0.3
-	_queue_box.anchor_bottom = 0.3
+	_queue_box.offset_top = 24.0
+	_queue_box.offset_bottom = 24.0
 	_queue_box.offset_left = -20.0
 	_queue_box.offset_right = -20.0
 	_queue_box.grow_horizontal = Control.GROW_DIRECTION_BEGIN

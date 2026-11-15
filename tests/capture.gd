@@ -63,3 +63,47 @@ func _stage_creatures() -> void:
 	Game.life.vitals.add_status("poisoned", 6.0, 1.0)
 	await seconds(2.5)
 	await shot("creatures")
+
+
+## A slime a little way into a life: Predator, Great Sage, a few gains.
+func _kit() -> void:
+	for orb in main.get_node("Orbs").get_children():
+		orb.queue_free()
+	Game.grant_skill("predator", true)
+	Game.grant_skill("great_sage", true)
+	Game.grant_resistance("pain_nullification")
+	Game.add_ep(1400)
+	for skill_id: String in ["water_blade", "ultra_sound_waves", "drain", "mana_perception"]:
+		Game.grant_skill(skill_id)
+	Game.life.forms.append("giant_bat")
+	Game.life.recipes.append("healing_potion")
+	Game.add_item("hipokute_herb", 3)
+	Game.add_item("water", 12)
+	Game.add_item("magic_ore", 2)
+	player.predator.enqueue_analysis("species", "evil_centipede")
+	player.predator.enqueue_analysis("item", "magic_ore")
+	Game.life.flags["link_offered"] = true
+
+
+func _stage_sheet() -> void:
+	_kit()
+	await seconds(4.0)
+	main.get_node("HUD/StatusSheet").open()
+	await seconds(0.5)
+	await shot("sheet")
+
+
+func _stage_scan() -> void:
+	_kit()
+	var bat := spawn("giant_bat", Vector3(0.5, 1.2, -5.0))
+	bat.take_hit({"amount": 30.0, "damage_type": "impact"})
+	var herb := Harvestable.create("hipokute_herb")
+	main.add_child(herb)
+	herb.global_position = player.global_position + Vector3(-1.2, 0.0, -1.6)
+	var ore := Harvestable.create("magic_ore")
+	main.add_child(ore)
+	ore.global_position = player.global_position + Vector3(2.5, 0.0, -2.5)
+	await seconds(5.0)
+	player.advisor.scan()
+	await seconds(1.5)
+	await shot("scan")
