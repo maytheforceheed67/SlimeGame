@@ -1,0 +1,33 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/world/magicule_orb.gd" id="1_orb"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_orb"]
+radius = 0.7
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_orb"]
+albedo_color = Color(0.78, 0.6, 1, 1)
+emission_enabled = true
+emission = Color(0.7, 0.45, 1, 1)
+emission_energy_multiplier = 3.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_orb"]
+material = SubResource("StandardMaterial3D_orb")
+radius = 0.18
+height = 0.36
+
+[node name="MagiculeOrb" type="Area3D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_orb")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_orb")
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_orb")
+
+[node name="Light" type="OmniLight3D" parent="."]
+light_color = Color(0.75, 0.55, 1, 1)
+light_energy = 0.6
+omni_range = 3.0

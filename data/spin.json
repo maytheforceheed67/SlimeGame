@@ -1,0 +1,26 @@
+{
+  "_meta": {
+    "table": "spin",
+    "source": "Design document, section 4",
+    "notes": [
+      "The roulette itself is a later milestone. Until then every life uses first_life.",
+      "Race weights live on each race (races.json, spin_weight).",
+      "The first life's origin is not stated in the design document; reincarnated otherworlder is assumed."
+    ]
+  },
+  "first_life": {"race": "slime", "region": "sealed_cave", "origin": "reincarnated_otherworlder", "label": "DESIGN"},
+  "respins_per_birth": 1,
+  "origins": [
+    {"id": "native_born", "name": "Native-born", "races": [], "label": "DESIGN"},
+    {"id": "reincarnated_otherworlder", "name": "Reincarnated otherworlder", "races": [], "label": "DESIGN"},
+    {"id": "summoned_otherworlder", "name": "Summoned otherworlder", "races": ["human"], "label": "DESIGN", "notes": "[CANON] Falmuth summons otherworlders and binds them as living weapons, so a summoned start in Falmuth is a hard start."}
+  ],
+  "affinities": [
+    {"id": "fire", "name": "Fire", "label": "DESIGN"},
+    {"id": "water", "name": "Water", "label": "DESIGN"},
+    {"id": "wind", "name": "Wind", "label": "DESIGN"},
+    {"id": "earth", "name": "Earth", "label": "DESIGN"},
+    {"id": "light", "name": "Light", "label": "DESIGN"},
+    {"id": "dark", "name": "Dark", "label": "DESIGN"}
+  ]
+}

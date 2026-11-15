@@ -1,0 +1,16 @@
+# Godot 4 editor cache and imported assets
+.godot/
+/android/
+
+# Export output
+/build/
+/export/
+*.pck
+
+# Python (tools/)
+__pycache__/
+*.pyc
+
+# OS noise
+.DS_Store
+Thumbs.db

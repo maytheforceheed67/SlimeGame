@@ -1,0 +1,28 @@
+{
+  "_meta": {
+    "table": "voice_lines",
+    "source": "Original wording for this project (design document, section 6)",
+    "notes": [
+      "Every system message is spoken by the Voice of the World: flat, neutral, brief.",
+      "Text in {braces} is filled in by code. Do not rename a placeholder without changing the call site.",
+      "Keys starting with debug_ are only reachable from the debug overlay."
+    ]
+  },
+  "lines": {
+    "life_begin": "A soul has settled. Vessel: {race}. Place: {region}.",
+    "skill_acquired": "Acquired. {category}: {skill}.",
+    "resistance_acquired": "Acquired. {resistance}.",
+    "imprint_granted": "The previous end left its mark. Granted: {resistance}.",
+    "rank_changed": "Existence reassessed. Rank {old} is now rank {new}.",
+    "danger_class_assigned": "Threat class assigned: {danger}.",
+    "death": "This life has ended. Cause: {cause}.",
+    "death_imprint": "The cause is inscribed on the soul: {resistance}.",
+    "rebirth": "The soul moves on. A new branch opens.",
+    "data_fault": "{count} content records could not be read. See the log.",
+    "debug_confirm": "Test inquiry. Proceed?",
+    "debug_broadcast": "Test broadcast. All within range receive this.",
+    "debug_advisor": "Test reply. This is the advisor, not the Voice of the World.",
+    "debug_erase_confirm": "Erase everything the soul remembers?",
+    "debug_soul_erased": "The soul's memory is blank."
+  }
+}

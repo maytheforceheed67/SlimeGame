@@ -1,0 +1,223 @@
+{
+  "_meta": {
+    "table": "races",
+    "source": "Design document, section 4",
+    "default_field_labels": {
+      "evolution_line": "CANON",
+      "traits": "CANON",
+      "intrinsic_skills": "CANON",
+      "base_rank": "DESIGN",
+      "base_ep": "DESIGN",
+      "magicule_tolerance": "DESIGN",
+      "spin_weight": "DESIGN",
+      "spawn_regions": "DESIGN",
+      "playstyle": "DESIGN"
+    },
+    "default_triggers": {
+      "first_step": "naming",
+      "later_steps": "magicule_threshold_or_awakening_gift",
+      "label": "UNCONFIRMED"
+    },
+    "notes": [
+      "field_labels on a race overrides default_field_labels for that race.",
+      "A stage without a trigger uses default_triggers.",
+      "base_ep is a starting value chosen inside the race's base rank band.",
+      "magicule_tolerance is the highest region density level (regions.json) the race can stay in without harm.",
+      "intrinsic_skills is filled only where the design document names them."
+    ]
+  },
+  "races": [
+    {
+      "id": "slime",
+      "name": "Slime",
+      "kind": "monster",
+      "label": "CANON",
+      "evolution_line": [
+        {"id": "slime", "name": "Slime", "life_form": "demi_spiritual"},
+        {"id": "demon_slime", "name": "Demon Slime", "trigger": "true_demon_lord_awakening", "trigger_label": "CANON"},
+        {"id": "ultimate_slime", "name": "Ultimate Slime", "notes": "True Dragon class."}
+      ],
+      "traits": [
+        "Demi-spiritual life-form that thinks with its spiritual body.",
+        "No sight until it learns Mana Perception."
+      ],
+      "intrinsic_skills": ["absorb", "dissolve", "self_regeneration"],
+      "base_rank": "e",
+      "base_ep": 100,
+      "magicule_tolerance": 5,
+      "spin_weight": 30,
+      "spawn_regions": ["sealed_cave"],
+      "playstyle": "Devour, analyse, mimic."
+    },
+    {
+      "id": "goblin",
+      "name": "Goblin",
+      "kind": "monster",
+      "label": "CANON",
+      "field_labels": {"base_rank": "CANON"},
+      "evolution_line": [
+        {"id": "goblin", "name": "Goblin"},
+        {"id": "hobgoblin", "name": "Hobgoblin", "trigger": "naming", "trigger_label": "CANON", "condition": "male", "variants": [{"id": "goblina", "name": "Goblina", "condition": "female"}]}
+      ],
+      "traits": [
+        "Weak alone, dangerous in groups.",
+        "Evolves when named."
+      ],
+      "intrinsic_skills": [],
+      "base_rank": "e",
+      "base_ep": 400,
+      "magicule_tolerance": 4,
+      "spin_weight": 10,
+      "spawn_regions": ["jura_goblin_village"],
+      "playstyle": "Tribe leader; relies on Arts and allies."
+    },
+    {
+      "id": "direwolf",
+      "name": "Direwolf",
+      "kind": "monster",
+      "label": "CANON",
+      "evolution_line": [
+        {"id": "direwolf", "name": "Direwolf"},
+        {"id": "tempest_wolf", "name": "Tempest Wolf"},
+        {"id": "star_wolf", "name": "Star Wolf", "variants": [{"id": "tempest_star_wolf", "name": "Tempest Star Wolf"}]},
+        {"id": "soul_wolf", "name": "Soul Wolf"},
+        {"id": "divine_wolf", "name": "Divine Wolf"}
+      ],
+      "traits": [
+        "Magic beast.",
+        "Pack hunter."
+      ],
+      "intrinsic_skills": [],
+      "base_rank": "c",
+      "base_ep": 3200,
+      "magicule_tolerance": 4,
+      "spin_weight": 10,
+      "spawn_regions": ["jura_forest"],
+      "playstyle": "Fast quadruped; pack commands."
+    },
+    {
+      "id": "ogre",
+      "name": "Ogre",
+      "kind": "monster",
+      "label": "CANON",
+      "field_labels": {"base_rank": "CANON"},
+      "evolution_line": [
+        {"id": "ogre", "name": "Ogre"},
+        {"id": "kijin", "name": "Kijin"},
+        {"id": "oni", "name": "Oni", "life_form": "spiritual", "notes": "Power comparable to a Demon Lord."},
+        {"id": "soul_oni", "name": "Soul Oni"},
+        {"id": "divine_oni", "name": "Divine Oni"}
+      ],
+      "line_variants": [
+        {"id": "death_oni", "name": "Death Oni"},
+        {"id": "wicked_oni", "name": "Wicked Oni"}
+      ],
+      "traits": [
+        "An oni is a spiritual life-form with power comparable to a Demon Lord."
+      ],
+      "intrinsic_skills": [],
+      "base_rank": "b",
+      "base_ep": 6500,
+      "magicule_tolerance": 4,
+      "spin_weight": 10,
+      "spawn_regions": ["ogre_village"],
+      "playstyle": "Weapon Arts specialist."
+    },
+    {
+      "id": "orc",
+      "name": "Orc",
+      "kind": "monster",
+      "label": "CANON",
+      "field_labels": {"base_rank": "CANON"},
+      "evolution_line": [
+        {"id": "orc", "name": "Orc"},
+        {"id": "high_orc", "name": "High Orc"},
+        {"id": "orc_lord", "name": "Orc Lord", "notes": "A rare mutant."},
+        {"id": "orc_disaster", "name": "Orc Disaster"},
+        {"id": "soul_boar", "name": "Soul Boar", "notes": "Listed above Orc Disaster in the source."},
+        {"id": "divine_boar", "name": "Divine Boar", "notes": "Listed above Orc Disaster in the source."}
+      ],
+      "traits": [
+        "An Orc Lord is a rare mutant."
+      ],
+      "intrinsic_skills": [],
+      "base_rank": "d",
+      "base_ep": 1500,
+      "magicule_tolerance": 4,
+      "spin_weight": 10,
+      "spawn_regions": ["orc_host"],
+      "playstyle": "Endurance bruiser."
+    },
+    {
+      "id": "lizardman",
+      "name": "Lizardman",
+      "kind": "monster",
+      "label": "CANON",
+      "field_labels": {"base_rank": "CANON"},
+      "evolution_line": [
+        {"id": "lizardman", "name": "Lizardman"},
+        {"id": "dragonewt", "name": "Dragonewt"}
+      ],
+      "traits": [],
+      "intrinsic_skills": [],
+      "base_rank": "c",
+      "base_ep": 3500,
+      "magicule_tolerance": 4,
+      "spin_weight": 10,
+      "spawn_regions": ["lake_siss_marsh_caves"],
+      "playstyle": "Spear fighter; strong swimmer."
+    },
+    {
+      "id": "lesser_daemon",
+      "name": "Lesser Daemon",
+      "kind": "daemon",
+      "label": "CANON",
+      "evolution_line": [
+        {"id": "lesser_daemon", "name": "Lesser Daemon", "life_form": "spiritual"},
+        {"id": "greater_daemon", "name": "Greater Daemon", "life_form": "spiritual"},
+        {"id": "archdaemon", "name": "Archdaemon", "life_form": "spiritual", "notes": "Comparable to a Demon Lord seed."},
+        {"id": "daemon_lord", "name": "Daemon Lord", "life_form": "spiritual"},
+        {"id": "devil_lord", "name": "Devil Lord", "life_form": "spiritual"}
+      ],
+      "traits": [
+        "Spiritual life-form.",
+        "Needs a physical vessel to stay in this world.",
+        "Can be manipulated through its true name.",
+        "An archdaemon is comparable to a Demon Lord seed."
+      ],
+      "intrinsic_skills": [],
+      "base_rank": "b",
+      "base_ep": 6000,
+      "magicule_tolerance": 5,
+      "spin_weight": 10,
+      "spawn_regions": [],
+      "spawn_rule": "random_summoner",
+      "playstyle": "Dark-magic caster; summoned into a vessel by a random summoner."
+    },
+    {
+      "id": "human",
+      "name": "Human",
+      "kind": "human",
+      "label": "CANON",
+      "evolution_line": [
+        {"id": "human", "name": "Human", "life_form": "physical"},
+        {"id": "enlightened", "name": "Enlightened", "life_form": "demi_spiritual"},
+        {"id": "saint", "name": "Saint", "life_form": "spiritual"}
+      ],
+      "separate_routes": ["heros_egg"],
+      "traits": [
+        "No intrinsic skills.",
+        "Low magicule capacity and tolerance.",
+        "Strongest at aura-based Arts.",
+        "Raised chance of a Unique skill (otherworlder)."
+      ],
+      "intrinsic_skills": [],
+      "base_rank": "e",
+      "base_ep": 500,
+      "magicule_tolerance": 1,
+      "spin_weight": 10,
+      "spawn_regions": ["blumund", "englassia", "falmuth"],
+      "playstyle": "Arts, gear, spirit and holy magic, Free Guild work."
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "_meta": {
+    "table": "ranks",
+    "source": "Design document, section 7",
+    "notes": [
+      "EP bands are half-open: ep_min <= EP < ep_max. A null ep_max means no upper bound.",
+      "Rank F has no EP band in the source table. It is assigned by flag (no real combat ability), never derived from EP.",
+      "danger_class is the default for the band. Danger classes also reflect influence and politics, so an entity may override it.",
+      "Catastrophe is officially reserved for True Dragons and judged by power near theirs, not by an EP figure."
+    ]
+  },
+  "ranks": [
+    {"id": "f", "name": "F", "ep_min": null, "ep_max": null, "danger_class": "", "guild_meaning": "No real combat ability", "label": "CANON"},
+    {"id": "e", "name": "E", "ep_min": 0, "ep_max": 1000, "danger_class": "", "guild_meaning": "Average adult human", "label": "CANON"},
+    {"id": "d", "name": "D", "ep_min": 1000, "ep_max": 3000, "danger_class": "", "guild_meaning": "Soldier; three or four ordinary people can win", "label": "CANON"},
+    {"id": "c", "name": "C", "ep_min": 3000, "ep_max": 6000, "danger_class": "", "guild_meaning": "Seasoned professional soldier", "label": "CANON"},
+    {"id": "b", "name": "B", "ep_min": 6000, "ep_max": 8000, "danger_class": "", "guild_meaning": "Can wipe out a village alone", "label": "CANON"},
+    {"id": "b_plus", "name": "B+", "ep_min": 8000, "ep_max": 9000, "danger_class": "", "guild_meaning": "Intermediate step", "label": "CANON"},
+    {"id": "a_minus", "name": "A-", "ep_min": 9000, "ep_max": 10000, "danger_class": "", "guild_meaning": "Intermediate step", "label": "CANON"},
+    {"id": "a", "name": "A", "ep_min": 10000, "ep_max": 100000, "danger_class": "hazard", "guild_meaning": "Can wreck a town; needs a nation's knights", "label": "CANON"},
+    {"id": "special_a", "name": "Special A", "ep_min": 100000, "ep_max": 400000, "danger_class": "calamity", "guild_meaning": "Can topple a small nation", "label": "CANON"},
+    {"id": "s", "name": "S", "ep_min": 400000, "ep_max": 800000, "danger_class": "disaster", "guild_meaning": "Demon Lord level; needs a great power's whole military", "label": "CANON"},
+    {"id": "special_s", "name": "Special S", "ep_min": 800000, "ep_max": null, "danger_class": "catastrophe", "guild_meaning": "Beyond any single nation", "label": "CANON"}
+  ],
+  "danger_classes": [
+    {"id": "hazard", "name": "Hazard", "label": "CANON"},
+    {"id": "calamity", "name": "Calamity", "label": "CANON"},
+    {"id": "disaster", "name": "Disaster", "label": "CANON"},
+    {"id": "catastrophe", "name": "Catastrophe", "label": "CANON"}
+  ],
+  "informal_labels": [
+    {"id": "million_class", "name": "Million class", "ep_min": 1000000, "meaning": "Informal label for super-awakened beings", "label": "CANON"}
+  ],
+  "thresholds": [
+    {"id": "demon_lord_seed", "name": "Demon Lord seed", "ep_min": 200000, "label": "CANON"}
+  ]
+}

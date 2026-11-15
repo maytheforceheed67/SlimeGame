@@ -1,0 +1,21 @@
+{
+  "_meta": {
+    "table": "damage_types",
+    "source": "Design document, section 5 (imprint of the cause)",
+    "notes": [
+      "imprint_resistance is the Resistance granted at the next birth when this damage type ends a life.",
+      "Imprints are Resistance grade only. Nullification has to be earned in life.",
+      "The combat milestone will extend this list (magic, holy-demonic and other types are not defined yet)."
+    ]
+  },
+  "damage_types": [
+    {"id": "blade", "name": "Blade", "imprint_resistance": "pierce_resistance", "label": "DESIGN"},
+    {"id": "fire", "name": "Fire", "imprint_resistance": "heat_resistance", "label": "DESIGN"},
+    {"id": "cold", "name": "Cold", "imprint_resistance": "cold_resistance", "label": "DESIGN"},
+    {"id": "electricity", "name": "Electricity", "imprint_resistance": "electricity_resistance", "label": "DESIGN"},
+    {"id": "poison", "name": "Poison", "imprint_resistance": "poison_resistance", "label": "DESIGN"},
+    {"id": "paralysis", "name": "Paralysis", "imprint_resistance": "paralysis_resistance", "label": "DESIGN"},
+    {"id": "corrosion", "name": "Corrosion", "imprint_resistance": "corrosion_resistance", "label": "DESIGN"},
+    {"id": "spiritual", "name": "Spiritual", "imprint_resistance": "spiritual_attack_resistance", "label": "DESIGN"}
+  ]
+}

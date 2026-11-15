@@ -1,0 +1,86 @@
+{
+  "_meta": {
+    "table": "skills",
+    "source": "Design document, sections 4, 5, 8.1 and 8.4",
+    "notes": [
+      "label covers the skill's existence and name. category_label is added where the design document names a skill without stating its tier; those tiers are best-guess defaults.",
+      "From Extra tier up a skill is a bundle of named sub-functions. sub_functions is left empty until the sections that define each bundle are implemented.",
+      "Arts and resistances are not in this table. Resistances live in resistances.json; Arts get their own table with the combat milestone."
+    ]
+  },
+  "categories": [
+    {"id": "common", "name": "Common skill", "what": "Baseline tier.", "obtained_by": "Practice and effort.", "label": "CANON"},
+    {"id": "extra", "name": "Extra skill", "what": "One step up; the ceiling for effort. Power ranges from barely above Common to rivalling Unique.", "obtained_by": "Effort, mastering an Art, species inheritance, evolution of a Common skill.", "label": "CANON"},
+    {"id": "unique", "name": "Unique skill", "what": "One of a kind, born from the owner's mind and desires; anchored in body or soul; cannot be copied.", "obtained_by": "Intense emotion, trials, crossing worlds; evolution of an Extra skill.", "label": "CANON"},
+    {"id": "ultimate", "name": "Ultimate skill", "what": "Final stage; control over natural law.", "obtained_by": "A Unique skill pushed past its limit, or fusion of skills.", "label": "CANON"},
+    {"id": "intrinsic", "name": "Intrinsic skill", "what": "Innate to a species; scales with race evolution.", "obtained_by": "Race and evolution.", "label": "CANON"},
+    {"id": "ultimate_gift", "name": "Ultimate Gift", "what": "A weaker Ultimate handed down through a soul corridor.", "obtained_by": "Granted by a superior.", "label": "CANON"},
+    {"id": "manas", "name": "Manas", "what": "An Ultimate skill that gained an ego and a name.", "obtained_by": "Naming the skill.", "label": "CANON"}
+  ],
+  "skills": [
+    {"id": "absorb", "name": "Absorb", "category": "intrinsic", "label": "CANON", "sub_functions": []},
+    {"id": "dissolve", "name": "Dissolve", "category": "intrinsic", "label": "CANON", "sub_functions": []},
+    {"id": "self_regeneration", "name": "Self-Regeneration", "category": "intrinsic", "label": "CANON", "sub_functions": []},
+
+    {"id": "mimicry", "name": "Mimicry", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": [], "notes": "Listed as a fusion input in section 8.4. Whether it is a standalone skill or a sub-function of Predator is settled when section 9 is implemented."},
+    {"id": "ultraspeed_regeneration", "name": "Ultraspeed Regeneration", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "infinite_regeneration", "name": "Infinite Regeneration", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+
+    {"id": "sticky_thread", "name": "Sticky Thread", "category": "common", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "steel_thread", "name": "Steel Thread", "category": "common", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "sticky_steel_thread", "name": "Sticky-Steel Thread", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "universal_thread", "name": "Universal Thread", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+
+    {"id": "water_current_motion", "name": "Water Current Motion", "category": "common", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "hydraulic_propulsion", "name": "Hydraulic Propulsion", "category": "common", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "water_blade", "name": "Water Blade", "category": "common", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "water_manipulation", "name": "Water Manipulation", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "flame_manipulation", "name": "Flame Manipulation", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "molecular_manipulation", "name": "Molecular Manipulation", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "mana_jamming", "name": "Mana Jamming", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "mana_manipulation", "name": "Mana Manipulation", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+
+    {"id": "flame_transformation", "name": "Flame Transformation", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "black_flame", "name": "Black Flame", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "black_lightning", "name": "Black Lightning", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "black_thunder", "name": "Black Thunder", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "black_flame_thunder", "name": "Black Flame-Thunder", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+
+    {"id": "mana_perception", "name": "Mana Perception", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "heat_source_perception", "name": "Heat Source Perception", "category": "common", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "sound_wave_perception", "name": "Sound Wave Perception", "category": "common", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "universal_perception", "name": "Universal Perception", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+
+    {"id": "coercion", "name": "Coercion", "category": "common", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "haki", "name": "Haki", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "magic_aura", "name": "Magic Aura", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "demon_lords_haki", "name": "Demon Lord's Haki", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+
+    {"id": "telepathy", "name": "Telepathy", "category": "common", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "thought_communication", "name": "Thought Communication", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "ranged_barrier", "name": "Ranged Barrier", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "multilayer_barrier", "name": "Multilayer Barrier", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "body_double", "name": "Body Double", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "enhanced_body_double", "name": "Enhanced Body Double", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "shadow_motion", "name": "Shadow Motion", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "spatial_motion", "name": "Spatial Motion", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+
+    {"id": "sage", "name": "Sage", "category": "extra", "label": "CANON", "sub_functions": []},
+    {"id": "great_sage", "name": "Great Sage", "category": "unique", "label": "CANON", "sub_functions": []},
+    {"id": "raphael", "name": "Raphael", "category": "ultimate", "label": "CANON", "sub_functions": []},
+    {"id": "ciel", "name": "Ciel", "category": "manas", "label": "CANON", "sub_functions": []},
+    {"id": "degenerate", "name": "Degenerate", "category": "unique", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+
+    {"id": "predator", "name": "Predator", "category": "unique", "label": "CANON", "sub_functions": []},
+    {"id": "starved", "name": "Starved", "category": "unique", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "gluttony", "name": "Gluttony", "category": "unique", "label": "CANON", "sub_functions": []},
+    {"id": "beelzebuth", "name": "Beelzebuth", "category": "ultimate", "label": "CANON", "sub_functions": []},
+    {"id": "merciless", "name": "Merciless", "category": "unique", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+
+    {"id": "infinity_prison", "name": "Infinity Prison", "category": "unique", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "uriel", "name": "Uriel", "category": "ultimate", "label": "CANON", "sub_functions": []},
+    {"id": "azathoth", "name": "Azathoth", "category": "ultimate", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
+    {"id": "veldora_skill", "name": "Veldora skill (name pending)", "category": "ultimate", "category_label": "UNCONFIRMED", "label": "UNCONFIRMED", "sub_functions": [], "notes": "Section 8.4 refers to 'the Veldora and Velgrynd skills' without naming them. Placeholder until the design document names them."},
+    {"id": "velgrynd_skill", "name": "Velgrynd skill (name pending)", "category": "ultimate", "category_label": "UNCONFIRMED", "label": "UNCONFIRMED", "sub_functions": [], "notes": "See veldora_skill."}
+  ]
+}

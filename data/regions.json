@@ -1,0 +1,30 @@
+{
+  "_meta": {
+    "table": "regions",
+    "source": "Design document, sections 4 and 7",
+    "notes": [
+      "Only regions named so far in the design document are listed. Geography, borders and map positions come with the world milestone.",
+      "magicule_density indexes density_levels. Every density value here is a [DESIGN] starting value.",
+      "ambient_ep is the EP granted by one condensed magicule mote in a region of that density (Milestone 0 placeholder for absorbing magicules)."
+    ]
+  },
+  "density_levels": [
+    {"level": 0, "name": "Trace", "ambient_ep": 10, "label": "DESIGN"},
+    {"level": 1, "name": "Thin", "ambient_ep": 25, "label": "DESIGN"},
+    {"level": 2, "name": "Moderate", "ambient_ep": 60, "label": "DESIGN"},
+    {"level": 3, "name": "Dense", "ambient_ep": 120, "label": "DESIGN"},
+    {"level": 4, "name": "Heavy", "ambient_ep": 250, "label": "DESIGN"},
+    {"level": 5, "name": "Saturated", "ambient_ep": 600, "label": "DESIGN"}
+  ],
+  "regions": [
+    {"id": "sealed_cave", "name": "Sealed Cave", "kind": "cave", "magicule_density": 4, "label": "CANON"},
+    {"id": "jura_forest", "name": "Jura Forest", "kind": "forest", "magicule_density": 2, "label": "CANON"},
+    {"id": "jura_goblin_village", "name": "Goblin Village", "kind": "settlement", "parent": "jura_forest", "magicule_density": 1, "label": "CANON"},
+    {"id": "ogre_village", "name": "Ogre Village", "kind": "settlement", "parent": "jura_forest", "magicule_density": 2, "label": "CANON", "notes": "On Jura's western route."},
+    {"id": "orc_host", "name": "Orc Host", "kind": "mobile", "magicule_density": 1, "label": "DESIGN", "notes": "An army on the march; the orc homeland is not fixed by the sources."},
+    {"id": "lake_siss_marsh_caves", "name": "Lake Siss Marsh Caves", "kind": "cave", "magicule_density": 2, "label": "CANON"},
+    {"id": "blumund", "name": "Blumund", "kind": "nation", "magicule_density": 0, "label": "CANON"},
+    {"id": "englassia", "name": "Englassia", "kind": "nation", "magicule_density": 0, "label": "CANON"},
+    {"id": "falmuth", "name": "Falmuth", "kind": "nation", "magicule_density": 0, "label": "CANON"}
+  ]
+}

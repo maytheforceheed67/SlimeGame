@@ -1,0 +1,47 @@
+{
+  "_meta": {
+    "table": "fusions",
+    "source": "Design document, section 8.4",
+    "notes": [
+      "kind 'fusion' consumes several inputs; kind 'evolution' upgrades a single skill.",
+      "gate 'awakening_event' is [DESIGN]: Ultimate-tier steps only fire at awakening events (section 11).",
+      "event, sacrifices, absorbs and requires record the conditions given in the source table.",
+      "Fusion logic is not implemented yet. This table is the upgrade tree the skill milestone will read."
+    ]
+  },
+  "fusions": [
+    {"id": "ultraspeed_regeneration", "kind": "fusion", "inputs": ["absorb", "dissolve", "self_regeneration", "mimicry"], "result": "ultraspeed_regeneration", "label": "CANON"},
+    {"id": "infinite_regeneration", "kind": "evolution", "inputs": ["ultraspeed_regeneration"], "result": "infinite_regeneration", "label": "CANON"},
+
+    {"id": "sticky_steel_thread", "kind": "fusion", "inputs": ["sticky_thread", "steel_thread"], "result": "sticky_steel_thread", "label": "CANON"},
+    {"id": "universal_thread", "kind": "evolution", "inputs": ["sticky_steel_thread"], "result": "universal_thread", "label": "CANON"},
+
+    {"id": "water_manipulation", "kind": "fusion", "inputs": ["water_current_motion", "hydraulic_propulsion", "water_blade"], "result": "water_manipulation", "label": "CANON"},
+    {"id": "molecular_manipulation", "kind": "fusion", "inputs": ["water_manipulation", "flame_manipulation"], "result": "molecular_manipulation", "label": "CANON"},
+    {"id": "mana_manipulation", "kind": "fusion", "inputs": ["water_manipulation", "mana_jamming"], "result": "mana_manipulation", "label": "CANON"},
+
+    {"id": "black_flame", "kind": "evolution", "inputs": ["flame_transformation"], "result": "black_flame", "label": "CANON"},
+    {"id": "black_thunder", "kind": "evolution", "inputs": ["black_lightning"], "result": "black_thunder", "label": "CANON"},
+    {"id": "black_flame_thunder", "kind": "fusion", "inputs": ["black_flame", "black_thunder"], "result": "black_flame_thunder", "label": "CANON"},
+
+    {"id": "universal_perception", "kind": "fusion", "inputs": ["mana_perception", "heat_source_perception", "sound_wave_perception"], "result": "universal_perception", "label": "CANON"},
+
+    {"id": "haki", "kind": "evolution", "inputs": ["coercion"], "result": "haki", "label": "CANON"},
+    {"id": "demon_lords_haki", "kind": "fusion", "inputs": ["haki", "magic_aura"], "result": "demon_lords_haki", "requires": "seed_level_rank", "label": "CANON"},
+
+    {"id": "thought_communication", "kind": "evolution", "inputs": ["telepathy"], "result": "thought_communication", "label": "CANON"},
+    {"id": "multilayer_barrier", "kind": "evolution", "inputs": ["ranged_barrier"], "result": "multilayer_barrier", "label": "CANON"},
+    {"id": "enhanced_body_double", "kind": "evolution", "inputs": ["body_double"], "result": "enhanced_body_double", "label": "CANON"},
+    {"id": "spatial_motion", "kind": "evolution", "inputs": ["shadow_motion"], "result": "spatial_motion", "label": "CANON"},
+
+    {"id": "great_sage", "kind": "evolution", "inputs": ["sage"], "result": "great_sage", "label": "CANON"},
+    {"id": "raphael", "kind": "evolution", "inputs": ["great_sage"], "result": "raphael", "event": "harvest_festival", "sacrifices": ["degenerate"], "gate": "awakening_event", "label": "CANON"},
+    {"id": "ciel", "kind": "evolution", "inputs": ["raphael"], "result": "ciel", "requires": "naming_the_skill", "label": "CANON"},
+
+    {"id": "gluttony", "kind": "fusion", "inputs": ["predator", "starved"], "result": "gluttony", "label": "CANON"},
+    {"id": "beelzebuth", "kind": "evolution", "inputs": ["gluttony"], "result": "beelzebuth", "event": "harvest_festival", "absorbs": ["merciless"], "gate": "awakening_event", "label": "CANON"},
+
+    {"id": "uriel", "kind": "fusion", "inputs": ["infinity_prison"], "result": "uriel", "requires": "skills_gathered_through_food_chain", "gate": "awakening_event", "label": "CANON", "notes": "The source lists the second input as 'skills gathered through Food Chain' (section 10), not as a single skill."},
+    {"id": "azathoth", "kind": "fusion", "inputs": ["raphael", "beelzebuth", "veldora_skill", "velgrynd_skill"], "result": "azathoth", "gate": "awakening_event", "label": "CANON"}
+  ]
+}

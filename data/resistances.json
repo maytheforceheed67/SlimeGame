@@ -1,0 +1,42 @@
+{
+  "_meta": {
+    "table": "resistances",
+    "source": "Design document, sections 5 and 8.5",
+    "notes": [
+      "Resistances are not strictly skills, so they live in their own table.",
+      "grade is 'resistance' (partial) or 'nullification'.",
+      "mitigates lists damage type ids from damage_types.json. It is empty where the matching damage type is not defined yet.",
+      "A merge with one input is an upgrade of that resistance. The source gives no trigger for upgrades; the default is continued exposure [UNCONFIRMED]."
+    ]
+  },
+  "resistances": [
+    {"id": "cold_resistance", "name": "Cold Resistance", "grade": "resistance", "mitigates": ["cold"], "label": "CANON"},
+    {"id": "heat_resistance", "name": "Heat Resistance", "grade": "resistance", "mitigates": ["fire"], "label": "CANON"},
+    {"id": "thermal_fluctuation_resistance", "name": "Thermal Fluctuation Resistance", "grade": "resistance", "mitigates": ["cold", "fire"], "label": "CANON"},
+    {"id": "thermal_fluctuation_nullification", "name": "Thermal Fluctuation Nullification", "grade": "nullification", "mitigates": ["cold", "fire"], "label": "CANON"},
+    {"id": "electricity_resistance", "name": "Electricity Resistance", "grade": "resistance", "mitigates": ["electricity"], "label": "CANON"},
+    {"id": "natural_effects_nullification", "name": "Natural Effects Nullification", "grade": "nullification", "mitigates": ["cold", "fire", "electricity"], "label": "CANON"},
+    {"id": "pierce_resistance", "name": "Pierce Resistance", "grade": "resistance", "mitigates": ["blade"], "label": "CANON"},
+    {"id": "physical_attack_resistance", "name": "Physical Attack Resistance", "grade": "resistance", "mitigates": ["blade"], "label": "CANON"},
+    {"id": "physical_attack_nullification", "name": "Physical Attack Nullification", "grade": "nullification", "mitigates": ["blade"], "label": "CANON"},
+    {"id": "paralysis_resistance", "name": "Paralysis Resistance", "grade": "resistance", "mitigates": ["paralysis"], "label": "CANON"},
+    {"id": "corrosion_resistance", "name": "Corrosion Resistance", "grade": "resistance", "mitigates": ["corrosion"], "label": "CANON"},
+    {"id": "abnormal_condition_nullification", "name": "Abnormal Condition Nullification", "grade": "nullification", "mitigates": ["paralysis", "corrosion"], "label": "CANON"},
+    {"id": "magic_resistance", "name": "Magic Resistance", "grade": "resistance", "mitigates": [], "label": "CANON"},
+    {"id": "holy_demonic_attack_resistance", "name": "Holy-Demonic Attack Resistance", "grade": "resistance", "mitigates": [], "label": "CANON"},
+    {"id": "spiritual_attack_resistance", "name": "Spiritual Attack Resistance", "grade": "resistance", "mitigates": ["spiritual"], "label": "CANON"},
+    {"id": "spiritual_attack_nullification", "name": "Spiritual Attack Nullification", "grade": "nullification", "mitigates": ["spiritual"], "label": "CANON"},
+    {"id": "pain_nullification", "name": "Pain Nullification", "grade": "nullification", "mitigates": [], "label": "CANON", "notes": "Stands alone in the merge tree."},
+    {"id": "poison_resistance", "name": "Poison Resistance", "grade": "resistance", "mitigates": ["poison"], "label": "DESIGN", "notes": "Implied by the section 5 imprint list; not part of the section 8.5 merge tree."}
+  ],
+  "merges": [
+    {"inputs": ["cold_resistance", "heat_resistance"], "result": "thermal_fluctuation_resistance", "label": "CANON"},
+    {"inputs": ["thermal_fluctuation_resistance"], "result": "thermal_fluctuation_nullification", "label": "CANON"},
+    {"inputs": ["thermal_fluctuation_nullification", "electricity_resistance"], "result": "natural_effects_nullification", "label": "CANON"},
+    {"inputs": ["pierce_resistance"], "result": "physical_attack_resistance", "label": "CANON"},
+    {"inputs": ["physical_attack_resistance"], "result": "physical_attack_nullification", "label": "CANON"},
+    {"inputs": ["paralysis_resistance", "corrosion_resistance"], "result": "abnormal_condition_nullification", "label": "CANON"},
+    {"inputs": ["magic_resistance"], "result": "holy_demonic_attack_resistance", "label": "CANON"},
+    {"inputs": ["spiritual_attack_resistance"], "result": "spiritual_attack_nullification", "label": "CANON"}
+  ]
+}

@@ -1,0 +1,35 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="SlimeGame"
+config/description="A 3D open-world reincarnation roguelike. Personal, non-commercial fan project."
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.3", "Forward Plus")
+config/icon="res://icon.svg"
+
+[autoload]
+
+Database="*res://scripts/autoload/database.gd"
+Voice="*res://scripts/autoload/voice_of_world.gd"
+Soul="*res://scripts/autoload/soul.gd"
+Game="*res://scripts/autoload/game.gd"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[rendering]
+
+anti_aliasing/quality/msaa_3d=1
