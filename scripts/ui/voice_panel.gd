@@ -87,8 +87,8 @@ func _build_world_column() -> void:
 	_world_column.add_theme_constant_override("separation", 6)
 	_world_column.anchor_left = 0.5
 	_world_column.anchor_right = 0.5
-	_world_column.offset_left = -400.0
-	_world_column.offset_right = 400.0
+	_world_column.offset_left = -330.0
+	_world_column.offset_right = 330.0
 	_world_column.offset_top = 36.0
 	_world_column.offset_bottom = 36.0
 	add_child(_world_column)

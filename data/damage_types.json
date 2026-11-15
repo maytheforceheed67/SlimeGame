@@ -1,15 +1,18 @@
 {
   "_meta": {
     "table": "damage_types",
-    "source": "Design document, section 5 (imprint of the cause)",
+    "source": "Design document, section 5 (imprint of the cause) and section 12 (damage layers)",
     "notes": [
-      "imprint_resistance is the Resistance granted at the next birth when this damage type ends a life.",
+      "imprint_resistance is the Resistance granted at the next birth when this damage type ends a life, and the first Resistance earned by surviving enough of it.",
       "Imprints are Resistance grade only. Nullification has to be earned in life.",
-      "The combat milestone will extend this list (magic, holy-demonic and other types are not defined yet)."
+      "impact (falls, tackles, tail sweeps) is a [DESIGN] addition with no imprint: the section 5 list has no blunt entry.",
+      "statuses are lingering conditions. A status belongs to a damage type, so the matching Resistance halves its duration and Nullification blocks it.",
+      "Magic, holy and soul-reaching damage (section 12) arrive with the magic milestone."
     ]
   },
   "damage_types": [
     {"id": "blade", "name": "Blade", "imprint_resistance": "pierce_resistance", "label": "DESIGN"},
+    {"id": "impact", "name": "Impact", "imprint_resistance": "", "label": "DESIGN"},
     {"id": "fire", "name": "Fire", "imprint_resistance": "heat_resistance", "label": "DESIGN"},
     {"id": "cold", "name": "Cold", "imprint_resistance": "cold_resistance", "label": "DESIGN"},
     {"id": "electricity", "name": "Electricity", "imprint_resistance": "electricity_resistance", "label": "DESIGN"},
@@ -17,5 +20,12 @@
     {"id": "paralysis", "name": "Paralysis", "imprint_resistance": "paralysis_resistance", "label": "DESIGN"},
     {"id": "corrosion", "name": "Corrosion", "imprint_resistance": "corrosion_resistance", "label": "DESIGN"},
     {"id": "spiritual", "name": "Spiritual", "imprint_resistance": "spiritual_attack_resistance", "label": "DESIGN"}
+  ],
+  "statuses": [
+    {"id": "poisoned", "name": "Poisoned", "damage_type": "poison", "tick_interval": 1.0, "label": "DESIGN"},
+    {"id": "paralysed", "name": "Paralysed", "damage_type": "paralysis", "speed_factor": 0.25, "blocks_attacks": true, "label": "DESIGN"},
+    {"id": "webbed", "name": "Webbed", "damage_type": "impact", "speed_factor": 0.4, "label": "DESIGN"},
+    {"id": "dazed", "name": "Dazed", "damage_type": "impact", "speed_factor": 0.6, "blocks_attacks": true, "label": "DESIGN"},
+    {"id": "corroding", "name": "Corroding", "damage_type": "corrosion", "tick_interval": 0.5, "label": "DESIGN"}
   ]
 }

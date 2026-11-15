@@ -36,3 +36,30 @@ func shot(shot_name: String) -> void:
 func _stage_birth() -> void:
 	await seconds(2.5)
 	await shot("birth")
+
+
+## Spawns a creature in front of the slime, optionally frozen in place.
+func spawn(id: String, offset: Vector3, frozen: bool = true) -> Creature:
+	var creature := Creature.create(id)
+	main.add_child(creature)
+	creature.global_position = player.global_position + offset
+	creature.home = creature.global_position
+	if frozen:
+		creature.set_physics_process(false)
+	return creature
+
+
+func _stage_creatures() -> void:
+	for orb in main.get_node("Orbs").get_children():
+		orb.queue_free()
+	spawn("giant_bat", Vector3(-5.0, 1.6, -5.0))
+	spawn("evil_centipede", Vector3(-2.5, 0.0, -5.0)).rotation.y = 0.9
+	spawn("armorsaurus", Vector3(0.5, 0.0, -6.0)).rotation.y = 0.8
+	spawn("black_spider", Vector3(4.0, 0.0, -5.5)).rotation.y = -0.6
+	spawn("tempest_serpent", Vector3(8.0, 0.0, -8.0)).rotation.y = -0.9
+	var hurt := spawn("giant_bat", Vector3(-1.0, 1.0, -2.5))
+	hurt.take_hit({"amount": 40.0, "damage_type": "impact", "stagger": 40.0})
+	Game.life.vitals.apply_damage(22.0, "blade")
+	Game.life.vitals.add_status("poisoned", 6.0, 1.0)
+	await seconds(2.5)
+	await shot("creatures")

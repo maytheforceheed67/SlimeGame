@@ -1,6 +1,6 @@
 extends Control
-## Developer overlay and cheat keys. Debug builds only; a release export hides
-## the overlay and ignores the keys.
+## Developer overlay and cheat keys. Debug builds only; a release export
+## ignores the keys. The overlay starts hidden; F3 shows it.
 ##
 ##   F3  show / hide          1  +500 EP          2  double EP
 ##   3   Voice test           4  die (next cause) 5  erase the soul's memory
@@ -34,8 +34,11 @@ func _ready() -> void:
 	_panel.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	add_child(_panel)
 
-	_label = UiStyle.label(13)
+	_label = UiStyle.label(12)
+	_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_label.custom_minimum_size.x = 300.0
 	_panel.add_child(_label)
+	_panel.visible = false
 
 
 func _process(delta: float) -> void:
@@ -100,7 +103,8 @@ func _build_text() -> String:
 		lines.append("Life %d   seed %d   %s" % [life.life_number, life.world_seed, "alive" if life.alive else "dead"])
 		lines.append("Race %s   stage %d   origin %s" % [life.race_id, life.stage_index, life.origin_id])
 		lines.append("Region %s" % life.region_id)
-		lines.append("EP %s   rank %s" % [UiStyle.format_int(life.ep), Database.rank_name(rank)])
+		lines.append("EP %s   rank %s   power x%.2f" % [UiStyle.format_int(life.ep), Database.rank_name(rank), Game.get_power()])
+		lines.append("Stomach: %s" % str(life.stomach))
 		lines.append("Skills: %s" % _joined(life.skills))
 		lines.append("Resistances: %s" % _joined(life.resistances))
 

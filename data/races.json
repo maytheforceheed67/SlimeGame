@@ -13,6 +13,13 @@
       "spawn_regions": "DESIGN",
       "playstyle": "DESIGN"
     },
+    "default_vitals": {
+      "hp_base": 40,
+      "hp_scale": 2.0,
+      "capacity_factor": 1.0,
+      "move_speed": 5.5,
+      "jump_velocity": 7.0
+    },
     "default_triggers": {
       "first_step": "naming",
       "later_steps": "magicule_threshold_or_awakening_gift",
@@ -23,7 +30,9 @@
       "A stage without a trigger uses default_triggers.",
       "base_ep is a starting value chosen inside the race's base rank band.",
       "magicule_tolerance is the highest region density level (regions.json) the race can stay in without harm.",
-      "intrinsic_skills is filled only where the design document names them."
+      "intrinsic_skills is filled only where the design document names them.",
+      "vitals: max HP = hp_base + hp_scale * sqrt(EP); magicule capacity = EP * capacity_factor minus what skills reserve. A race without vitals uses default_vitals.",
+      "moveset.light is the body's basic attack (same schema as creature attacks; damage is multiplied by the user's power)."
     ]
   },
   "races": [
@@ -42,6 +51,10 @@
         "No sight until it learns Mana Perception."
       ],
       "intrinsic_skills": ["absorb", "dissolve", "self_regeneration"],
+      "vitals": {"hp_base": 40, "hp_scale": 2.0, "capacity_factor": 1.0, "move_speed": 5.5, "jump_velocity": 7.0},
+      "moveset": {
+        "light": {"id": "slime_tackle", "name": "Tackle", "kind": "lunge", "damage": 8, "damage_type": "impact", "range": 1.3, "speed": 12, "duration": 0.22, "windup": 0.05, "recover": 0.2, "cooldown": 0.55, "stagger": 6}
+      },
       "base_rank": "e",
       "base_ep": 100,
       "magicule_tolerance": 5,

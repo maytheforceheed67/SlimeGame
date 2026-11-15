@@ -17,13 +17,21 @@ var danger_classes: Dictionary = {}
 var informal_labels: Array[Dictionary] = []
 var thresholds: Dictionary = {}
 
+## Global [DESIGN] numbers, by section. Read them with tune().
+var tuning: Dictionary = {}
+
 var damage_types: Dictionary = {}
+var statuses: Dictionary = {}
 var resistances: Dictionary = {}
 var resistance_merges: Array[Dictionary] = []
 
 var skill_categories: Dictionary = {}
 var skills: Dictionary = {}
+## sub-function id -> id of the skill it belongs to
+var sub_functions: Dictionary = {}
 var fusions: Dictionary = {}
+
+var creatures: Dictionary = {}
 
 var races: Dictionary = {}
 var regions: Dictionary = {}
@@ -32,6 +40,8 @@ var density_levels: Dictionary = {}
 var spin: Dictionary = {}
 
 var voice_lines: Dictionary = {}
+
+var _race_meta: Dictionary = {}
 
 var problems: PackedStringArray = PackedStringArray()
 
@@ -50,7 +60,10 @@ func reload() -> void:
 	informal_labels = _list(rank_file, "informal_labels", "ranks.json")
 	ranks = _build_rank_bands()
 
-	damage_types = _by_id(_read("damage_types.json"), "damage_types", "damage_types.json")
+	tuning = _read("tuning.json")
+	var damage_file := _read("damage_types.json")
+	damage_types = _by_id(damage_file, "damage_types", "damage_types.json")
+	statuses = _by_id(damage_file, "statuses", "damage_types.json")
 	var resistance_file := _read("resistances.json")
 	resistances = _by_id(resistance_file, "resistances", "resistances.json")
 	resistance_merges = _list(resistance_file, "merges", "resistances.json")
@@ -58,9 +71,18 @@ func reload() -> void:
 	var skill_file := _read("skills.json")
 	skill_categories = _by_id(skill_file, "categories", "skills.json")
 	skills = _by_id(skill_file, "skills", "skills.json")
+	sub_functions = {}
+	for skill_id: String in skills:
+		for function: Variant in skills[skill_id].get("sub_functions", []):
+			if function is Dictionary:
+				sub_functions[str(function.get("id", ""))] = skill_id
 	fusions = _by_id(_read("fusions.json"), "fusions", "fusions.json")
+	creatures = _by_id(_read("creatures.json"), "creatures", "creatures.json")
 
-	races = _by_id(_read("races.json"), "races", "races.json")
+	var race_file := _read("races.json")
+	races = _by_id(race_file, "races", "races.json")
+	var race_meta: Variant = race_file.get("_meta", {})
+	_race_meta = race_meta if race_meta is Dictionary else {}
 	var region_file := _read("regions.json")
 	regions = _by_id(region_file, "regions", "regions.json")
 	density_levels = {}
@@ -81,10 +103,21 @@ func reload() -> void:
 
 
 func summary() -> String:
-	return "%d ranks, %d races, %d skills, %d fusions, %d resistances, %d regions, %d voice lines" % [
+	return "%d ranks, %d races, %d skills, %d fusions, %d resistances, %d creatures, %d regions, %d voice lines" % [
 		ranks_by_id.size(), races.size(), skills.size(), fusions.size(),
-		resistances.size(), regions.size(), voice_lines.size(),
+		resistances.size(), creatures.size(), regions.size(), voice_lines.size(),
 	]
+
+
+# --- Tuning ------------------------------------------------------------------
+
+## A [DESIGN] number from data/tuning.json, for example tune("combat", "resistance_factor").
+func tune(section: String, key: String, fallback: float = 0.0) -> float:
+	var group: Variant = tuning.get(section, {})
+	if group is Dictionary and group.has(key):
+		return float(group[key])
+	push_warning("[Database] missing tuning value %s.%s" % [section, key])
+	return fallback
 
 
 # --- Ranks and existence points -------------------------------------------
@@ -145,6 +178,48 @@ func skill_name(skill_id: String) -> String:
 func skill_category_name(skill_id: String) -> String:
 	var category_id := str(get_skill(skill_id).get("category", ""))
 	return str(skill_categories.get(category_id, {}).get("name", "Skill"))
+
+
+## Magicule capacity a skill reserves once acquired in life.
+func capacity_cost(skill_id: String) -> int:
+	var skill := get_skill(skill_id)
+	if skill.has("capacity_cost"):
+		return int(skill["capacity_cost"])
+	return int(tune("capacity_cost", str(skill.get("category", "")), 0.0))
+
+
+func get_creature(creature_id: String) -> Dictionary:
+	return creatures.get(creature_id, {})
+
+
+func get_status(status_id: String) -> Dictionary:
+	return statuses.get(status_id, {})
+
+
+## A race's vitals: its own values laid over the table's defaults.
+func race_vitals(race_id: String) -> Dictionary:
+	var merged: Dictionary = {}
+	var meta: Variant = _race_meta.get("default_vitals", {})
+	if meta is Dictionary:
+		merged = meta.duplicate()
+	var own: Variant = get_race(race_id).get("vitals", {})
+	if own is Dictionary:
+		merged.merge(own, true)
+	return merged
+
+
+## Damage multiplier the given resistances apply to a damage type:
+## 1.0 unprotected, the tuned factor with a Resistance, 0.0 with a Nullification.
+func mitigation(resistance_ids: Array, damage_type_id: String) -> float:
+	var factor := 1.0
+	for resistance_id: Variant in resistance_ids:
+		var resistance := get_resistance(str(resistance_id))
+		if not (resistance.get("mitigates", []) as Array).has(damage_type_id):
+			continue
+		if str(resistance.get("grade", "")) == "nullification":
+			return 0.0
+		factor = minf(factor, tune("combat", "resistance_factor", 0.5))
+	return factor
 
 
 func get_resistance(resistance_id: String) -> Dictionary:
@@ -253,9 +328,32 @@ func _cross_check() -> void:
 
 	for id: String in skills:
 		_need(skill_categories, skills[id].get("category"), "skills.json: '%s' category" % id)
+	for id: String in statuses:
+		_need(damage_types, statuses[id].get("damage_type"), "damage_types.json: status '%s' damage_type" % id)
+	for id: String in skills:
+		_check_attack(skills[id].get("active"), "skills.json: '%s' active" % id)
+	for id: String in races:
+		var moveset: Variant = races[id].get("moveset", {})
+		if moveset is Dictionary:
+			for slot: String in moveset:
+				_check_attack(moveset[slot], "races.json: '%s' moveset.%s" % [id, slot])
+	for id: String in creatures:
+		var creature: Dictionary = creatures[id]
+		_need(ranks_by_id, creature.get("rank"), "creatures.json: '%s' rank" % id)
+		_need_all(resistances, creature.get("resistances"), "creatures.json: '%s' resistances" % id)
+		_need_all(damage_types, creature.get("weak_to"), "creatures.json: '%s' weak_to" % id)
+		for attack: Variant in creature.get("attacks", []):
+			_check_attack(attack, "creatures.json: '%s' attack" % id)
+		var devour: Variant = creature.get("devour", {})
+		if devour is Dictionary:
+			for gain: Variant in devour.get("skills", []):
+				_need(skills, gain.get("skill"), "creatures.json: '%s' devour skill" % id)
+
+	var fusion_inputs: Dictionary = skills.duplicate()
+	fusion_inputs.merge(sub_functions)
 	for id: String in fusions:
 		var fusion: Dictionary = fusions[id]
-		_need_all(skills, fusion.get("inputs"), "fusions.json: '%s' inputs" % id)
+		_need_all(fusion_inputs, fusion.get("inputs"), "fusions.json: '%s' inputs" % id)
 		_need(skills, fusion.get("result"), "fusions.json: '%s' result" % id)
 		_need_all(skills, fusion.get("sacrifices"), "fusions.json: '%s' sacrifices" % id)
 		_need_all(skills, fusion.get("absorbs"), "fusions.json: '%s' absorbs" % id)
@@ -275,6 +373,22 @@ func _cross_check() -> void:
 		_need(regions, first.get("region"), "spin.json: first_life region")
 	else:
 		_problem("spin.json: first_life must be an object")
+
+
+func _check_attack(attack: Variant, where: String) -> void:
+	if attack == null:
+		return
+	if not (attack is Dictionary):
+		_problem("%s: must be an object" % where)
+		return
+	if str(attack.get("kind", "")) == "jet":
+		return
+	if not ["melee", "lunge", "projectile", "cone"].has(str(attack.get("kind", ""))):
+		_problem("%s: kind must be melee, lunge, projectile, cone or jet" % where)
+	_need(damage_types, attack.get("damage_type", "?"), "%s damage_type" % where)
+	var status: Variant = attack.get("status")
+	if status is Dictionary:
+		_need(statuses, status.get("id", "?"), "%s status" % where)
 
 
 ## Records a problem unless `id` is empty (optional reference) or known.

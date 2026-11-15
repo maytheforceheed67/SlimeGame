@@ -1,13 +1,21 @@
 extends Control
-## Top-left nameplate for the player: form, letter rank, danger class, life.
+## Top-left nameplate for the player: name and form, letter rank, danger
+## class, health, magicules, lingering statuses and the bound skill.
 ##
 ## Numeric EP is deliberately absent. The design shows it only once the player
-## has an appraisal skill or the capital's analysis facility; until then the
-## number is visible in the debug overlay only.
+## has an appraisal skill or the capital's analysis facility; the status sheet
+## and the debug overlay show the number when that is allowed.
+
+const BAR_WIDTH := 230.0
 
 var _form_label: Label
 var _rank_label: Label
-var _life_label: Label
+var _health_bar: ProgressBar
+var _health_label: Label
+var _magicule_bar: ProgressBar
+var _magicule_label: Label
+var _status_label: Label
+var _skill_label: Label
 
 
 func _ready() -> void:
@@ -22,37 +30,27 @@ func _ready() -> void:
 
 	var column := VBoxContainer.new()
 	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	column.add_theme_constant_override("separation", 2)
+	column.add_theme_constant_override("separation", 3)
 	panel.add_child(column)
 
-	_form_label = UiStyle.label(22)
-	_rank_label = UiStyle.label(17)
-	_life_label = UiStyle.label(14, UiStyle.MUTED_COLOR)
+	_form_label = UiStyle.label(21)
+	_rank_label = UiStyle.label(15, UiStyle.MUTED_COLOR)
 	column.add_child(_form_label)
 	column.add_child(_rank_label)
-	column.add_child(_life_label)
-
-	Game.life_began.connect(_on_life_began)
-	Game.ep_changed.connect(_on_ep_changed)
-	_refresh()
-
-
-func _on_life_began(_new_life: LifeState) -> void:
-	_refresh()
-
-
-func _on_ep_changed(_ep: int, _delta: int) -> void:
-	_refresh()
+	_health_bar = _bar(Color(0.82, 0.3, 0.3))
+	_health_label = _bar_caption(column, _health_bar)
+	_magicule_bar = _bar(Color(0.45, 0.6, 0.95))
+	_magicule_label = _bar_caption(column, _magicule_bar)
+	_status_label = UiStyle.label(13, UiStyle.WARNING_COLOR)
+	_skill_label = UiStyle.label(13, UiStyle.MUTED_COLOR)
+	column.add_child(_status_label)
+	column.add_child(_skill_label)
 
 
-func _refresh() -> void:
+func _process(_delta: float) -> void:
 	var life := Game.life
 	if life == null:
-		_form_label.text = "—"
-		_rank_label.text = ""
-		_life_label.text = ""
 		return
-
 	var rank := Database.rank_for_ep(life.ep)
 	var parts := PackedStringArray(["Rank " + Database.rank_name(rank)])
 	var danger := Database.danger_class_name(str(rank.get("danger_class", "")))
@@ -61,7 +59,52 @@ func _refresh() -> void:
 	var informal := Database.informal_label_for_ep(life.ep)
 	if informal != "":
 		parts.append(informal)
+	parts.append("Life %d" % life.life_number)
 
-	_form_label.text = Database.stage_name(life.race_id, life.stage_index)
+	var form := Database.stage_name(life.race_id, life.stage_index)
+	if life.form_id != "":
+		form = "%s (as %s)" % [form, str(Database.get_creature(life.form_id).get("name", life.form_id))]
+	_form_label.text = form if life.full_name() == "" else "%s  ·  %s" % [life.full_name(), form]
 	_rank_label.text = "  ·  ".join(parts)
-	_life_label.text = "Life %d" % life.life_number
+
+	var vitals := life.vitals
+	_health_bar.value = vitals.fraction()
+	_health_label.text = "Health  %d / %d" % [ceili(vitals.hp), ceili(vitals.max_hp)]
+	_magicule_bar.value = life.magicules / maxf(1.0, life.max_magicules)
+	_magicule_label.text = "Magicules  %d / %d" % [floori(life.magicules), floori(life.max_magicules)]
+
+	var afflictions := PackedStringArray()
+	for status_id: String in vitals.statuses:
+		afflictions.append("%s %ds" % [str(Database.get_status(status_id).get("name", status_id)),
+				ceili(float(vitals.statuses[status_id]["remaining"]))])
+	_status_label.text = "   ".join(afflictions)
+	_status_label.visible = not afflictions.is_empty()
+
+	_skill_label.visible = life.selected_skill != ""
+	if life.selected_skill != "":
+		_skill_label.text = "Skill: %s" % Database.skill_name(life.selected_skill)
+
+
+func _bar(color: Color) -> ProgressBar:
+	var bar := ProgressBar.new()
+	bar.min_value = 0.0
+	bar.max_value = 1.0
+	bar.step = 0.0
+	bar.show_percentage = false
+	bar.custom_minimum_size = Vector2(BAR_WIDTH, 9.0)
+	bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var back := StyleBoxFlat.new()
+	back.bg_color = Color(0.0, 0.0, 0.0, 0.55)
+	var fill := StyleBoxFlat.new()
+	fill.bg_color = color
+	bar.add_theme_stylebox_override("background", back)
+	bar.add_theme_stylebox_override("fill", fill)
+	return bar
+
+
+## Adds a small caption and the bar under it; returns the caption label.
+func _bar_caption(column: VBoxContainer, bar: ProgressBar) -> Label:
+	var caption := UiStyle.label(12, UiStyle.MUTED_COLOR)
+	column.add_child(caption)
+	column.add_child(bar)
+	return caption

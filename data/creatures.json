@@ -1,0 +1,151 @@
+{
+  "_meta": {
+    "table": "creatures",
+    "source": "Design document, sections 15 and 16 (Sealed Cave rows)",
+    "notes": [
+      "label covers the creature's existence, name and traits. rank_label marks where the rank comes from: only the black spider's rank B is sourced; the serpent's 'above B' is inferred.",
+      "ep, stats, attacks and devour numbers are [DESIGN] starting values.",
+      "devour.skills carries the source tag of each gain: C = canon gain, U = unconfirmed pairing, D = design drop.",
+      "attacks use one schema shared with skills: kind is melee, lunge, projectile or cone. use_range is the distance band in which the creature chooses that attack.",
+      "model describes an original placeholder body assembled from primitives by scripts/creatures/creature_visual.gd."
+    ]
+  },
+  "creatures": [
+    {
+      "id": "giant_bat",
+      "name": "Giant Bat",
+      "family": "magic_beast",
+      "label": "CANON",
+      "rank": "d",
+      "rank_label": "DESIGN",
+      "ep": 1200,
+      "traits": ["Drains its prey.", "Ultra Sound Waves.", "Wings that adjust its own gravity."],
+      "model": {"kind": "bat", "color": "3b2a4d", "accent": "c9a2ff", "size": 1.0},
+      "body": {"radius": 0.55, "hover_height": 2.4},
+      "stats": {"hp": 90, "speed": 6.5, "sight": 15, "leash": 24, "stagger_threshold": 30},
+      "resistances": [],
+      "weak_to": [],
+      "attacks": [
+        {"id": "bat_bite", "name": "Draining Bite", "kind": "melee", "damage": 12, "damage_type": "blade", "range": 1.9, "arc": 120, "windup": 0.4, "recover": 0.7, "cooldown": 1.8, "lifesteal": 0.5, "use_range": [0, 1.7]},
+        {"id": "bat_screech", "name": "Screech", "kind": "cone", "damage": 2, "damage_type": "impact", "range": 7, "arc": 60, "windup": 0.6, "duration": 0.6, "ticks": 3, "recover": 0.6, "cooldown": 8, "status": {"id": "dazed", "duration": 1.2}, "use_range": [3, 7], "color": "d0b0ff"}
+      ],
+      "devour": {
+        "ep_share": 0.25,
+        "analysis_time": 60,
+        "skills": [
+          {"skill": "ultra_sound_waves", "source": "C"},
+          {"skill": "drain", "source": "C"}
+        ]
+      }
+    },
+    {
+      "id": "evil_centipede",
+      "name": "Evil Centipede",
+      "family": "magic_beast",
+      "label": "CANON",
+      "rank": "d",
+      "rank_label": "DESIGN",
+      "ep": 2200,
+      "traits": ["Giant centipede."],
+      "model": {"kind": "segmented", "color": "7a2d1c", "accent": "ffb347", "size": 0.5, "segments": 8, "legs": true},
+      "body": {"radius": 0.5, "hover_height": 0.0},
+      "stats": {"hp": 150, "speed": 5.6, "sight": 13, "leash": 22, "stagger_threshold": 40},
+      "resistances": ["paralysis_resistance"],
+      "weak_to": ["fire"],
+      "attacks": [
+        {"id": "centipede_bite", "name": "Mandibles", "kind": "melee", "damage": 18, "damage_type": "blade", "range": 2.0, "arc": 100, "windup": 0.35, "recover": 0.6, "cooldown": 1.6, "use_range": [0, 1.8]},
+        {"id": "centipede_breath", "name": "Paralyzing Breath", "kind": "cone", "damage": 2, "damage_type": "paralysis", "range": 5.5, "arc": 55, "windup": 0.7, "duration": 0.8, "ticks": 4, "recover": 0.7, "cooldown": 9, "status": {"id": "paralysed", "duration": 2.5}, "use_range": [2, 5], "color": "e8d24a"}
+      ],
+      "devour": {
+        "ep_share": 0.25,
+        "analysis_time": 90,
+        "skills": [
+          {"skill": "paralyzing_breath", "source": "C"}
+        ]
+      }
+    },
+    {
+      "id": "armorsaurus",
+      "name": "Armorsaurus",
+      "family": "magic_beast",
+      "label": "CANON",
+      "rank": "c",
+      "rank_label": "DESIGN",
+      "ep": 4200,
+      "traits": ["Armoured lizard."],
+      "model": {"kind": "quadruped", "color": "4c5a48", "accent": "9fb08f", "size": 1.0, "plates": true},
+      "body": {"radius": 0.9, "hover_height": 0.0},
+      "stats": {"hp": 280, "speed": 3.4, "sight": 12, "leash": 20, "stagger_threshold": 70},
+      "resistances": ["physical_attack_resistance"],
+      "weak_to": ["corrosion", "poison"],
+      "attacks": [
+        {"id": "armorsaurus_charge", "name": "Charge", "kind": "lunge", "damage": 30, "damage_type": "impact", "range": 1.8, "speed": 13, "duration": 0.6, "windup": 0.8, "recover": 1.1, "cooldown": 5, "knockback": 9, "use_range": [4, 10]},
+        {"id": "armorsaurus_tail", "name": "Tail Swipe", "kind": "melee", "damage": 22, "damage_type": "impact", "range": 2.6, "arc": 200, "windup": 0.5, "recover": 0.8, "cooldown": 2.2, "knockback": 5, "use_range": [0, 2.4]}
+      ],
+      "devour": {
+        "ep_share": 0.25,
+        "analysis_time": 120,
+        "skills": [
+          {"skill": "body_armor", "source": "U"}
+        ]
+      }
+    },
+    {
+      "id": "black_spider",
+      "name": "Black Spider",
+      "family": "magic_beast",
+      "label": "CANON",
+      "rank": "b",
+      "rank_label": "CANON",
+      "ep": 7000,
+      "traits": ["Village-destroyer tier.", "Hard to flee from."],
+      "model": {"kind": "spider", "color": "15151c", "accent": "ff4a4a", "size": 1.1},
+      "body": {"radius": 0.95, "hover_height": 0.0},
+      "stats": {"hp": 380, "speed": 6.2, "sight": 18, "leash": 26, "stagger_threshold": 80},
+      "resistances": [],
+      "weak_to": ["fire"],
+      "attacks": [
+        {"id": "spider_web", "name": "Sticky Thread", "kind": "projectile", "damage": 6, "damage_type": "impact", "speed": 20, "range": 20, "radius": 0.45, "windup": 0.5, "recover": 0.5, "cooldown": 5, "status": {"id": "webbed", "duration": 3.0}, "use_range": [5, 16], "color": "e8e8e8"},
+        {"id": "spider_slash", "name": "Steel Thread", "kind": "melee", "damage": 38, "damage_type": "blade", "range": 4.0, "arc": 70, "windup": 0.45, "recover": 0.7, "cooldown": 2.4, "use_range": [1.5, 3.8], "color": "c8d2e0"},
+        {"id": "spider_bite", "name": "Fangs", "kind": "melee", "damage": 45, "damage_type": "blade", "range": 2.2, "arc": 90, "windup": 0.35, "recover": 0.6, "cooldown": 1.8, "use_range": [0, 1.9]}
+      ],
+      "devour": {
+        "ep_share": 0.25,
+        "analysis_time": 150,
+        "skills": [
+          {"skill": "sticky_thread", "source": "C"},
+          {"skill": "steel_thread", "source": "C"}
+        ]
+      }
+    },
+    {
+      "id": "tempest_serpent",
+      "name": "Tempest Serpent",
+      "family": "magic_beast",
+      "label": "CANON",
+      "rank": "a_minus",
+      "rank_label": "UNCONFIRMED",
+      "ep": 9500,
+      "boss": true,
+      "traits": ["Jet-black giant snake.", "Thorned scales.", "Tough hide.", "The strongest monster in the cave."],
+      "model": {"kind": "segmented", "color": "0d0d12", "accent": "7df9ff", "size": 0.8, "segments": 13, "spikes": true},
+      "body": {"radius": 1.0, "hover_height": 0.0},
+      "stats": {"hp": 650, "speed": 5.4, "sight": 24, "leash": 30, "stagger_threshold": 120},
+      "resistances": ["poison_resistance"],
+      "weak_to": ["cold"],
+      "attacks": [
+        {"id": "serpent_bite", "name": "Fangs", "kind": "melee", "damage": 62, "damage_type": "blade", "range": 3.0, "arc": 80, "windup": 0.55, "recover": 0.8, "cooldown": 2.2, "status": {"id": "poisoned", "duration": 4.0, "tick_damage": 6}, "use_range": [0, 2.8]},
+        {"id": "serpent_breath", "name": "Poison Breath", "kind": "cone", "damage": 6, "damage_type": "poison", "range": 8, "arc": 50, "windup": 0.8, "duration": 1.2, "ticks": 6, "recover": 0.8, "cooldown": 8, "status": {"id": "poisoned", "duration": 6.0, "tick_damage": 8}, "use_range": [3, 7.5], "color": "8a4fd0"},
+        {"id": "serpent_tail", "name": "Tail Sweep", "kind": "melee", "damage": 40, "damage_type": "impact", "range": 4.2, "arc": 220, "windup": 0.6, "recover": 0.9, "cooldown": 5, "knockback": 11, "use_range": [0, 4.0]}
+      ],
+      "devour": {
+        "ep_share": 0.25,
+        "analysis_time": 240,
+        "skills": [
+          {"skill": "poison_breath", "source": "C"},
+          {"skill": "heat_source_perception", "source": "U"}
+        ]
+      }
+    }
+  ]
+}

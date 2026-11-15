@@ -1,0 +1,89 @@
+{
+  "_meta": {
+    "table": "tuning",
+    "source": "Design values for this project",
+    "notes": [
+      "Every number in this file is [DESIGN]: a starting value for tuning, not canon.",
+      "power: an attacker's damage multiplier is sqrt(EP / power_reference_ep), so EP is quantity while skills and technique still matter.",
+      "exposure: surviving exposure_to_resistance x max HP of one damage type earns its Resistance; each later step of the merge tree costs exposure_step_factor times more.",
+      "capacity: every acquired skill reserves part of the magicule pool; skills granted at birth are free.",
+      "analysis times in other tables are the unlinked times in seconds; the Great Sage link multiplies them by analysis_link_factor."
+    ]
+  },
+  "combat": {
+    "resistance_factor": 0.5,
+    "power_reference_ep": 100,
+    "exposure_to_resistance": 1.2,
+    "exposure_step_factor": 3.0,
+    "stagger_decay_per_second": 6.0,
+    "stagger_duration": 3.5,
+    "flinch_time": 0.3,
+    "invulnerable_after_hit": 0.4,
+    "corpse_lifetime": 180.0,
+    "aim_assist_range": 14.0,
+    "aim_assist_close_range": 3.5,
+    "aim_assist_angle": 50.0
+  },
+  "vitals": {
+    "hp_regen_per_second": 0.0,
+    "self_regeneration_fraction_per_second": 0.012,
+    "magicule_regen_fraction_per_density": 0.004,
+    "stamina_max": 100.0,
+    "stamina_regen_per_second": 30.0,
+    "minimum_capacity_fraction": 0.1
+  },
+  "capacity_cost": {
+    "common": 10,
+    "extra": 40,
+    "unique": 400,
+    "ultimate": 4000,
+    "intrinsic": 0,
+    "ultimate_gift": 1000,
+    "manas": 0
+  },
+  "predator": {
+    "devour_range": 2.8,
+    "devour_arc": 120.0,
+    "devour_time_item": 0.45,
+    "devour_time_body": 1.1,
+    "devour_time_living": 1.6,
+    "absorb_time_factor": 2.0,
+    "living_base_chance": 0.25,
+    "living_staggered_bonus": 0.5,
+    "living_max_chance": 0.95,
+    "failed_devour_recover": 0.8,
+    "analysis_slots": 1,
+    "parallel_processing_slots": 2,
+    "analysis_link_factor": 0.02,
+    "analysis_known_time": 0.5,
+    "isolation_seconds_per_item": 1.0,
+    "form_upkeep_base": 1.5,
+    "form_upkeep_min": 0.2,
+    "form_upkeep_max": 12.0
+  },
+  "practice": {
+    "water_current_motion_seconds": 12.0,
+    "hydraulic_propulsion_uses": 5,
+    "water_blade_uses": 8,
+    "mana_perception_seconds": 4.0,
+    "remembered_factor": 0.15
+  },
+  "traversal": {
+    "cling_stamina_per_second": 22.0,
+    "cling_speed": 3.2,
+    "squeeze_speed_factor": 0.45,
+    "swim_speed_factor": 0.45,
+    "water_current_motion_factor": 1.1,
+    "jet_speed": 16.0,
+    "jet_time": 0.35,
+    "water_per_gulp": 5,
+    "water_capacity": 40
+  },
+  "death": {
+    "cards_min": 6,
+    "cards_max": 8,
+    "picks": 3,
+    "slow_motion_scale": 0.25,
+    "low_health_fraction": 0.3
+  }
+}

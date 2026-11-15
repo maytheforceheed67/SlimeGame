@@ -115,9 +115,43 @@ def check_ranks() -> tuple[dict, dict]:
     return ranks, danger
 
 
-def check_resistances() -> dict:
+ATTACK_KINDS = {"melee", "lunge", "projectile", "cone"}
+
+
+def check_attack(attack: object, where: str, damage: dict, statuses: dict) -> None:
+    """Validates one attack record (creature attack, race moveset or skill active)."""
+    if attack is None:
+        return
+    if not isinstance(attack, dict):
+        problem(f"{where}: must be an object")
+        return
+    if not isinstance(attack.get("id"), str):
+        problem(f"{where}: needs an id")
+    if attack.get("kind") == "jet":
+        return
+    if attack.get("kind") not in ATTACK_KINDS:
+        problem(f"{where}: kind must be one of {sorted(ATTACK_KINDS)} or jet")
+    need(damage, attack.get("damage_type") or "<missing>", f"{where} damage_type")
+    if not isinstance(attack.get("damage"), (int, float)):
+        problem(f"{where}: needs a numeric damage")
+    status = attack.get("status")
+    if status is not None:
+        if not isinstance(status, dict):
+            problem(f"{where}: status must be an object")
+        else:
+            need(statuses, status.get("id") or "<missing>", f"{where} status")
+    band = attack.get("use_range")
+    if band is not None and not (isinstance(band, list) and len(band) == 2 and band[0] <= band[1]):
+        problem(f"{where}: use_range must be [min, max]")
+
+
+def check_resistances() -> tuple[dict, dict, dict]:
     damage_file, resist_file = "damage_types.json", "resistances.json"
-    damage = by_id(read(damage_file), "damage_types", damage_file)
+    damage_root = read(damage_file)
+    damage = by_id(damage_root, "damage_types", damage_file)
+    statuses = by_id(damage_root, "statuses", damage_file)
+    for status_id, status in statuses.items():
+        need(damage, status.get("damage_type") or "<missing>", f"{damage_file}: status '{status_id}' damage_type")
     resist_root = read(resist_file)
     resistances = by_id(resist_root, "resistances", resist_file)
 
@@ -147,14 +181,15 @@ def check_resistances() -> dict:
         if merge.get("result") in (None, ""):
             problem(f"{where}: needs a result")
         need(resistances, merge.get("result"), f"{where} result")
-    return resistances
+    return resistances, damage, statuses
 
 
-def check_skills() -> dict:
+def check_skills(damage: dict, statuses: dict) -> dict:
     skill_file, fusion_file = "skills.json", "fusions.json"
     skill_root = read(skill_file)
     categories = by_id(skill_root, "categories", skill_file)
     skills = by_id(skill_root, "skills", skill_file)
+    sub_functions: dict[str, str] = {}
     for skill_id, skill in skills.items():
         where = f"{skill_file}: skill '{skill_id}'"
         if skill.get("category") not in categories:
@@ -163,6 +198,19 @@ def check_skills() -> dict:
             check_label(f"{where} category_label", skill["category_label"])
         if not isinstance(skill.get("sub_functions", []), list):
             problem(f"{where}: sub_functions must be a list")
+            continue
+        for function in skill.get("sub_functions", []):
+            function_id = function.get("id") if isinstance(function, dict) else None
+            if not isinstance(function_id, str) or not ID_PATTERN.match(function_id):
+                problem(f"{where}: every sub-function needs a snake_case id")
+            elif function_id in sub_functions or function_id in skills:
+                problem(f"{where}: sub-function id '{function_id}' is already in use")
+            else:
+                sub_functions[function_id] = skill_id
+                check_label(f"{where} sub-function '{function_id}'", function.get("label"))
+        check_attack(skill.get("active"), f"{where} active", damage, statuses)
+        if "passive" in skill and not isinstance(skill["passive"], dict):
+            problem(f"{where}: passive must be an object")
 
     fusions = by_id(read(fusion_file), "fusions", fusion_file)
     for fusion_id, fusion in fusions.items():
@@ -177,14 +225,64 @@ def check_skills() -> dict:
             problem(f"{where}: an evolution has exactly one input")
         if fusion.get("result") in (None, ""):
             problem(f"{where}: needs a result")
-        need_all(skills, fusion.get("inputs"), f"{where} inputs")
+        need_all({**skills, **sub_functions}, fusion.get("inputs"), f"{where} inputs")
         need(skills, fusion.get("result"), f"{where} result")
         need_all(skills, fusion.get("sacrifices"), f"{where} sacrifices")
         need_all(skills, fusion.get("absorbs"), f"{where} absorbs")
     return skills
 
 
-def check_world(ranks: dict, skills: dict) -> None:
+def check_creatures(ranks: dict, skills: dict, resistances: dict, damage: dict, statuses: dict) -> dict:
+    file_name = "creatures.json"
+    creatures = by_id(read(file_name), "creatures", file_name)
+    for creature_id, creature in creatures.items():
+        where = f"{file_name}: '{creature_id}'"
+        need(ranks, creature.get("rank") or "<missing>", f"{where} rank")
+        check_label(f"{where} rank_label", creature.get("rank_label"))
+        rank = ranks.get(creature.get("rank"), {})
+        ep = creature.get("ep")
+        if not isinstance(ep, int) or ep <= 0:
+            problem(f"{where}: ep must be a positive integer")
+        elif rank.get("ep_min") is not None:
+            upper = rank.get("ep_max")
+            if ep < rank["ep_min"] or (upper is not None and ep >= upper):
+                problem(f"{where}: ep {ep} is outside the band of rank '{creature.get('rank')}'")
+        need_all(resistances, creature.get("resistances"), f"{where} resistances")
+        need_all(damage, creature.get("weak_to"), f"{where} weak_to")
+        for key in ("model", "body", "stats"):
+            if not isinstance(creature.get(key), dict):
+                problem(f"{where}: needs a '{key}' object")
+        attacks = creature.get("attacks")
+        if not isinstance(attacks, list) or not attacks:
+            problem(f"{where}: needs at least one attack")
+            attacks = []
+        for attack in attacks:
+            check_attack(attack, f"{where} attack", damage, statuses)
+            if isinstance(attack, dict) and "use_range" not in attack:
+                problem(f"{where}: attack '{attack.get('id')}' needs use_range")
+        devour = creature.get("devour") or {}
+        for gain in devour.get("skills") or []:
+            need(skills, gain.get("skill") or "<missing>", f"{where} devour skill")
+            if gain.get("source") not in ("C", "U", "D"):
+                problem(f"{where}: devour gain source must be C, U or D")
+    return creatures
+
+
+def check_tuning() -> None:
+    file_name = "tuning.json"
+    root = read(file_name)
+    for section, values in root.items():
+        if section == "_meta":
+            continue
+        if not isinstance(values, dict):
+            problem(f"{file_name}: '{section}' must be an object")
+            continue
+        for key, value in values.items():
+            if not isinstance(value, (int, float)) or isinstance(value, bool):
+                problem(f"{file_name}: {section}.{key} must be a number")
+
+
+def check_world(ranks: dict, skills: dict, damage: dict, statuses: dict) -> None:
     race_file, region_file, spin_file = "races.json", "regions.json", "spin.json"
     region_root = read(region_file)
     regions = by_id(region_root, "regions", region_file)
@@ -232,6 +330,8 @@ def check_world(ranks: dict, skills: dict) -> None:
             check_label(f"{where} field_labels", label)
         need(ranks, race.get("base_rank"), f"{where} base_rank")
         need_all(skills, race.get("intrinsic_skills"), f"{where} intrinsic_skills")
+        for slot, attack in (race.get("moveset") or {}).items():
+            check_attack(attack, f"{where} moveset.{slot}", damage, statuses)
         need_all(regions, race.get("spawn_regions"), f"{where} spawn_regions")
         if not race.get("spawn_regions") and not race.get("spawn_rule"):
             problem(f"{where}: needs spawn_regions or a spawn_rule")
@@ -283,9 +383,11 @@ def check_voice() -> None:
 
 def main() -> int:
     ranks, _danger = check_ranks()
-    check_resistances()
-    skills = check_skills()
-    check_world(ranks, skills)
+    resistances, damage, statuses = check_resistances()
+    skills = check_skills(damage, statuses)
+    check_creatures(ranks, skills, resistances, damage, statuses)
+    check_tuning()
+    check_world(ranks, skills, damage, statuses)
     check_voice()
     if problems:
         for message in problems:

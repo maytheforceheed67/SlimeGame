@@ -4,6 +4,7 @@
 [ext_resource type="Script" path="res://scripts/ui/status_panel.gd" id="2_status"]
 [ext_resource type="Script" path="res://scripts/ui/voice_panel.gd" id="3_voice"]
 [ext_resource type="Script" path="res://scripts/ui/debug_overlay.gd" id="4_debug"]
+[ext_resource type="Script" path="res://scripts/ui/world_overlay.gd" id="5_world"]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_hud")
@@ -11,6 +12,10 @@ script = ExtResource("1_hud")
 [node name="Veil" type="ColorRect" parent="."]
 mouse_filter = 2
 color = Color(0, 0, 0, 0)
+
+[node name="WorldOverlay" type="Control" parent="."]
+mouse_filter = 2
+script = ExtResource("5_world")
 
 [node name="StatusPanel" type="Control" parent="."]
 mouse_filter = 2
