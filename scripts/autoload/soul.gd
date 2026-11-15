@@ -31,7 +31,8 @@ var lore: Dictionary = {}
 var dungeon_records: Dictionary = {}
 
 ## What the last death grants the next birth (section 5). Replaced at every
-## death, read at every birth. Currently only {"resistances": [id]}.
+## death, read at every birth: "resistances" (the imprint of the cause),
+## "wish_skills", "wish_resistances" and "reel_weights" (the last thoughts).
 var birth_grants: Dictionary = {}
 ## Short record of each finished life, oldest first.
 var past_lives: Array = []
@@ -55,6 +56,14 @@ func record_death(life: LifeState, damage_type_id: String, imprint_resistance: S
 	while past_lives.size() > PAST_LIVES_KEPT:
 		past_lives.pop_front()
 	birth_grants = {"resistances": [imprint_resistance] if imprint_resistance != "" else []}
+	save_to_disk()
+
+
+## Adds what the chosen last thoughts grant to the next birth (see Wishes).
+func set_wishes(grants: Dictionary) -> void:
+	birth_grants["wish_skills"] = grants.get("skills", [])
+	birth_grants["wish_resistances"] = grants.get("resistances", [])
+	birth_grants["reel_weights"] = grants.get("reel_weights", {})
 	save_to_disk()
 
 

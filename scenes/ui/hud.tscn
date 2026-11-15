@@ -11,13 +11,15 @@
 [ext_resource type="Script" path="res://scripts/ui/senses_overlay.gd" id="9_senses"]
 [ext_resource type="Script" path="res://scripts/ui/dialogue_panel.gd" id="10_dialogue"]
 [ext_resource type="Script" path="res://scripts/ui/name_panel.gd" id="11_name"]
+[ext_resource type="Script" path="res://scripts/ui/world_veil.gd" id="12_veil"]
+[ext_resource type="Script" path="res://scripts/ui/death_screen.gd" id="13_death"]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_hud")
 
 [node name="Veil" type="ColorRect" parent="."]
 mouse_filter = 2
-color = Color(0, 0, 0, 0)
+script = ExtResource("12_veil")
 
 [node name="WorldOverlay" type="Control" parent="."]
 mouse_filter = 2
@@ -50,6 +52,10 @@ script = ExtResource("10_dialogue")
 [node name="NamePanel" type="Control" parent="."]
 mouse_filter = 2
 script = ExtResource("11_name")
+
+[node name="DeathScreen" type="Control" parent="."]
+mouse_filter = 2
+script = ExtResource("13_death")
 
 [node name="StatusSheet" type="Control" parent="."]
 mouse_filter = 2

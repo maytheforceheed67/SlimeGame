@@ -33,19 +33,20 @@ func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
+	# Bottom-aligned in a box container, which re-fits the panel to each
+	# line: a panel sized by anchors alone would never shrink again.
+	var frame := VBoxContainer.new()
+	frame.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	frame.offset_bottom = -64.0
+	frame.alignment = BoxContainer.ALIGNMENT_END
+	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(frame)
 	_panel = PanelContainer.new()
 	_panel.add_theme_stylebox_override("panel", UiStyle.panel_box(UiStyle.BROADCAST_COLOR))
-	_panel.anchor_left = 0.5
-	_panel.anchor_right = 0.5
-	_panel.anchor_top = 1.0
-	_panel.anchor_bottom = 1.0
-	_panel.offset_left = -400.0
-	_panel.offset_right = 400.0
-	_panel.offset_top = -64.0
-	_panel.offset_bottom = -64.0
-	_panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	_panel.custom_minimum_size.x = 800.0
+	_panel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	_panel.visible = false
-	add_child(_panel)
+	frame.add_child(_panel)
 
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 6)
@@ -169,6 +170,7 @@ func _show(node_id: String) -> void:
 			_options.append(option)
 	_selected = 0
 	for child in _option_box.get_children():
+		_option_box.remove_child(child)
 		child.queue_free()
 	for i in _options.size():
 		var row := UiStyle.label(16)
@@ -205,9 +207,7 @@ func _select(index: int) -> void:
 func _refresh_options() -> void:
 	var rows := _option_box.get_children()
 	for i in mini(rows.size(), _options.size()):
-		var row := rows[rows.size() - _options.size() + i] as Label
-		if row == null:
-			continue
+		var row := rows[i] as Label
 		var chosen := i == _selected
 		row.text = "%s %d.  %s" % ["›" if chosen else "  ", i + 1, str(_options[i].get("text", ""))]
 		row.add_theme_color_override("font_color", UiStyle.WORLD_COLOR if chosen else UiStyle.MUTED_COLOR)

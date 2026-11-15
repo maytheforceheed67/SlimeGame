@@ -1,0 +1,103 @@
+{
+  "_meta": {
+    "table": "wish_cards",
+    "source": "Design document, section 5 (all cards are [DESIGN]; the thoughts are original wording)",
+    "notes": [
+      "At each death six to eight cards are offered and up to three may be chosen. Each chosen card shapes the next life.",
+      "when decides how strongly a card fits the life that just ended: stat/at_least scores a tally of that life against a threshold; cause lists damage types that fit the death; always puts the card in every offer. Cards that fit come first; if fewer than six fit, the nearest misses fill the offer (what you lacked).",
+      "prologue marks the thoughts read at the very first death, before the first life. They are granted without a choice, as a nod to canon and as the tutorial for this screen.",
+      "result.kind: skill (granted at birth; stacks_into upgrades it when two chosen cards grant the same skill), resistance, reel_weight (extra weight on a spin reel; the spin arrives in Milestone 1), or nothing.",
+      "A card's result is shown only once the soul has seen it happen. Until then the card shows a question mark.",
+      "Most results are utility, in line with the rule that only about one Unique skill in ten is an obvious combat skill."
+    ]
+  },
+  "cards": [
+    {
+      "id": "take_in_everything",
+      "thought": "I wanted to take all of it in.",
+      "reason": "You devoured a great deal.",
+      "when": {"stat": "devours", "at_least": 6},
+      "prologue": true,
+      "first_death": true,
+      "result": {"kind": "skill", "skill": "predator"},
+      "label": "DESIGN"
+    },
+    {
+      "id": "wished_to_understand",
+      "thought": "If only I had understood what I was looking at.",
+      "reason": "You studied what you met.",
+      "when": {"stat": "scans", "at_least": 4},
+      "prologue": true,
+      "result": {"kind": "skill", "skill": "sage", "stacks_into": "great_sage"},
+      "label": "DESIGN"
+    },
+    {
+      "id": "more_to_understand",
+      "thought": "There was so much I never worked out.",
+      "reason": "You analysed what you ate.",
+      "when": {"stat": "analyses", "at_least": 3},
+      "prologue": true,
+      "result": {"kind": "skill", "skill": "sage", "stacks_into": "great_sage"},
+      "label": "DESIGN"
+    },
+    {
+      "id": "pain_to_stop",
+      "thought": "I only wanted it to stop hurting.",
+      "reason": "You spent a long time close to death.",
+      "when": {"stat": "seconds_at_low_health", "at_least": 15},
+      "prologue": true,
+      "result": {"kind": "resistance", "resistance": "pain_nullification"},
+      "label": "DESIGN"
+    },
+    {
+      "id": "body_cannot_bleed",
+      "thought": "A body that could not bleed would have been enough.",
+      "reason": "You died of a wound.",
+      "when": {"cause": ["blade"]},
+      "prologue": true,
+      "result": {"kind": "reel_weight", "reel": "race", "value": "slime", "weight": 20},
+      "label": "DESIGN"
+    },
+    {
+      "id": "idle_worry",
+      "thought": "Did I leave the lamp burning?",
+      "reason": "Some thoughts are only thoughts.",
+      "when": {"always": true},
+      "prologue": true,
+      "result": {"kind": "nothing"},
+      "label": "DESIGN"
+    },
+    {
+      "id": "wanted_to_see",
+      "thought": "I never saw it coming. I never saw anything.",
+      "reason": "You spent a long time in the dark.",
+      "when": {"stat": "seconds_blind", "at_least": 45},
+      "result": {"kind": "skill", "skill": "mana_perception"},
+      "label": "DESIGN"
+    },
+    {
+      "id": "quiet_water",
+      "thought": "It was quiet under the water. I could have stayed.",
+      "reason": "You spent a long time under water.",
+      "when": {"stat": "seconds_in_water", "at_least": 40},
+      "result": {"kind": "skill", "skill": "water_current_motion"},
+      "label": "DESIGN"
+    },
+    {
+      "id": "wanted_a_voice",
+      "thought": "I never said a word out loud.",
+      "reason": "You spoke only in thought.",
+      "when": {"stat": "talks", "at_least": 2},
+      "result": {"kind": "skill", "skill": "ultra_sound_waves"},
+      "label": "DESIGN"
+    },
+    {
+      "id": "hard_shell",
+      "thought": "I wish I had been harder to break.",
+      "reason": "You took a beating.",
+      "when": {"stat": "damage_taken", "at_least": 250},
+      "result": {"kind": "skill", "skill": "body_armor"},
+      "label": "DESIGN"
+    }
+  ]
+}

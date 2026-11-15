@@ -20,6 +20,7 @@ func _run() -> void:
 	DirAccess.make_dir_recursive_absolute(_out_dir)
 	populate = _stage.begins_with("cave") or _stage.begins_with("veldora") or _stage == "blind"
 	sighted = _stage != "blind"
+	sequences = _stage == "death"
 	await start_main()
 	if has_method("_stage_" + _stage):
 		await call("_stage_" + _stage)
@@ -177,3 +178,20 @@ func _stage_veldora() -> void:
 	dialogue.advance()
 	await seconds(1.5)
 	await shot("veldora_dialogue")
+
+
+func _stage_death() -> void:
+	var death: DeathScreen = main.get_node("HUD/DeathScreen")
+	await seconds(8.5)
+	await shot("prologue")
+	death.confirm()
+	await seconds(5.0)
+	Game.life.stats = {"devours": 10.0, "scans": 6.0, "analyses": 4.0, "seconds_blind": 80.0, "kills": 2.0, "talks": 3.0}
+	Game.die("blade")
+	await seconds(1.6)
+	await shot("dying")
+	await seconds(3.0)
+	death.toggle(0)
+	death.toggle(2)
+	await seconds(0.5)
+	await shot("last_thoughts")

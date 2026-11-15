@@ -39,6 +39,8 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	# The Voice keeps its own pace even when the world slows down.
+	delta /= maxf(Engine.time_scale, 0.01)
 	if _cooldown > 0.0:
 		_cooldown -= delta
 		return

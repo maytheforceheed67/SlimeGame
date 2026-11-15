@@ -35,6 +35,7 @@ var creatures: Dictionary = {}
 var items: Dictionary = {}
 var recipes: Dictionary = {}
 var dialogues: Dictionary = {}
+var wish_cards: Dictionary = {}
 
 var races: Dictionary = {}
 var regions: Dictionary = {}
@@ -84,6 +85,7 @@ func reload() -> void:
 	items = _by_id(_read("items.json"), "items", "items.json")
 	recipes = _by_id(_read("recipes.json"), "recipes", "recipes.json")
 	dialogues = _by_id(_read("dialogues.json"), "dialogues", "dialogues.json")
+	wish_cards = _by_id(_read("wish_cards.json"), "cards", "wish_cards.json")
 
 	var race_file := _read("races.json")
 	races = _by_id(race_file, "races", "races.json")
@@ -399,6 +401,17 @@ func _cross_check() -> void:
 			_need(nodes, node.get("next"), "dialogues.json: '%s' node '%s' next" % [id, node_id])
 			for option: Variant in node.get("options", []):
 				_need(nodes, option.get("next"), "dialogues.json: '%s' node '%s' option" % [id, node_id])
+
+	for id: String in wish_cards:
+		var result: Variant = wish_cards[id].get("result", {})
+		if not (result is Dictionary):
+			_problem("wish_cards.json: '%s' needs a result" % id)
+			continue
+		_need(skills, result.get("skill"), "wish_cards.json: '%s' skill" % id)
+		_need(skills, result.get("stacks_into"), "wish_cards.json: '%s' stacks_into" % id)
+		_need(resistances, result.get("resistance"), "wish_cards.json: '%s' resistance" % id)
+		if str(result.get("kind", "")) == "reel_weight":
+			_need(races, result.get("value"), "wish_cards.json: '%s' reel value" % id)
 
 	var fusion_inputs: Dictionary = skills.duplicate()
 	fusion_inputs.merge(sub_functions)

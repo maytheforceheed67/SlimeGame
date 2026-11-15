@@ -19,6 +19,7 @@ var _stamina_label: Label
 var _status_label: Label
 var _skill_label: Label
 var _item_label: Label
+var _panel: PanelContainer
 
 
 func _ready() -> void:
@@ -30,6 +31,7 @@ func _ready() -> void:
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	panel.position = Vector2(20.0, 20.0)
 	add_child(panel)
+	_panel = panel
 
 	var column := VBoxContainer.new()
 	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -57,6 +59,7 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	var life := Game.life
+	_panel.visible = life != null
 	if life == null:
 		return
 	var rank := Database.rank_for_ep(life.ep)

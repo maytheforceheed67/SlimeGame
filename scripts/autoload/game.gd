@@ -20,8 +20,10 @@ const REBIRTH_DELAY := 4.0
 var life: LifeState = null
 ## Number of open screens that take over input (dialogue, status sheet...).
 var ui_locks := 0
-## When true, death waits for the death sequence screen to call begin_life().
-var death_sequence_enabled := false
+## When true, the prologue and the death sequence (last thoughts) are shown
+## and the death screen starts the next life. Tests switch this off and get a
+## plain timed rebirth.
+var sequences_enabled := true
 
 var _lifesteal := 0.0
 var _regenerates := false
@@ -32,6 +34,7 @@ var _rules_by_stat: Dictionary = {}
 
 func _enter_tree() -> void:
 	InputBindings.install()
+	creature_died.connect(func(_creature: Creature) -> void: count("kills"))
 
 
 func is_alive() -> bool:
@@ -112,10 +115,16 @@ func begin_life() -> void:
 	})
 	for skill_id: String in race.get("intrinsic_skills", []):
 		grant_skill(skill_id, true)
-	for skill_id: String in Soul.birth_grants.get("skills", []):
-		grant_skill(skill_id, true)
 	for resistance_id: String in Soul.birth_grants.get("resistances", []):
 		grant_resistance(resistance_id, true)
+	var wish_skills: Array = Soul.birth_grants.get("wish_skills", [])
+	var wish_resistances: Array = Soul.birth_grants.get("wish_resistances", [])
+	if not wish_skills.is_empty() or not wish_resistances.is_empty():
+		Voice.say("wish_takes_shape")
+	for skill_id: String in wish_skills:
+		grant_skill(skill_id, true)
+	for resistance_id: String in wish_resistances:
+		grant_resistance(resistance_id)
 
 	_refresh_vitals()
 	life.vitals.hp = life.vitals.max_hp
@@ -356,11 +365,23 @@ func die(damage_type_id: String) -> void:
 		Voice.say("death_imprint", {"resistance": Database.resistance_name(imprint)})
 
 	Soul.record_death(life, damage_type_id, imprint)
+	if not is_sighted():
+		count("died_sightless")
 	life_ended.emit(life, damage_type_id)
-	if death_sequence_enabled:
+	if sequences_enabled:
 		return
 
 	await get_tree().create_timer(REBIRTH_DELAY).timeout
+	Voice.say("rebirth")
+	begin_life()
+
+
+## Called by the death screen once the last thoughts are chosen: stores what
+## they grant, lets the soul remember what each card led to, and starts the
+## next life.
+func reincarnate(chosen_cards: Array[Dictionary]) -> void:
+	Soul.set_wishes(Wishes.grants(chosen_cards))
+	Wishes.remember(chosen_cards, life.life_number if life != null else 0)
 	Voice.say("rebirth")
 	begin_life()
 

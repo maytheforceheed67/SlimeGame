@@ -11,6 +11,9 @@ func _ready() -> void:
 	_player.fell_out_of_world.connect(_place_player)
 	if not Database.problems.is_empty():
 		Voice.say("data_fault", {"count": Database.problems.size()})
+	# The very first birth is preceded by the death that led to it.
+	if Game.sequences_enabled and Soul.lives_lived == 0 and Soul.birth_grants.is_empty():
+		await $HUD/DeathScreen.play_prologue()
 	Game.begin_life()
 
 

@@ -39,7 +39,13 @@ func _run() -> void:
 	pass
 
 
+## Set true before start_main() to play the prologue and the full death
+## sequence; by default tests get a plain timed rebirth.
+var sequences := false
+
+
 func start_main() -> void:
+	Game.sequences_enabled = sequences
 	Level.populate_enabled = populate
 	main = MAIN_SCENE.instantiate()
 	add_child(main)

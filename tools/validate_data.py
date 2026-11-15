@@ -337,6 +337,40 @@ def check_dialogues(skills: dict) -> None:
                 problem(f"{spot}: cannot be reached from the start node")
 
 
+def check_wish_cards(skills: dict, resistances: dict, damage: dict) -> None:
+    file_name = "wish_cards.json"
+    cards = by_id(read(file_name), "cards", file_name)
+    if not any(card.get("when", {}).get("always") for card in cards.values()):
+        problem(f"{file_name}: at least one card must always be offered")
+    for card_id, card in cards.items():
+        where = f"{file_name}: '{card_id}'"
+        for key in ("thought", "reason"):
+            if not isinstance(card.get(key), str) or not card[key].strip():
+                problem(f"{where}: needs {key}")
+        when = card.get("when")
+        if not isinstance(when, dict) or not ({"stat", "cause", "always"} & set(when)):
+            problem(f"{where}: when needs stat, cause or always")
+        else:
+            need_all(damage, when.get("cause"), f"{where} when.cause")
+            if "stat" in when and not isinstance(when.get("at_least"), (int, float)):
+                problem(f"{where}: when.stat needs at_least")
+        result = card.get("result")
+        if not isinstance(result, dict):
+            problem(f"{where}: needs a result")
+            continue
+        kind = result.get("kind")
+        if kind == "skill":
+            need(skills, result.get("skill") or "<missing>", f"{where} skill")
+            need(skills, result.get("stacks_into"), f"{where} stacks_into")
+        elif kind == "resistance":
+            need(resistances, result.get("resistance") or "<missing>", f"{where} resistance")
+        elif kind == "reel_weight":
+            if result.get("reel") != "race" or not isinstance(result.get("weight"), (int, float)):
+                problem(f"{where}: reel_weight needs reel 'race' and a numeric weight")
+        elif kind != "nothing":
+            problem(f"{where}: result kind must be skill, resistance, reel_weight or nothing")
+
+
 def check_tuning() -> None:
     file_name = "tuning.json"
     root = read(file_name)
@@ -457,6 +491,7 @@ def main() -> int:
     creatures = check_creatures(ranks, skills, resistances, damage, statuses)
     check_items(creatures)
     check_dialogues(skills)
+    check_wish_cards(skills, resistances, damage)
     check_tuning()
     check_world(ranks, skills, damage, statuses)
     check_voice()
