@@ -243,7 +243,8 @@ func _swallow_projectiles() -> void:
 
 
 func _stop() -> void:
-	if target is Harvestable and is_instance_valid(target):
+	# Validity first: remains can fade away in the middle of a devour.
+	if is_instance_valid(target) and target is Harvestable:
 		target.set_devour_progress(0.0)
 	target = null
 	progress = 0.0

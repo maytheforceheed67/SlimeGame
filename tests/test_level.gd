@@ -40,6 +40,11 @@ func _run() -> void:
 	Input.action_release("squeeze")
 	await frames(20)
 	check(player.is_squeezed(), "and stays flat while there is rock overhead")
+	life.skills.append("predator")
+	life.forms.append("giant_bat")
+	check(not player.set_form("giant_bat") and not player.in_form(), "and cannot take another shape with no room to stand")
+	life.skills.erase("predator")
+	life.forms.clear()
 	await hold("move_right", 300)
 	check(player.global_position.x > 20.5 and not player.is_squeezed(), "it stands up again on the far side")
 
@@ -78,6 +83,19 @@ func _run() -> void:
 	Input.action_release("jump")
 	check(player.global_position.y > -1.4, "with it the slime swims up at will")
 
+	# The lake is several adjoining volumes; nudging across a seam and back
+	# must not count as leaving the water.
+	player.global_position = Vector3(37.0, -2.0, -4.6)
+	player.velocity = Vector3.ZERO
+	await frames(6)
+	player.global_position = Vector3(37.0, -2.0, -3.9)
+	player.velocity = Vector3.ZERO
+	await frames(6)
+	player.global_position = Vector3(37.0, -2.0, -4.6)
+	player.velocity = Vector3.ZERO
+	await frames(6)
+	check(player.in_water(), "crossing a seam in the lake and turning back keeps the slime in water")
+
 	Game.grant_skill("predator", true)
 	await place_at_cell(18, 47, -2.0)
 	await frames(3)
@@ -99,7 +117,22 @@ func _run() -> void:
 	await place_at_cell(37, 27)
 	Game.add_item("water", 20)
 	check(life.selected_skill == "", "nothing is bound to the skill button yet")
-	for i in 7:
+	for i in 3:
+		await tap("attack_skill")
+		await frames(40)
+	check(life.practice.get("water_spits", 0.0) == 3.0, "with nothing bound, the skill button spits stored water")
+	# Owning another skill must not shut the practice out.
+	Game.grant_skill("ultra_sound_waves")
+	check(life.selected_skill == "ultra_sound_waves", "a first active skill binds itself")
+	var magicules_before := life.magicules
+	await tap("attack_skill")
+	check(life.magicules < magicules_before - 10.0 and life.practice.get("water_spits", 0.0) == 3.0,
+			"the bound skill is used, not the practice move")
+	await frames(100)
+	await tap("skill_next")
+	check(life.selected_skill == "practice:water_blade" and Game.selected_skill_name() == "Water Spit (practice)",
+			"the practice move can be bound in its place")
+	for i in 4:
 		await tap("attack_skill")
 		await frames(40)
 	check(not life.has_skill("water_blade") and life.practice.get("water_spits", 0.0) == 7.0, "seven spits are not yet a blade")

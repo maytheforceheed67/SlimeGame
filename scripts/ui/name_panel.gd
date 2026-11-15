@@ -60,11 +60,10 @@ func is_open() -> bool:
 ## Opens the panel and waits for the names: [given name, family name].
 func ask() -> Array:
 	_open = true
-	Game.ui_locks += 1
+	Game.lock_ui(true)
 	_family_edit.text = DEFAULT_FAMILY
 	_given_edit.text = GIVEN_SUGGESTIONS[randi() % GIVEN_SUGGESTIONS.size()]
 	_panel.visible = true
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	_given_edit.grab_focus()
 	_given_edit.select_all()
 	var names: Array = await _answered
@@ -82,9 +81,8 @@ func submit(given: String, family: String) -> void:
 	if family == "":
 		family = DEFAULT_FAMILY
 	_open = false
-	Game.ui_locks = maxi(0, Game.ui_locks - 1)
+	Game.unlock_ui(true)
 	_panel.visible = false
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	_answered.emit(given, family)
 
 

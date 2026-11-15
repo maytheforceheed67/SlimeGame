@@ -35,6 +35,8 @@ var _impulse := Vector3.ZERO
 var _wander_to := Vector3.ZERO
 var _wander_timer := 0.0
 var _strafe := 1.0
+## Gave up a chase at the end of its leash and is heading home.
+var _returning := false
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)
 
 
@@ -193,11 +195,22 @@ func _physics_process(delta: float) -> void:
 
 func _update_target() -> void:
 	var stats: Dictionary = data.get("stats", {})
+	var from_home := global_position.distance_to(home)
 	if _target != null:
 		var gone: bool = not is_instance_valid(_target) or not _target.get_vitals().alive
-		if gone or global_position.distance_to(home) > float(stats.get("leash", 20.0)):
+		var too_far := from_home > float(stats.get("leash", 20.0))
+		if gone or too_far:
 			_target = null
+			_returning = too_far
+		else:
+			_returning = false
 		return
+	if _returning:
+		# It ignores prey until it is home again; otherwise it would turn
+		# straight back and the leash would never hold.
+		if from_home > 3.0:
+			return
+		_returning = false
 	for node in get_tree().get_nodes_in_group(Combat.GROUP):
 		var other := node as Node3D
 		if other == null or not Combat.are_hostile(self, other) or not other.get_vitals().alive:
@@ -244,6 +257,10 @@ func _hunt(delta: float) -> Vector3:
 
 
 func _wander(delta: float) -> Vector3:
+	if _returning:
+		var way_home := home - global_position
+		way_home.y = 0.0
+		return way_home.normalized() * _speed * 0.8 if way_home.length() > 0.6 else Vector3.ZERO
 	_wander_timer -= delta
 	if _wander_timer <= 0.0:
 		_wander_timer = randf_range(2.5, 6.0)

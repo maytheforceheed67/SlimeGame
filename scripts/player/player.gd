@@ -35,7 +35,9 @@ var _impulse := Vector3.ZERO
 var _flinch := 0.0
 var _invulnerable := 0.0
 
-var _water: WaterVolume
+## Every water volume the body overlaps, oldest first. A lake can be made
+## of several adjoining volumes, so leaving one must not mean leaving water.
+var _waters: Array[WaterVolume] = []
 var _squeezed := false
 var _clinging := false
 var _wall_normal := Vector3.ZERO
@@ -120,12 +122,19 @@ func take_hit(hit: Dictionary) -> float:
 
 ## True while the body's centre is below a water surface.
 func in_water() -> bool:
-	return _water != null and get_aim_origin().y < _water.surface_y
+	var volume := _current_water()
+	return volume != null and get_aim_origin().y < volume.surface_y
 
 
 ## The water the body is in, or null.
 func water() -> WaterVolume:
-	return _water if in_water() else null
+	return _current_water() if in_water() else null
+
+
+func _current_water() -> WaterVolume:
+	while not _waters.is_empty() and not is_instance_valid(_waters.back()):
+		_waters.pop_back()
+	return _waters.back() if not _waters.is_empty() else null
 
 
 func is_clinging() -> bool:
@@ -148,6 +157,9 @@ func set_form(creature_id: String) -> bool:
 		return false
 	if creature_id == life.form_id:
 		return true
+	if _squeezed and not _has_headroom():
+		# Flattened under low rock: there is no room to take another shape.
+		return false
 	if is_instance_valid(_form_visual):
 		_form_visual.queue_free()
 	_form_visual = null
@@ -206,12 +218,12 @@ func interact_target() -> Node3D:
 
 
 func enter_water(volume: WaterVolume) -> void:
-	_water = volume
+	if not _waters.has(volume):
+		_waters.append(volume)
 
 
 func exit_water(volume: WaterVolume) -> void:
-	if _water == volume:
-		_water = null
+	_waters.erase(volume)
 
 
 # --- Aiming ------------------------------------------------------------------
@@ -238,6 +250,16 @@ func aim_direction() -> Vector3:
 
 # --- Frame update ------------------------------------------------------------
 
+## Speaking is read as an event rather than polled: the press that closed a
+## conversation has already been handled there and must not start the next.
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("interact") and Game.can_control():
+		var thing := interact_target()
+		if thing != null:
+			get_viewport().set_input_as_handled()
+			thing.interact(self)
+
+
 func _physics_process(delta: float) -> void:
 	_flinch = maxf(0.0, _flinch - delta)
 	_invulnerable = maxf(0.0, _invulnerable - delta)
@@ -258,10 +280,6 @@ func _physics_process(delta: float) -> void:
 			Game.use_potion()
 		if Input.is_action_just_pressed("form_next"):
 			cycle_form()
-		if Input.is_action_just_pressed("interact"):
-			var thing := interact_target()
-			if thing != null:
-				thing.interact(self)
 		# Feeling for magicules: hold still and hold the sense button.
 		if Input.is_action_pressed("scan") and not Game.is_sighted() and input.length() < 0.1:
 			Game.practice("sensing_seconds", delta)
@@ -431,7 +449,7 @@ func _climb(delta: float, input: Vector2, wants_jump: bool, life: LifeState) -> 
 ## Hydraulic Propulsion turns stored water into a jet dash.
 func _swim(delta: float, wish: Vector3, speed: float, wants_jump: bool, controllable: bool) -> void:
 	var life := Game.life
-	var depth := _water.surface_y - get_aim_origin().y
+	var depth := _current_water().surface_y - get_aim_origin().y
 	var swims := life.has_skill("water_current_motion")
 	speed *= Database.tune("traversal", "water_current_motion_factor", 1.1) if swims \
 			else Database.tune("traversal", "swim_speed_factor", 0.45)
@@ -534,8 +552,14 @@ func _read_attacks(vitals: Vitals) -> void:
 				attack["status"] = tackle_status
 			attacker.begin(attack, aim_direction())
 	elif Input.is_action_just_pressed("attack_skill"):
-		if not use_skill(Game.life.selected_skill):
-			_practise_attack()
+		var bound := Game.life.selected_skill
+		if bound.begins_with(Game.PRACTICE_PREFIX):
+			_practise(bound.trim_prefix(Game.PRACTICE_PREFIX))
+		elif not use_skill(bound) and bound == "":
+			# Nothing bound yet: try whatever can be practised.
+			for skill_id: String in Database.skills:
+				if _practise(skill_id):
+					break
 
 
 ## Uses an owned active skill, paying its cost. Returns whether it started.
@@ -552,18 +576,14 @@ func use_skill(skill_id: String) -> bool:
 
 
 ## A clumsy first attempt at a skill the body does not have yet: its
-## "precursor" attack. Enough attempts and the skill itself is acquired.
-func _practise_attack() -> void:
-	var life := Game.life
-	if life.selected_skill != "":
-		return
-	for skill_id: String in Database.skills:
-		var rule: Variant = Database.skills[skill_id].get("practice")
-		if life.has_skill(skill_id) or not (rule is Dictionary) or not (rule.get("precursor") is Dictionary):
-			continue
-		if _pay_and_begin(rule["precursor"]):
-			Game.practice(str(rule.get("stat", "")), 1.0)
-			return
+## practice move. Enough attempts and the skill itself is acquired.
+## Returns whether the move started.
+func _practise(skill_id: String) -> bool:
+	var move := Game.practice_move(skill_id)
+	if move.is_empty() or Game.life.has_skill(skill_id) or not _pay_and_begin(move):
+		return false
+	Game.practice(str(Database.get_skill(skill_id)["practice"].get("stat", "")), 1.0)
+	return true
 
 
 func _pay_and_begin(attack: Dictionary) -> bool:

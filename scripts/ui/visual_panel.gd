@@ -3,7 +3,9 @@ extends Control
 ## data/visual_config.json appears with an editor for its kind; changes apply
 ## at once. "Save" writes them to user://visual_overrides.json, which is laid
 ## over the shipped file at start-up; "Reset all" returns to the shipped values.
-## The cursor is freed while the panel is open; the game keeps running.
+## While it is open the cursor is free and the body does not take input, so
+## typing in the filter cannot walk the slime about; the world keeps running.
+## It also works while the world is paused.
 
 const STATS_INTERVAL := 0.5
 
@@ -19,6 +21,7 @@ var _stats_in := 0.0
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	if not OS.is_debug_build():
 		set_process(false)
 		set_process_unhandled_input(false)
@@ -71,19 +74,19 @@ func is_open() -> bool:
 
 
 func open() -> void:
-	if _panel == null:
+	if _panel == null or _panel.visible:
 		return
 	if not _built:
 		_build_rows()
 	_panel.visible = true
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	Game.lock_ui(true)
 
 
 func close() -> void:
-	if _panel == null:
+	if _panel == null or not _panel.visible:
 		return
 	_panel.visible = false
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	Game.unlock_ui(true)
 
 
 func _unhandled_input(event: InputEvent) -> void:

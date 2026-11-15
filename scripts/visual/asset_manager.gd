@@ -59,8 +59,13 @@ func instantiate(id: String, params: Dictionary = {}) -> Node3D:
 	if file != "":
 		var loaded := _load_file("res://" + file)
 		if loaded != null:
+			# The file sits under a holder: the fit is applied to the file's
+			# own root, and callers are free to move and scale the holder.
+			var holder := Node3D.new()
+			holder.name = str(loaded.name)
+			holder.add_child(loaded)
 			fit_height(loaded, float(record.get("target_height", 0.0)))
-			return loaded
+			return holder
 		_warn(id, "'%s': %s is missing or unreadable; using its stand-in" % [id, file])
 
 	var placeholder: Dictionary = record.get("placeholder", {})

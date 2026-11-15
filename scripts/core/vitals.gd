@@ -23,8 +23,6 @@ var statuses: Dictionary = {}
 ## damage type id -> damage survived since the last resistance step
 var exposure: Dictionary = {}
 
-var _steps: Dictionary = {}
-
 
 func setup(maximum: float, owned_resistances: Array[String]) -> void:
 	max_hp = maxf(1.0, maximum)
@@ -33,7 +31,6 @@ func setup(maximum: float, owned_resistances: Array[String]) -> void:
 	resistances = owned_resistances
 	statuses.clear()
 	exposure.clear()
-	_steps.clear()
 
 
 ## Changes maximum health, keeping the same fraction of it filled.
@@ -171,18 +168,22 @@ func next_resistance_step(damage_type_id: String) -> String:
 	return ""
 
 
+## Counts damage survived toward the next step of the merge tree. The price
+## of a step depends only on what the body already holds against that damage
+## type: the first Resistance costs the base amount, and each step beyond it
+## costs exposure_step_factor times more.
 func _expose(damage_type_id: String, dealt: float) -> void:
+	var next := next_resistance_step(damage_type_id)
+	if next == "":
+		# Nothing more can be earned from this kind of damage.
+		exposure.erase(damage_type_id)
+		return
 	exposure[damage_type_id] = float(exposure.get(damage_type_id, 0.0)) + dealt
-	var steps := int(_steps.get(damage_type_id, 0))
 	var needed := max_hp * Database.tune("combat", "exposure_to_resistance", 1.2) \
-			* pow(Database.tune("combat", "exposure_step_factor", 3.0), steps)
+			* pow(Database.tune("combat", "exposure_step_factor", 3.0), _steps_held(damage_type_id))
 	if float(exposure[damage_type_id]) < needed:
 		return
 	exposure[damage_type_id] = 0.0
-	_steps[damage_type_id] = steps + 1
-	var next := next_resistance_step(damage_type_id)
-	if next == "":
-		return
 	for merge in Database.resistance_merges:
 		var inputs: Array = merge.get("inputs", [])
 		if inputs.size() == 1 and str(merge.get("result", "")) == next and resistances.has(str(inputs[0])):
@@ -192,6 +193,25 @@ func _expose(damage_type_id: String, dealt: float) -> void:
 			_apply_merges()
 			return
 	grant_resistance(next, "exposure")
+
+
+## How many steps of the merge tree the body holds against a damage type:
+## 0 unprotected, 1 with a first Resistance, 2 with its upgrade, and so on.
+func _steps_held(damage_type_id: String) -> int:
+	var held := 0
+	for resistance_id in resistances:
+		if (Database.get_resistance(resistance_id).get("mitigates", []) as Array).has(damage_type_id):
+			held = maxi(held, _depth(resistance_id))
+	return held
+
+
+## 1 for a Resistance that is not an upgrade of another, plus one per upgrade.
+func _depth(resistance_id: String) -> int:
+	for merge in Database.resistance_merges:
+		var inputs: Array = merge.get("inputs", [])
+		if inputs.size() == 1 and str(merge.get("result", "")) == resistance_id:
+			return 1 + _depth(str(inputs[0]))
+	return 1
 
 
 func _apply_merges() -> void:

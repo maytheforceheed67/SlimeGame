@@ -53,6 +53,10 @@ func _run() -> void:
 	await frames(3)
 	check(environment.fog_mode == Environment.FOG_MODE_DEPTH and environment.fog_light_color == Color.BLACK,
 			"a sightless body still sees only what it can touch")
+	Visual.set_value("fog.density", 0.03)
+	check(environment.fog_mode == Environment.FOG_MODE_DEPTH and environment.fog_light_color == Color.BLACK,
+			"editing a setting while sightless does not let the light in, even for a frame")
+	Visual.reset()
 	Game.grant_skill("mana_perception", true)
 	await frames(3)
 	check(environment.fog_light_color.is_equal_approx(Visual.color("palette.cave.fog")), "and the coloured fog returns with sight")
@@ -84,8 +88,12 @@ func _run() -> void:
 	Assets.manifest["test_rock"] = {"id": "test_rock", "file": "tests/fixtures/test_rock.glb",
 			"target_height": 0.5, "placeholder": {"builder": "mote_orb", "seed": 0}}
 	var rock := Assets.instantiate("test_rock")
-	check(rock.name == "TestRock" and is_equal_approx(rock.scale.y, 0.25), "a model file in the manifest is loaded and scaled to its target height")
+	var fitted := rock.get_child(0) as Node3D
+	check(fitted.name == "TestRock" and is_equal_approx(fitted.scale.y, 0.25), "a model file in the manifest is loaded and scaled to its target height")
 	check(Assets.warnings.is_empty(), "with no warning")
+	rock.scale = Vector3.ONE * 0.3
+	rock.position.y = 2.0
+	check(is_equal_approx(fitted.scale.y, 0.25) and is_zero_approx(fitted.position.y), "the fit survives the caller moving and scaling the model")
 	rock.free()
 	Assets.reload()
 
@@ -105,9 +113,18 @@ func _run() -> void:
 	var panel: Control = main.get_node("HUD/VisualPanel")
 	await tap("debug_visual_panel")
 	check(panel.is_open() and panel._rows.get_child_count() == Visual.entries().size(), "F4 opens an editor with a row per setting")
+	check(not Game.can_control(), "the body takes no input while the editor is open")
 	panel._changed("post.bloom_intensity", 1.2)
 	check(is_equal_approx(environment.glow_intensity, 1.2), "editing a row changes the look at once")
 	panel._reset_all()
 	check(is_equal_approx(environment.glow_intensity, 0.8), "Reset all restores the shipped look")
 	await tap("debug_visual_panel")
 	check(not panel.is_open() and Game.can_control(), "F4 closes it again")
+	var sheet: Control = main.get_node("HUD/StatusSheet")
+	sheet.open()
+	await tap("debug_visual_panel")
+	check(panel.is_open(), "the editor also opens while the status sheet has paused the world")
+	sheet.close()
+	check(Game.ui_locks == 1 and Game._cursor_locks == 1, "closing the sheet leaves the editor's hold on input and cursor")
+	await tap("debug_visual_panel")
+	check(Game.ui_locks == 0 and Game._cursor_locks == 0 and not get_tree().paused, "closing the editor releases them")

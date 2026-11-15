@@ -23,6 +23,7 @@ var player: Player
 
 var _checks := 0
 var _failures := 0
+var _quiet_failures: Dictionary = {}
 
 
 func _ready() -> void:
@@ -72,6 +73,17 @@ func check(condition: bool, description: String) -> void:
 	else:
 		_failures += 1
 		print("  FAIL  ", description)
+
+
+## For a condition sampled many times: counts as a failure the first time it
+## does not hold, and says nothing while it does.
+func check_quietly(condition: bool, failure: String) -> void:
+	if condition or _quiet_failures.has(failure):
+		return
+	_quiet_failures[failure] = true
+	_checks += 1
+	_failures += 1
+	print("  FAIL  ", failure)
 
 
 func frames(count: int) -> void:

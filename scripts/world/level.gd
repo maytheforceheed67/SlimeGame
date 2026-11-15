@@ -38,11 +38,17 @@ func _apply_look(_path: String) -> void:
 	_normal_fog_density = _environment.fog_density
 	_normal_fog_color = _environment.fog_light_color
 	_sighted = true
+	# Applied at once, not on the next frame: the level may be paused.
+	_apply_sight()
 
 
 ## A sightless body perceives only what is close enough to touch: the world
 ## beyond a few metres of it is swallowed by darkness.
 func _process(_delta: float) -> void:
+	_apply_sight()
+
+
+func _apply_sight() -> void:
 	var sighted := Game.is_sighted()
 	if sighted and not _sighted:
 		_environment.fog_mode = Environment.FOG_MODE_EXPONENTIAL

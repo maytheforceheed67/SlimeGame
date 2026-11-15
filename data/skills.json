@@ -43,7 +43,7 @@
     {"id": "black_lightning", "name": "Black Lightning", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
     {"id": "black_thunder", "name": "Black Thunder", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
     {"id": "black_flame_thunder", "name": "Black Flame-Thunder", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
-    {"id": "mana_perception", "name": "Mana Perception", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": [], "passive": {"sense": "sight"}, "summary": "Perceive the world through the magicules around you. A slime's only way to see.", "practice": {"stat": "sensing_seconds", "needed": 4, "requires_flag": "mana_perception_taught"}},
+    {"id": "mana_perception", "name": "Mana Perception", "category": "extra", "label": "CANON", "sub_functions": [], "passive": {"sense": "sight"}, "summary": "Perceive the world through the magicules around you. A slime's only way to see.", "practice": {"stat": "sensing_seconds", "needed": 4, "requires_flag": "mana_perception_taught"}},
     {"id": "heat_source_perception", "name": "Heat Source Perception", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": [], "passive": {"sense": "heat", "sense_range": 32.0}, "summary": "Sense living heat through rock and darkness."},
     {"id": "sound_wave_perception", "name": "Sound Wave Perception", "category": "common", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},
     {"id": "universal_perception", "name": "Universal Perception", "category": "extra", "category_label": "UNCONFIRMED", "label": "CANON", "sub_functions": []},

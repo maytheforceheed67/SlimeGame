@@ -37,14 +37,20 @@ var birth_grants: Dictionary = {}
 ## Short record of each finished life, oldest first.
 var past_lives: Array = []
 
+## True between a death and the choice of its last thoughts. Nothing is
+## written in between, so the file never holds a death without its wishes:
+## quitting on the card screen leaves the soul as it was before that death.
+var _death_pending := false
+
 
 func _enter_tree() -> void:
 	load_from_disk()
 
 
 ## Closes the book on a life. `imprint_resistance` is the Resistance that the
-## cause of death leaves on the soul, or "" for none.
-func record_death(life: LifeState, damage_type_id: String, imprint_resistance: String) -> void:
+## cause of death leaves on the soul, or "" for none. `write` saves at once;
+## pass false when set_wishes() will follow and save the whole death together.
+func record_death(life: LifeState, damage_type_id: String, imprint_resistance: String, write: bool = true) -> void:
 	lives_lived += 1
 	past_lives.append({
 		"life": life.life_number,
@@ -56,6 +62,7 @@ func record_death(life: LifeState, damage_type_id: String, imprint_resistance: S
 	while past_lives.size() > PAST_LIVES_KEPT:
 		past_lives.pop_front()
 	birth_grants = {"resistances": [imprint_resistance] if imprint_resistance != "" else []}
+	_death_pending = not write
 	save_to_disk()
 
 
@@ -64,6 +71,7 @@ func set_wishes(grants: Dictionary) -> void:
 	birth_grants["wish_skills"] = grants.get("skills", [])
 	birth_grants["wish_resistances"] = grants.get("resistances", [])
 	birth_grants["reel_weights"] = grants.get("reel_weights", {})
+	_death_pending = false
 	save_to_disk()
 
 
@@ -119,6 +127,8 @@ func erase() -> void:
 
 
 func save_to_disk() -> void:
+	if _death_pending:
+		return
 	var file := FileAccess.open(save_path, FileAccess.WRITE)
 	if file == null:
 		push_error("[Soul] cannot write %s (error %d)" % [save_path, FileAccess.get_open_error()])
@@ -158,6 +168,7 @@ func load_from_disk() -> void:
 
 
 func _reset() -> void:
+	_death_pending = false
 	lives_lived = 0
 	arts = {}
 	spells = {}

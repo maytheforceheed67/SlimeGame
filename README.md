@@ -35,7 +35,7 @@ soul with no past, delete it, or press **5** in a debug build.
 | Mouse / right stick | Look. Wheel zooms |
 | Left mouse / pad X | Tackle (or a Mimicry form's first move) |
 | Right mouse / pad Y | Bound skill (or a form's second move). With no skill: spit stored water |
-| Q / d-pad right | Bind the next skill |
+| Q / d-pad right | Bind the next skill, or a practice move such as Water Spit |
 | F (hold) / pad B | Devour what is in reach; store water while submerged |
 | E / d-pad left | Speak, continue a conversation |
 | R / pad RB | Scan with the advisor. While sightless: hold still and hold it to feel magicules |
@@ -45,6 +45,7 @@ soul with no past, delete it, or press **5** in a debug build.
 | H / d-pad down | Drink a healing potion |
 | Tab / Start | Status sheet (pauses) |
 | Y / N | Answer a Yes/No prompt |
+| Enter / pad A | Confirm the last thoughts (Space never does; with nothing chosen it asks twice) |
 | Esc | Free or capture the cursor |
 
 Debug builds only: **F3** overlay, **F4** visual settings (live tuning of every

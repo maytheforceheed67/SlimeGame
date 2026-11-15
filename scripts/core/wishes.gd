@@ -8,6 +8,8 @@ extends RefCounted
 ## chosen cards into what the next life is born with, and describes results.
 
 const MEMORY_PREFIX := "wish:"
+## Score of a card that must be in the offer; far above any fitted score.
+const ALWAYS_SCORE := 1000.0
 
 
 ## The cards offered for a life that ended by `cause`: those that fit it
@@ -18,7 +20,8 @@ static func offer(life: LifeState, cause: String) -> Array[Dictionary]:
 		var card: Dictionary = Database.wish_cards[card_id]
 		var score := _score(card, life, cause)
 		if card.get("first_death", false) and life.life_number == 1:
-			score = maxf(score, 1.0)
+			# Always offered at the first death, whatever else fits.
+			score = ALWAYS_SCORE
 		scored.append({"card": card, "score": score})
 	scored.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a["score"]) > float(b["score"]))
 
@@ -105,7 +108,7 @@ static func remember(cards: Array[Dictionary], life_number: int) -> void:
 static func _score(card: Dictionary, life: LifeState, cause: String) -> float:
 	var when: Dictionary = card.get("when", {})
 	if when.get("always", false):
-		return 1000.0
+		return ALWAYS_SCORE
 	var score := 0.0
 	if when.has("stat"):
 		score = float(life.stats.get(str(when["stat"]), 0.0)) / maxf(0.001, float(when.get("at_least", 1.0)))

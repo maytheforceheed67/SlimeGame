@@ -18,7 +18,12 @@ signal creature_died(creature: Creature)
 const REBIRTH_DELAY := 4.0
 
 var life: LifeState = null
+## Prefix of a skill-button binding that is practice for a skill not yet
+## learned, for example "practice:water_blade".
+const PRACTICE_PREFIX := "practice:"
+
 ## Number of open screens that take over input (dialogue, status sheet...).
+## Screens use lock_ui() and unlock_ui() rather than changing this.
 var ui_locks := 0
 ## When true, the prologue and the death sequence (last thoughts) are shown
 ## and the death screen starts the next life. Tests switch this off and get a
@@ -27,6 +32,11 @@ var sequences_enabled := true
 
 var _lifesteal := 0.0
 var _regenerates := false
+## How many open screens want the cursor free.
+var _cursor_locks := 0
+## Physics frame from which the body may be steered again after a screen
+## or a prompt closed.
+var _control_from_frame := 0
 var _announce_next_resistance := ""
 ## practice stat -> ids of the skills that stat teaches
 var _rules_by_stat: Dictionary = {}
@@ -35,6 +45,7 @@ var _rules_by_stat: Dictionary = {}
 func _enter_tree() -> void:
 	InputBindings.install()
 	creature_died.connect(func(_creature: Creature) -> void: count("kills"))
+	Voice.confirm_closed.connect(func(_accepted: bool) -> void: _hold_control())
 
 
 func is_alive() -> bool:
@@ -43,7 +54,33 @@ func is_alive() -> bool:
 
 ## True while the player may steer the body.
 func can_control() -> bool:
-	return is_alive() and ui_locks == 0 and not Voice.is_confirm_open()
+	return is_alive() and ui_locks == 0 and not Voice.is_confirm_open() \
+			and Engine.get_physics_frames() >= _control_from_frame
+
+
+## A screen takes over input. `frees_cursor` is for screens used with the
+## mouse; the cursor is captured again when the last of them closes.
+func lock_ui(frees_cursor: bool = false) -> void:
+	ui_locks += 1
+	if frees_cursor:
+		_cursor_locks += 1
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+
+
+## The screen that called lock_ui() has closed. Pass the same `frees_cursor`.
+func unlock_ui(freed_cursor: bool = false) -> void:
+	ui_locks = maxi(0, ui_locks - 1)
+	if freed_cursor:
+		_cursor_locks = maxi(0, _cursor_locks - 1)
+		if _cursor_locks == 0:
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	_hold_control()
+
+
+## The key press that closed a screen must not also act on the body, so
+## control returns two physics frames later.
+func _hold_control() -> void:
+	_control_from_frame = Engine.get_physics_frames() + 2
 
 
 ## Whether the body perceives the world at a distance. A sightless race
@@ -289,7 +326,7 @@ func grant_skill(skill_id: String, at_birth: bool = false) -> bool:
 	life.skills.append(skill_id)
 	if at_birth:
 		life.birth_skills.append(skill_id)
-	if life.selected_skill == "" and _is_selectable(skill_id):
+	if _is_selectable(skill_id) and (life.selected_skill == "" or life.selected_skill == PRACTICE_PREFIX + skill_id):
 		life.selected_skill = skill_id
 	_refresh_vitals()
 	skills_changed.emit()
@@ -317,14 +354,41 @@ func discard_skill(skill_id: String) -> bool:
 	return true
 
 
-## Owned skills that can be bound to the skill button.
+## What can be bound to the skill button: owned active skills, then the
+## practice moves of skills not yet learned ("practice:<skill id>"), so a
+## skill can still be practised after another one has been bound.
 func selectable_skills() -> Array[String]:
 	var found: Array[String] = []
-	if life != null:
-		for skill_id in life.skills:
-			if _is_selectable(skill_id):
-				found.append(skill_id)
+	if life == null:
+		return found
+	for skill_id in life.skills:
+		if _is_selectable(skill_id):
+			found.append(skill_id)
+	for skill_id: String in Database.skills:
+		if practice_move(skill_id).is_empty() or life.has_skill(skill_id):
+			continue
+		var flag := str(Database.get_skill(skill_id)["practice"].get("requires_flag", ""))
+		if flag == "" or life.flags.has(flag):
+			found.append(PRACTICE_PREFIX + skill_id)
 	return found
+
+
+## The clumsy move that counts as practice for a skill, or {} if it has none.
+func practice_move(skill_id: String) -> Dictionary:
+	var rule: Variant = Database.get_skill(skill_id).get("practice")
+	if rule is Dictionary and rule.get("precursor") is Dictionary:
+		return rule["precursor"]
+	return {}
+
+
+## Display name of what is bound to the skill button, or "".
+func selected_skill_name() -> String:
+	if life == null or life.selected_skill == "":
+		return ""
+	if life.selected_skill.begins_with(PRACTICE_PREFIX):
+		var move := practice_move(life.selected_skill.trim_prefix(PRACTICE_PREFIX))
+		return "%s (practice)" % str(move.get("name", "Practice"))
+	return Database.skill_name(life.selected_skill)
 
 
 func cycle_selected_skill() -> void:
@@ -366,7 +430,9 @@ func die(damage_type_id: String) -> void:
 	if imprint != "":
 		Voice.say("death_imprint", {"resistance": Database.resistance_name(imprint)})
 
-	Soul.record_death(life, damage_type_id, imprint)
+	# With the death sequence on, the soul is written once the last thoughts
+	# are chosen (reincarnate), so quitting before then loses nothing.
+	Soul.record_death(life, damage_type_id, imprint, not sequences_enabled)
 	if not is_sighted():
 		count("died_sightless")
 	life_ended.emit(life, damage_type_id)

@@ -80,9 +80,8 @@ func open() -> void:
 	if _open or Game.life == null:
 		return
 	_open = true
-	Game.ui_locks += 1
+	Game.lock_ui(true)
 	get_tree().paused = true
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	_panel.visible = true
 	refresh()
 
@@ -91,9 +90,8 @@ func close() -> void:
 	if not _open:
 		return
 	_open = false
-	Game.ui_locks = maxi(0, Game.ui_locks - 1)
+	Game.unlock_ui(true)
 	get_tree().paused = false
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	_panel.visible = false
 
 

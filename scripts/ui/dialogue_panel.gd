@@ -81,7 +81,7 @@ func start(dialogue_id: String, on_effect: Callable = Callable()) -> bool:
 	_on_effect = on_effect
 	_life_number_at_start = Game.life.life_number
 	_open = true
-	Game.ui_locks += 1
+	Game.lock_ui()
 	_panel.visible = true
 	_speaker.text = str(dialogue.get("speaker", ""))
 	if str(dialogue.get("mode", "thought")) == "thought":
@@ -224,7 +224,7 @@ func _close() -> void:
 	if not _open:
 		return
 	_open = false
-	Game.ui_locks = maxi(0, Game.ui_locks - 1)
+	Game.unlock_ui()
 	_panel.visible = false
 	_options.clear()
 

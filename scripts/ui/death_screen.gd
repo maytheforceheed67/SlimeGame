@@ -14,6 +14,9 @@ extends Control
 signal _confirmed
 
 const CARD_SIZE := Vector2(206.0, 172.0)
+## Seconds after the cards appear during which confirming is ignored, so a
+## key still held from the fight cannot end the choice.
+const CONFIRM_GUARD := 0.7
 
 var _veil: WorldVeil
 var _panel: PanelContainer
@@ -29,6 +32,10 @@ var _chosen: Array[int] = []
 var _picks := 3
 var _choosing := false
 var _busy := false
+var _guard := 0.0
+## Set once confirming an empty choice has been asked for; the next ask goes through.
+var _empty_confirm_armed := false
+var _cursor_freed := false
 
 
 func _ready() -> void:
@@ -60,6 +67,7 @@ func toggle(index: int) -> void:
 		_chosen.erase(index)
 	elif _chosen.size() < _picks:
 		_chosen.append(index)
+	_empty_confirm_armed = false
 	_refresh()
 
 
@@ -67,6 +75,22 @@ func toggle(index: int) -> void:
 func confirm() -> void:
 	if _panel.visible:
 		_confirmed.emit()
+
+
+## A confirm asked for by the player. Too soon after the cards appeared it is
+## ignored, and letting go of everything takes a second, deliberate press.
+func request_confirm() -> void:
+	if not _panel.visible or not _confirm.visible or _guard > 0.0:
+		return
+	if _choosing and _chosen.is_empty() and not _empty_confirm_armed:
+		_empty_confirm_armed = true
+		_footer.text = "Nothing is chosen. Press Enter again to let go of everything."
+		return
+	confirm()
+
+
+func _process(delta: float) -> void:
+	_guard = maxf(0.0, _guard - delta)
 
 
 ## The first death, before the first life: the thoughts are read out and
@@ -89,7 +113,7 @@ func play_prologue() -> void:
 	_confirm.text = "Be born  [Enter]"
 	_confirm.visible = true
 	await _confirmed
-	_panel.visible = false
+	_hide()
 
 	Soul.birth_grants = {"resistances": []}
 	Soul.set_wishes(Wishes.grants(_cards))
@@ -101,7 +125,13 @@ func play_prologue() -> void:
 
 
 func _on_life_ended(ended_life: LifeState, damage_type_id: String) -> void:
-	if Game.sequences_enabled and not _busy:
+	if not Game.sequences_enabled:
+		return
+	# A death during the fade into a new life waits for the fade to finish;
+	# dropping it would leave a dead body with no way on.
+	while _busy:
+		await get_tree().process_frame
+	if Game.life == ended_life and not ended_life.alive:
 		_run(ended_life, damage_type_id)
 
 
@@ -126,7 +156,7 @@ func _run(ended_life: LifeState, cause: String) -> void:
 	]
 	_show("Last thoughts", summary, "", true)
 	await _confirmed
-	_panel.visible = false
+	_hide()
 	_choosing = false
 
 	var chosen: Array[Dictionary] = []
@@ -137,7 +167,6 @@ func _run(ended_life: LifeState, cause: String) -> void:
 
 	# 4. Rebirth.
 	get_tree().paused = false
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	Game.reincarnate(chosen)
 	await _fade(1.0, 1.0, 0.0, 0.0, 1.6)
 	_busy = false
@@ -155,8 +184,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event.is_action_pressed("ui_accept"):
 		get_viewport().set_input_as_handled()
-		if _confirm.visible:
-			confirm()
+		# Space is also the hop key and is often still being pressed when a
+		# life ends, so it never confirms. Enter and pad A do.
+		var key := event as InputEventKey
+		if key == null or (key.physical_keycode != KEY_SPACE and key.keycode != KEY_SPACE):
+			request_confirm()
 	elif event is InputEventKey and event.pressed and not event.echo:
 		var index: int = event.physical_keycode - KEY_1
 		if index >= 0 and index < _cards.size():
@@ -203,7 +235,7 @@ func _build() -> void:
 	_confirm = Button.new()
 	_confirm.custom_minimum_size = Vector2(180.0, 38.0)
 	_confirm.focus_mode = Control.FOCUS_NONE
-	_confirm.pressed.connect(confirm)
+	_confirm.pressed.connect(request_confirm)
 	row.add_child(_confirm)
 
 
@@ -229,8 +261,20 @@ func _show(title: String, summary: String, footer: String, choosing: bool) -> vo
 	_confirm.text = "Let go  [Enter]"
 	_confirm.visible = choosing
 	_panel.visible = true
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	_guard = CONFIRM_GUARD
+	_empty_confirm_armed = false
+	if not _cursor_freed:
+		_cursor_freed = true
+		Game.lock_ui(true)
 	_refresh()
+
+
+## Closes the card panel and gives the cursor back.
+func _hide() -> void:
+	_panel.visible = false
+	if _cursor_freed:
+		_cursor_freed = false
+		Game.unlock_ui(true)
 
 
 ## Redraws the cards. `reveal_chosen` shows the result of chosen cards even
@@ -250,7 +294,7 @@ func _refresh(reveal_chosen: bool = false) -> void:
 			_buttons[i].add_theme_stylebox_override(state, box)
 		_buttons[i].add_theme_color_override("font_color", UiStyle.WORLD_COLOR if picked else UiStyle.MUTED_COLOR)
 		_buttons[i].add_theme_color_override("font_hover_color", UiStyle.WORLD_COLOR)
-	if _choosing:
+	if _choosing and not _empty_confirm_armed:
 		_footer.text = "Choose up to %d  (%d chosen).  Press a number or click a card." % [_picks, _chosen.size()]
 
 

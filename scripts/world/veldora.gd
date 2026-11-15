@@ -20,6 +20,7 @@ var _path_index := 0
 var _busy := false
 var _taken := false
 var _body: Node3D
+var _shell_shape: CollisionShape3D
 
 
 func _ready() -> void:
@@ -126,6 +127,8 @@ func _offer_swallow() -> void:
 	if not accepted or Game.life != life or not life.alive or not life.has_skill("predator"):
 		return
 	_taken = true
+	# The seal stops being a wall the moment it starts to be drawn in.
+	_shell_shape.set_deferred("disabled", true)
 	life.sealed.append("Veldora")
 	life.flags["veldora_swallowed"] = true
 	Soul.remember("carried_veldora", life.life_number)
@@ -152,6 +155,7 @@ func _build_barrier() -> void:
 	sphere.radius = BARRIER_RADIUS
 	shape.shape = sphere
 	shell.add_child(shape)
+	_shell_shape = shape
 	shell.position.y = 1.0
 	add_child(shell)
 	shell.add_child(Assets.instantiate("veldora_seal", {"radius": BARRIER_RADIUS}))

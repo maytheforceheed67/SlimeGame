@@ -21,6 +21,9 @@ var _confirm_label: Label
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# The Voice speaks while the world is paused (last thoughts, status
+	# sheet), so its lines must keep appearing then.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	_build_world_column()
 	_build_advisor_column()
 	_build_confirm_panel()

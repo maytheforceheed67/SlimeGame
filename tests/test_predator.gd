@@ -69,6 +69,19 @@ func _run() -> void:
 			"discarding Drain returns its capacity")
 	check(not Game.discard_skill("absorb"), "intrinsic skills cannot be discarded")
 
+	# Remains that fade away in the middle of a devour.
+	var fading := _creature("giant_bat", Vector3(0.0, 0.0, -1.8))
+	fading.take_hit({"amount": 9999.0, "damage_type": "impact"})
+	await frames(20)
+	Input.action_press("devour")
+	await frames(20)
+	check(predator.target == fading and predator.progress > 0.2, "a devour is under way")
+	fading.free()
+	await frames(10)
+	Input.action_release("devour")
+	check(predator.target == null and is_zero_approx(predator.progress), "if the remains vanish, the devour simply stops")
+	life.analysis_queue.clear()
+
 	# Living prey: unlikely while it is alert, likely once staggered.
 	var centipede := _creature("evil_centipede", Vector3(0.0, 0.0, -2.0))
 	centipede.set_physics_process(false)

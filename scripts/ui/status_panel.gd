@@ -98,7 +98,7 @@ func _process(_delta: float) -> void:
 
 	_skill_label.visible = life.selected_skill != ""
 	if life.selected_skill != "":
-		_skill_label.text = "Skill: %s" % Database.skill_name(life.selected_skill)
+		_skill_label.text = "Skill: %s" % Game.selected_skill_name()
 
 	var carried := PackedStringArray()
 	if Game.potions_available() > 0:

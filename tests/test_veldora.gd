@@ -51,8 +51,13 @@ func _run() -> void:
 	check(dialogue.option_texts().has("Can you help me see?"), "he can be asked for help")
 	dialogue.choose(0)
 	dialogue.advance()
-	dialogue.advance()
+	# The last line is closed with the real key: the same press must not
+	# reach the body and start the next conversation.
+	await tap("interact")
+	await frames(6)
 	check(not dialogue.is_open() and life.flags.has("mana_perception_taught"), "he teaches how to feel magicules")
+	check(life.stats.get("talks", 0.0) == 1.0, "the key that ends a conversation does not begin another")
+	check(Game.can_control() and Game.ui_locks == 0, "and the body answers again")
 	check(Soul.remembers("met_veldora"), "the soul remembers meeting him")
 
 	# The lesson: hold still and feel.
@@ -104,10 +109,13 @@ func _run() -> void:
 	dialogue.advance()
 	await frames(5)
 	check(Voice.is_confirm_open(), "the Voice asks before something so large is devoured")
+	var stood := player.global_position
 	await tap("voice_yes")
 	check(life.sealed == ["Veldora"] and life.flags.has("veldora_swallowed"), "by agreement, Veldora goes to the Stomach")
 	await seconds(2.5)
 	check(_veldora() == null and player.interact_target() == null, "and is gone from the chamber")
+	check(player.global_position.distance_to(stood) < 0.3,
+			"the seal is drawn in without shoving the slime (moved %.2f m)" % player.global_position.distance_to(stood))
 	main.get_node("HUD/StatusSheet").open()
 	var sheet_text: String = main.get_node("HUD/StatusSheet")._columns[2].text
 	main.get_node("HUD/StatusSheet").close()

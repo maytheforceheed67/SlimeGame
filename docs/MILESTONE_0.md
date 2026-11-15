@@ -159,7 +159,7 @@ Play a fresh soul (delete `user://soul.json` or press 5, then restart).
 13. Walk into the lake at its shallow western edge. Hold F: stored water rises in fives.
 14. In deep water the slime sinks; Space on the bed pushes off. After about 12 s of moving, Water Current Motion is announced, and Space and Ctrl now swim up and down.
 15. In deep water with stored water, press Space five times: Hydraulic Propulsion is announced, and Space becomes a jet.
-16. On land, right-click eight times with stored water: Water Blade is announced and is bound to the skill button.
+16. On land, right-click eight times with stored water: Water Blade is announced and is bound to the skill button. If another skill is already bound, press Q until the HUD shows "Water Spit (practice)" first.
 
 **Traversal**
 17. In the birth chamber's east wall is a low slot. Walking into it fails; holding Ctrl crawls through to the herb grotto.
@@ -173,13 +173,13 @@ Play a fresh soul (delete `user://soul.json` or press 5, then restart).
 
 **Death and the second life**
 23. On death, time slows and colour drains; the Voice names the cause and the Resistance it leaves.
-24. Six to eight cards appear. Cards seen in the prologue show their results; new ones show "?". At most three can be chosen. Enter confirms.
+24. Six to eight cards appear. Cards seen in the prologue show their results; new ones show "?". At most three can be chosen. Enter confirms (Space does not, and nothing confirms in the first moment); with no card chosen, Enter asks once and a second press lets go of everything. Quitting on this screen loses nothing: the soul is written only when the choice is made.
 25. The next life begins sightless again, with the chosen wishes and the imprinted Resistance announced, and no name, Stomach, forms or EP from before.
 26. In this life: Veldora offers a third option; sight takes under a second; the herb analyses at once; Water Blade takes two spits; the analysis link is already made.
 
 ## 7. Automated tests
 
-`tools/run_tests.sh` runs the data validator and nine headless scenes, 278
+`tools/run_tests.sh` runs the data validator and ten headless scenes, 373
 checks in all:
 
 | Scene | Covers |
@@ -193,6 +193,7 @@ checks in all:
 | `test_veldora` | sightless start, the voice path, the full Veldora flow, the second-life shortcut |
 | `test_death` | prologue, slow motion, card offer and limits, grants at birth, hidden results |
 | `test_full_loop` | two whole lives with real settings, and that the second is faster |
+| `test_visual` | the visual pipeline from Pass 0 of the visual overhaul: config, asset manifest, world look, the F4 editor |
 
 These were run on Godot 4.5.1 with the headless renderer. Screenshots for
 layout checks were rendered with the Compatibility renderer on software GL,
