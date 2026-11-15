@@ -15,7 +15,9 @@ Whether it is fun needs you to play it.
 ## 1. Engine and assumptions
 
 Engine line confirmed: **Godot 4** (4.3 or newer; built and tested on 4.5.1),
-GDScript, Forward+ renderer, content in JSON.
+GDScript, content in JSON. (The renderer was Forward+ during this milestone;
+the visual overhaul moved the project to the Compatibility renderer in its
+Pass 1.)
 
 Assumptions and design calls I made where the document left room. Each is
 cheap to change; tell me which you want differently.
@@ -179,7 +181,7 @@ Play a fresh soul (delete `user://soul.json` or press 5, then restart).
 
 ## 7. Automated tests
 
-`tools/run_tests.sh` runs the data validator and ten headless scenes, 373
+`tools/run_tests.sh` runs the data validator and ten headless scenes, 410
 checks in all:
 
 | Scene | Covers |
@@ -196,9 +198,9 @@ checks in all:
 | `test_visual` | the visual pipeline from Pass 0 of the visual overhaul: config, asset manifest, world look, the F4 editor |
 
 These were run on Godot 4.5.1 with the headless renderer. Screenshots for
-layout checks were rendered with the Compatibility renderer on software GL,
-so the Forward+ look (glow, fog, lighting strength) has not been seen by me
-and will differ somewhat.
+layout checks were rendered with the Compatibility renderer on software GL.
+Since Pass 1 of the visual overhaul that is also the project's renderer, so
+what those screenshots show is what the game shows.
 
 ## 8. Canon notes
 

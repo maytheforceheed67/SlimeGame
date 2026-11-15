@@ -184,6 +184,12 @@ func _add(mesh: Mesh, at: Vector3, size: Vector3, material: Material, parent: No
 	instance.material_override = material
 	instance.position = at
 	instance.scale = size
+	# Eyes, plates, spikes and thin limbs stay out of the shadow map: their
+	# shadows are too fine to draw cleanly and each would cost a draw.
+	var sides := [size.x, size.y, size.z]
+	sides.sort()
+	if material == _accent_material or sides[1] < Visual.number("lights.shadow_min_part_size", 0.12):
+		instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	(parent if parent != null else self).add_child(instance)
 	return instance
 

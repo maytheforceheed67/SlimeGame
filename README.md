@@ -5,14 +5,15 @@ Reincarnated as a Slime*. Personal, non-commercial fan project. All models,
 art, interface and text in this repository are original; nothing is taken from
 the series' official artwork, music, logos or book text.
 
-Engine: **Godot 4.3 or newer** (GDScript, Forward+ renderer).
+Engine: **Godot 4.3 or newer** (GDScript, Compatibility renderer).
 
 - Design document: [docs/DESIGN.md](docs/DESIGN.md), the source of truth.
 - Milestone 0 plan, schemas, test checklist and open questions:
   [docs/MILESTONE_0.md](docs/MILESTONE_0.md).
 - Visual overhaul: the style brief is [docs/VISUAL_STYLE.md](docs/VISUAL_STYLE.md);
-  progress by pass is under [docs/visual/](docs/visual/) (currently
-  [Pass 0](docs/visual/PASS_0.md)). Assets to download: [ASSETS_TODO.md](ASSETS_TODO.md).
+  progress by pass is under [docs/visual/](docs/visual/)
+  ([Pass 0](docs/visual/PASS_0.md), [Pass 1](docs/visual/PASS_1.md)).
+  Assets to download: [ASSETS_TODO.md](ASSETS_TODO.md).
   Credits: [CREDITS.md](CREDITS.md).
 
 ## Running it
@@ -79,6 +80,7 @@ assets_raw/             untouched downloads; ignored by git and by Godot
 scripts/
   autoload/               singletons, loaded in this order
     database.gd             Database: loads and cross-checks data/
+    (visual/)               Visual, Toon and Assets, listed under visual/ below
     voice_of_world.gd       Voice: the announcer and Yes/No prompts
     soul.gd                 Soul: what survives death (saved to disk)
     game.gd                 Game: the current life and the run loop
@@ -87,7 +89,15 @@ scripts/
   creatures/              Creature (behaviour), CreatureVisual (placeholder bodies)
   player/                 Player body and orbit camera
   skills/                 Predator and Advisor modules
-  visual/                 Visual config, asset manager, stand-ins, world look
+  visual/                 the look, kept apart from the rules
+    visual_config.gd        Visual: every visual tunable, live-editable (F4)
+    toon.gd                 Toon: the one place a material is made
+    asset_manager.gd        Assets: a model by id, from a file or a stand-in
+    stand_ins.gd            models built in code
+    mesh_kit.gd             shared shapes, smoothed normals, mesh baking
+    world_look.gd           tone map, bloom, fog, key light
+    blob_shadows.gd         a soft disc under every actor
+    shaders/                toon (character, world), outline, veil, blob shadow
   world/                  Level, Veldora, water, harvestables, motes, sounds
   ui/                     HUD panels and screens
   main.gd                 entry scene script

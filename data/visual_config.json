@@ -10,6 +10,7 @@
       "renderer.antialiasing: off, fxaa, msaa2x or msaa4x. The project runs on Godot's Compatibility renderer, which has no fxaa; there fxaa means msaa2x.",
       "Read since Pass 0: renderer, post, fog, palette.cave.fog; accessibility is stored. Read since Pass 1: lights, toon, outline, blob_shadow, seal, water, props and the palette groups cave, slime, veldora, seal, herb and ore. The ui and elements palettes, slime.face_enabled, quality and tiers are read by later passes.",
       "lights.fill_* is the ambient light of the scene. Toon surfaces ignore it (their shade tint does that job), so it only touches a model that has not been given the toon material.",
+      "lights.shadow_min_part_size: a creature part thinner than this (metres) casts no shadow, nor do eyes and other accents.",
       "lights.shadow_splits is 1, 2 or 4 (more splits keep near shadows sharp); lights.shadow_filter is 0 (hard) to 5 (softest), re-thresholded to a crisp edge by shadow_edge_low and shadow_edge_high.",
       "lights.key_pitch and key_yaw aim the one key light, in degrees: pitch -90 is straight down. toon.character_light_* is the direction characters are lit from, relative to the camera (x right, y up, z toward the viewer).",
       "outline widths are pixels at a screen height of outline.reference_height. An asset's own width is outline_px in data/asset_manifest.json; outline.scale multiplies them all.",
@@ -52,6 +53,7 @@
     "shadow_map_size": 2048.0,
     "shadow_bias": 0.05,
     "shadow_normal_bias": 1.5,
+    "shadow_min_part_size": 0.12,
     "shadow_edge_low": 0.45,
     "shadow_edge_high": 0.55,
     "point_light_pool": 4

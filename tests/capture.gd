@@ -201,6 +201,24 @@ func _stage_death() -> void:
 # The eight fixed views docs/VISUAL_STYLE.md asks to be captured after every
 # pass, with the renderer's frame statistics for each.
 
+## A row of identical slimes at growing distances, for checking that the ink
+## line keeps its width on screen. Prints where each one is on screen.
+func _stage_outlines() -> void:
+	await look_from(20, 19, -PI * 0.5, -0.1)
+	var camera := get_viewport().get_camera_3d()
+	var distances: Array[float] = [3.0, 6.0, 12.0, 20.0, 30.0]
+	for i in distances.size():
+		var copy := Assets.instantiate("slime")
+		main.add_child(copy)
+		var away := distances[i]
+		copy.global_position = player.global_position + Vector3(away, 0.0, (-0.3 + 0.15 * i) * (away + 6.0))
+		await frames(2)
+		var centre := copy.global_position + Vector3(0.0, 0.4, 0.0)
+		print("slime %d: %.1f m from the camera, at screen %s" % [i, camera.global_position.distance_to(centre), camera.unproject_position(centre).round()])
+	await seconds(0.5)
+	await shot("outline_distance")
+
+
 var _stats: Array[Dictionary] = []
 
 
@@ -221,8 +239,16 @@ func mark(bookmark: String) -> void:
 	await shot(bookmark)
 
 
+## The seed every bookmark run uses, so that the same creatures and pickups
+## are in view from one pass to the next and frame statistics can be compared.
+const BOOKMARK_SEED := 20261115
+
+
 func _stage_bookmarks() -> void:
 	player._invulnerable = 9999.0
+	Game.life.world_seed = BOOKMARK_SEED
+	main.level.populate(Game.life)
+	await frames(3)
 	Game.grant_skill("predator", true)
 	Game.grant_skill("great_sage", true)
 	Game.life.flags["link_offered"] = true

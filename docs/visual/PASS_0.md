@@ -220,6 +220,10 @@ machine. F3 and F4 show frames per second, draw calls and primitives live.
 
 ## 8. Decisions I need from you
 
+**Answered** (and applied at the start of [Pass 1](PASS_1.md)): 1, switch to
+the Compatibility renderer; 2, option (a), keep both wisdom cards and word the
+second as the step up; 3, the slime's face is on by default.
+
 1. **Renderer.** I can only render with Godot's Compatibility renderer here;
    the Forward+ renderer needs Vulkan, which this environment lacks. Every
    screenshot I check is therefore Compatibility, while the project is set to

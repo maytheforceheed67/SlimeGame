@@ -6,4 +6,4 @@ set -u
 cd "$(dirname "$0")/.."
 GODOT="${GODOT:-godot}"
 xvfb-run -a -s "-screen 0 1280x720x24" "$GODOT" --rendering-driver opengl3 --fixed-fps 60 --path . \
-	res://tests/capture.tscn -- --stage="$1" --out="$2" 2>&1 | grep -E "saved|ERROR|SCRIPT|at:|unknown stage"
+	res://tests/capture.tscn -- --stage="$1" --out="$2" 2>&1 | grep -E "saved|ERROR|SCRIPT|at:|unknown stage|^slime [0-9]"
