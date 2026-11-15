@@ -11,6 +11,7 @@ func _run() -> void:
 	check(Database.rank_for_ep(450000).get("danger_class") == "disaster", "450,000 EP is Disaster class")
 	check(Database.informal_label_for_ep(2000000) == "Million class", "2,000,000 EP is Million class")
 
+	populate = true
 	await start_main()
 	var life := Game.life
 	check(life != null and life.race_id == "slime", "the first life is a slime")
@@ -22,8 +23,7 @@ func _run() -> void:
 	check(spoken().contains("Vessel: Slime"), "the Voice announces the birth")
 	check(spoken().contains("Self-Regeneration"), "the Voice announces intrinsic skills")
 	check(player.is_on_floor(), "the slime rests on the cave floor")
-	var orbs: Node = main.get_node("Orbs")
-	check(orbs.get_child_count() == 10, "ten magicule motes are scattered")
+	check(_motes().size() == 6, "six magicule motes are scattered")
 
 	var start := player.global_position
 	await hold("move_forward", 60)
@@ -39,12 +39,14 @@ func _run() -> void:
 	await frames(90)
 	check(player.is_on_floor(), "and lands again")
 
-	var orb_count := orbs.get_child_count()
 	var ep_before := life.ep
-	player.global_position = (orbs.get_child(0) as Node3D).global_position
+	var motes_before := _motes().size()
+	player.global_position = _motes()[0].global_position
 	await frames(30)
 	check(life.ep > ep_before, "touching a mote raises EP")
-	check(orbs.get_child_count() == orb_count - 1, "and the mote is consumed")
+	check(_motes().size() == motes_before - 1, "and the mote is consumed")
+	player.respawn(main.level.spawn_position())
+	await frames(30)
 
 	Game.add_ep(1000 - life.ep)
 	await seconds(1.5)
@@ -65,7 +67,7 @@ func _run() -> void:
 
 	player.global_position = Vector3(200.0, -80.0, 0.0)
 	await frames(5)
-	check(player.global_position.distance_to(Vector3(0.0, 1.0, 8.0)) < 2.0, "falling out of the world returns to spawn")
+	check(player.global_position.distance_to(main.level.spawn_position()) < 2.0, "falling out of the world returns to spawn")
 	await frames(60)
 
 	Game.die("fire")
@@ -83,10 +85,19 @@ func _run() -> void:
 	check(reborn.life_number == 2, "it is life 2")
 	check(reborn.ep == 100, "EP resets with the body")
 	check(reborn.resistances == ["heat_resistance"], "the imprinted Resistance is granted at birth")
-	check(orbs.get_child_count() == 10, "the motes are re-seeded")
+	await frames(3)
+	check(_motes().size() == 6, "the motes are re-seeded")
 
 	Soul.lives_lived = 0
 	Soul.load_from_disk()
 	check(Soul.lives_lived == 1, "the soul is restored from disk")
 	Soul.erase()
 	check(Soul.lives_lived == 0 and Soul.birth_grants.is_empty(), "erasing blanks the soul")
+
+
+func _motes() -> Array[MagiculeOrb]:
+	var found: Array[MagiculeOrb] = []
+	for node in main.level.get_node("Spawned").get_children():
+		if node is MagiculeOrb and not node.is_queued_for_deletion():
+			found.append(node)
+	return found

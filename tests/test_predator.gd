@@ -6,8 +6,6 @@ extends TestCase
 func _run() -> void:
 	print("Predator")
 	await start_main()
-	for orb in main.get_node("Orbs").get_children():
-		orb.queue_free()
 	await seconds(2.5)
 	player._invulnerable = 9999.0
 	var life := Game.life

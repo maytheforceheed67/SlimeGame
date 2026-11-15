@@ -62,10 +62,6 @@
     "form_upkeep_max": 12.0
   },
   "practice": {
-    "water_current_motion_seconds": 12.0,
-    "hydraulic_propulsion_uses": 5,
-    "water_blade_uses": 8,
-    "mana_perception_seconds": 4.0,
     "remembered_factor": 0.15
   },
   "traversal": {

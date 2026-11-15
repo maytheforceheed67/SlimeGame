@@ -36,6 +36,8 @@
     "advisor_low_health": "Health is critical. Withdraw.",
     "advisor_low_health_potion": "Health is critical. A potion is ready.",
     "advisor_staggered": "Target staggered. Predation is likely to succeed now.",
+    "advisor_water": "Water can be stored in the Stomach. Hold devour while submerged.",
+    "advisor_practice": "Repetition is registering. Keep going and the technique will take shape.",
     "advisor_herb": "Hipokute herb nearby. Devouring one allows analysis.",
     "rank_changed": "Existence reassessed. Rank {old} is now rank {new}.",
     "danger_class_assigned": "Threat class assigned: {danger}.",

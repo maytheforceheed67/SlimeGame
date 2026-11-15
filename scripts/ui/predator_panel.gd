@@ -87,6 +87,9 @@ func _show_prompt(predator: Predator) -> void:
 		_prompt.text = "Hold [F]  %s alive: %s  (%d%%)" % [verb, thing.display_name(), roundi(predator.living_chance(thing) * 100.0)]
 	elif thing is Creature:
 		_prompt.text = "Hold [F]  %s: %s (remains)" % [verb, thing.display_name()]
+	elif thing is WaterVolume:
+		_prompt.text = "Hold [F]  Store water  (%d / %d)" % [Game.life.item_count("water"),
+				int(Database.tune("traversal", "water_capacity", 40.0))]
 	else:
 		_prompt.text = "Hold [F]  %s: %s" % [verb, thing.display_name()]
 	_progress.value = predator.progress / maxf(0.01, predator.needed)

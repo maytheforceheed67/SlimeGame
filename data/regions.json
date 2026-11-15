@@ -5,6 +5,7 @@
     "notes": [
       "Only regions named so far in the design document are listed. Geography, borders and map positions come with the world milestone.",
       "magicule_density indexes density_levels. Every density value here is a [DESIGN] starting value.",
+      "spawn sets what a new life finds: the chance that each creature and harvest marker is filled, and how many motes appear. Bosses always appear. [DESIGN]",
       "ambient_ep is the EP granted by one condensed magicule mote in a region of that density (Milestone 0 placeholder for absorbing magicules)."
     ]
   },
@@ -17,7 +18,7 @@
     {"level": 5, "name": "Saturated", "ambient_ep": 600, "label": "DESIGN"}
   ],
   "regions": [
-    {"id": "sealed_cave", "name": "Sealed Cave", "kind": "cave", "magicule_density": 4, "label": "CANON"},
+    {"id": "sealed_cave", "name": "Sealed Cave", "kind": "cave", "magicule_density": 4, "label": "CANON", "spawn": {"creature_chance": 0.8, "harvest_chance": 0.85, "mote_count": 6}},
     {"id": "jura_forest", "name": "Jura Forest", "kind": "forest", "magicule_density": 2, "label": "CANON"},
     {"id": "jura_goblin_village", "name": "Goblin Village", "kind": "settlement", "parent": "jura_forest", "magicule_density": 1, "label": "CANON"},
     {"id": "ogre_village", "name": "Ogre Village", "kind": "settlement", "parent": "jura_forest", "magicule_density": 2, "label": "CANON", "notes": "On Jura's western route."},

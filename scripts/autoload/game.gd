@@ -25,6 +25,9 @@ var death_sequence_enabled := false
 
 var _lifesteal := 0.0
 var _regenerates := false
+var _announce_next_resistance := ""
+## practice stat -> ids of the skills that stat teaches
+var _rules_by_stat: Dictionary = {}
 
 
 func _enter_tree() -> void:
@@ -135,6 +138,55 @@ func spend_magicules(amount: float) -> bool:
 		return false
 	life.magicules -= amount
 	return true
+
+
+# --- Practice ----------------------------------------------------------------
+
+## Counts practice toward skills that are learned by doing (skills.json,
+## "practice"). When a counter reaches what a skill needs, the skill is
+## acquired and the soul remembers the method, so later lives need less.
+func practice(stat: String, amount: float = 1.0) -> void:
+	if not is_alive() or stat == "":
+		return
+	life.practice[stat] = float(life.practice.get(stat, 0.0)) + amount
+	for skill_id: String in _practice_rules().get(stat, []):
+		if life.has_skill(skill_id):
+			continue
+		var flag := str(Database.get_skill(skill_id)["practice"].get("requires_flag", ""))
+		if flag != "" and not life.flags.has(flag):
+			continue
+		if float(life.practice[stat]) >= practice_needed(skill_id):
+			grant_skill(skill_id)
+			Soul.remember("practice:" + skill_id, life.life_number)
+			count("skills_practised")
+
+
+## How much practice a skill needs in this life.
+func practice_needed(skill_id: String) -> float:
+	var needed := float(Database.get_skill(skill_id).get("practice", {}).get("needed", 1.0))
+	if Soul.remembers("practice:" + skill_id):
+		needed *= Database.tune("practice", "remembered_factor", 0.15)
+	return needed
+
+
+## Practice progress toward a skill, 0 to 1.
+func practice_progress(skill_id: String) -> float:
+	var rule: Variant = Database.get_skill(skill_id).get("practice")
+	if life == null or not (rule is Dictionary):
+		return 0.0
+	return clampf(float(life.practice.get(str(rule.get("stat", "")), 0.0)) / practice_needed(skill_id), 0.0, 1.0)
+
+
+func _practice_rules() -> Dictionary:
+	if _rules_by_stat.is_empty():
+		for skill_id: String in Database.skills:
+			var rule: Variant = Database.skills[skill_id].get("practice")
+			if rule is Dictionary:
+				var stat := str(rule.get("stat", ""))
+				if not _rules_by_stat.has(stat):
+					_rules_by_stat[stat] = []
+				_rules_by_stat[stat].append(skill_id)
+	return _rules_by_stat
 
 
 # --- Stomach -----------------------------------------------------------------
@@ -297,9 +349,6 @@ func die(damage_type_id: String) -> void:
 	await get_tree().create_timer(REBIRTH_DELAY).timeout
 	Voice.say("rebirth")
 	begin_life()
-
-
-var _announce_next_resistance := ""
 
 
 func _on_resistance_gained(resistance_id: String, cause: String) -> void:

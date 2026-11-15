@@ -355,6 +355,9 @@ func _cross_check() -> void:
 		_need(damage_types, statuses[id].get("damage_type"), "damage_types.json: status '%s' damage_type" % id)
 	for id: String in skills:
 		_check_attack(skills[id].get("active"), "skills.json: '%s' active" % id)
+		var practice: Variant = skills[id].get("practice")
+		if practice is Dictionary:
+			_check_attack(practice.get("precursor"), "skills.json: '%s' practice precursor" % id)
 	for id: String in races:
 		var moveset: Variant = races[id].get("moveset", {})
 		if moveset is Dictionary:

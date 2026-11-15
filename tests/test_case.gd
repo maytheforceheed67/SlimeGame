@@ -11,6 +11,10 @@ extends Node
 const MAIN_SCENE: PackedScene = preload("res://scenes/main.tscn")
 const TEST_SOUL_PATH := "user://soul_test.json"
 
+## Set true before start_main() to have the level spawn its creatures,
+## harvestables and motes; by default tests get an empty cave.
+var populate := false
+
 var main: Node3D
 var player: Player
 
@@ -33,10 +37,17 @@ func _run() -> void:
 
 
 func start_main() -> void:
+	Level.populate_enabled = populate
 	main = MAIN_SCENE.instantiate()
 	add_child(main)
 	player = main.get_node("Player")
 	await frames(10)
+
+
+## Puts the slime at a cell of the cave map (see tools/build_sealed_cave.py).
+func place_at_cell(row: int, column: int, height: float = 0.5) -> void:
+	player.respawn(Vector3((column - 28) * 2.0 + 1.0, height, (row - 22) * 2.0 + 1.0))
+	await frames(20)
 
 
 func check(condition: bool, description: String) -> void:

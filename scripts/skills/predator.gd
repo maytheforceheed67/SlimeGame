@@ -137,6 +137,10 @@ func _find_target() -> Node3D:
 			best_distance = distance
 	if best != null or not has_predator():
 		return best
+	# Submerged with room in the Stomach: the water itself can be drunk.
+	var pool := _player.water()
+	if pool != null and Game.life.item_count("water") < int(Database.tune("traversal", "water_capacity", 40.0)):
+		return pool
 	# Nothing inert in reach: a living creature can be attempted with Predator.
 	for node in tree.get_nodes_in_group(Combat.GROUP):
 		var creature := node as Creature
@@ -176,6 +180,10 @@ func _finish() -> void:
 	_stop()
 	if thing is Harvestable:
 		_swallow_item(thing)
+	elif thing is WaterVolume:
+		var room := int(Database.tune("traversal", "water_capacity", 40.0)) - Game.life.item_count("water")
+		Game.add_item("water", mini(room, int(Database.tune("traversal", "water_per_gulp", 5.0))))
+		Game.count("water_drunk")
 	elif thing is Creature:
 		if thing.is_corpse():
 			_swallow_creature(thing, false)

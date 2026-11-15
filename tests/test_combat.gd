@@ -81,22 +81,16 @@ func _spawn(id: String, offset: Vector3) -> Creature:
 
 ## Puts the slime back at the cave's spawn point, healed and unhurried.
 func _reset() -> void:
-	player.respawn(Vector3(0.0, 0.5, 8.0))
+	player.respawn(main.level.spawn_position())
 	Game.life.vitals.hp = Game.life.vitals.max_hp
 	Game.life.vitals.statuses.clear()
 	await frames(30)
-
-
-func _clear_orbs() -> void:
-	for orb in main.get_node("Orbs").get_children():
-		orb.queue_free()
 
 
 func _test_creatures() -> void:
 	var life := Game.life
 	check(is_equal_approx(life.vitals.max_hp, 60.0), "a 100 EP slime has 60 health")
 	check(is_equal_approx(Game.get_power(), 1.0), "and a damage multiplier of 1")
-	_clear_orbs()
 	await seconds(1.0)
 
 	# A bat notices the slime, closes in and bites.

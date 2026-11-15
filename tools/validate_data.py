@@ -209,6 +209,13 @@ def check_skills(damage: dict, statuses: dict) -> dict:
                 sub_functions[function_id] = skill_id
                 check_label(f"{where} sub-function '{function_id}'", function.get("label"))
         check_attack(skill.get("active"), f"{where} active", damage, statuses)
+        practice = skill.get("practice")
+        if practice is not None:
+            if not isinstance(practice, dict) or not isinstance(practice.get("stat"), str) \
+                    or not isinstance(practice.get("needed"), (int, float)):
+                problem(f"{where}: practice needs a stat and a numeric needed")
+            else:
+                check_attack(practice.get("precursor"), f"{where} practice precursor", damage, statuses)
         if "passive" in skill and not isinstance(skill["passive"], dict):
             problem(f"{where}: passive must be an object")
 

@@ -14,6 +14,8 @@ var _health_bar: ProgressBar
 var _health_label: Label
 var _magicule_bar: ProgressBar
 var _magicule_label: Label
+var _stamina_bar: ProgressBar
+var _stamina_label: Label
 var _status_label: Label
 var _skill_label: Label
 var _item_label: Label
@@ -42,6 +44,9 @@ func _ready() -> void:
 	_health_label = _bar_caption(column, _health_bar)
 	_magicule_bar = _bar(Color(0.45, 0.6, 0.95))
 	_magicule_label = _bar_caption(column, _magicule_bar)
+	_stamina_bar = _bar(Color(0.55, 0.85, 0.45))
+	_stamina_label = _bar_caption(column, _stamina_bar)
+	_stamina_label.text = "Stamina"
 	_status_label = UiStyle.label(13, UiStyle.WARNING_COLOR)
 	_skill_label = UiStyle.label(13, UiStyle.MUTED_COLOR)
 	_item_label = UiStyle.label(13, UiStyle.MUTED_COLOR)
@@ -75,6 +80,11 @@ func _process(_delta: float) -> void:
 	_health_label.text = "Health  %d / %d" % [ceili(vitals.hp), ceili(vitals.max_hp)]
 	_magicule_bar.value = life.magicules / maxf(1.0, life.max_magicules)
 	_magicule_label.text = "Magicules  %d / %d" % [floori(life.magicules), floori(life.max_magicules)]
+
+	var stamina_max := Database.tune("vitals", "stamina_max", 100.0)
+	_stamina_bar.value = life.stamina / stamina_max
+	_stamina_bar.visible = life.stamina < stamina_max - 0.5
+	_stamina_label.visible = _stamina_bar.visible
 
 	var afflictions := PackedStringArray()
 	for status_id: String in vitals.statuses:

@@ -18,6 +18,7 @@ func _run() -> void:
 		elif argument.begins_with("--stage="):
 			_stage = argument.trim_prefix("--stage=")
 	DirAccess.make_dir_recursive_absolute(_out_dir)
+	populate = _stage.begins_with("cave")
 	await start_main()
 	if has_method("_stage_" + _stage):
 		await call("_stage_" + _stage)
@@ -50,8 +51,6 @@ func spawn(id: String, offset: Vector3, frozen: bool = true) -> Creature:
 
 
 func _stage_creatures() -> void:
-	for orb in main.get_node("Orbs").get_children():
-		orb.queue_free()
 	spawn("giant_bat", Vector3(-5.0, 1.6, -5.0))
 	spawn("evil_centipede", Vector3(-2.5, 0.0, -5.0)).rotation.y = 0.9
 	spawn("armorsaurus", Vector3(0.5, 0.0, -6.0)).rotation.y = 0.8
@@ -67,8 +66,6 @@ func _stage_creatures() -> void:
 
 ## A slime a little way into a life: Predator, Great Sage, a few gains.
 func _kit() -> void:
-	for orb in main.get_node("Orbs").get_children():
-		orb.queue_free()
 	Game.grant_skill("predator", true)
 	Game.grant_skill("great_sage", true)
 	Game.grant_resistance("pain_nullification")
@@ -107,3 +104,33 @@ func _stage_scan() -> void:
 	player.advisor.scan()
 	await seconds(1.5)
 	await shot("scan")
+
+
+## Stands the slime on a map cell looking along `yaw` (0 looks north).
+func look_from(row: int, column: int, yaw: float, pitch: float = -0.3) -> void:
+	await place_at_cell(row, column)
+	player._camera_rig._yaw = yaw
+	player._camera_rig._pitch = pitch
+	player._camera_rig._apply()
+	await seconds(0.5)
+
+
+func _stage_cave() -> void:
+	player._invulnerable = 9999.0
+	Game.grant_skill("predator", true)
+	Game.grant_skill("great_sage", true)
+	for node in get_tree().get_nodes_in_group(Combat.GROUP):
+		if node is Creature:
+			node.set_physics_process(false)
+	await look_from(37, 27, 0.0)
+	await shot("cave_birth")
+	await look_from(25, 28, 0.0, -0.35)
+	await shot("cave_hall")
+	await look_from(20, 16, PI * 0.5, -0.25)
+	await shot("cave_veldora_chamber")
+	await look_from(20, 41, -PI * 0.5, -0.35)
+	await shot("cave_lake")
+	await look_from(9, 28, 0.0, -0.3)
+	await shot("cave_lair")
+	await look_from(36, 39, -PI * 0.5, -0.3)
+	await shot("cave_grotto")

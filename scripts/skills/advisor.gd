@@ -173,6 +173,12 @@ func _give_hints() -> void:
 		if creature.is_staggered() and life.has_skill("predator"):
 			_hint_once("hint_staggered", "advisor_staggered")
 
+	if _player.in_water() and life.has_skill("predator"):
+		_hint_once("hint_water", "advisor_water")
+	for stat: String in ["water_spits", "water_spurts", "swim_seconds"]:
+		if float(life.practice.get(stat, 0.0)) > 0.0:
+			_hint_once("hint_practice", "advisor_practice")
+
 	if life.has_skill("predator") and not life.analysed.has("item:hipokute_herb"):
 		for node in get_tree().get_nodes_in_group(Harvestable.GROUP):
 			var herb := node as Harvestable
