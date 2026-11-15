@@ -357,6 +357,8 @@ func die(damage_type_id: String) -> void:
 		return
 	life.alive = false
 	life.vitals.alive = false
+	if Voice.is_confirm_open():
+		Voice.answer(false)
 
 	var damage := Database.get_damage_type(damage_type_id)
 	var imprint := str(damage.get("imprint_resistance", ""))

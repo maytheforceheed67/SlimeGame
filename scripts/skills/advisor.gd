@@ -73,6 +73,7 @@ func link_analysis() -> bool:
 	if level() < 2 or Game.life.analysis_linked:
 		return false
 	Game.life.analysis_linked = true
+	Soul.remember("analysis_link", Game.life.life_number)
 	Voice.advise("advisor_link_done")
 	return true
 
@@ -157,6 +158,10 @@ func _give_hints() -> void:
 		_hint_once("hint_blind", "advisor_blind")
 		return
 
+	_hint_once("hint_goal", "advisor_goal")
+	if life.flags.has("veldora_swallowed") and life.analysed.has("species:tempest_serpent"):
+		_hint_once("hint_slice_done", "advisor_slice_done")
+
 	if life.vitals.fraction() < Database.tune("death", "low_health_fraction", 0.3):
 		if not life.flags.get("hint_low_health_active", false):
 			life.flags["hint_low_health_active"] = true
@@ -196,7 +201,13 @@ func _offer_link() -> void:
 	var life := Game.life
 	if level() < 2 or life.analysis_linked or _asking_link or life.flags.has("link_offered"):
 		return
-	if life.analysis_queue.is_empty() or not Game.can_control():
+	if Soul.remembers_from_before("analysis_link", life.life_number):
+		# A soul that made the link in an earlier life makes it again at once.
+		life.flags["link_offered"] = true
+		life.analysis_linked = true
+		Voice.advise("advisor_link_remembered")
+		return
+	if (life.analysis_queue.is_empty() and life.analysed.is_empty()) or not Game.can_control():
 		return
 	life.flags["link_offered"] = true
 	_asking_link = true

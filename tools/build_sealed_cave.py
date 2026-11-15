@@ -89,7 +89,7 @@ MARKS = [
     (16, 54, "spawn", "giant_bat"), (16, 31, "spawn", "giant_bat"),
     (37, 45, "spawn", "evil_centipede"), (40, 41, "spawn", "evil_centipede"),
     (12, 18, "spawn", "evil_centipede"),
-    (16, 27, "spawn", "armorsaurus"), (29, 47, "spawn", "armorsaurus"),
+    (11, 27, "spawn", "armorsaurus"), (29, 47, "spawn", "armorsaurus"),
     (5, 8, "spawn", "black_spider"), (8, 13, "spawn", "black_spider"),
     (4, 27, "spawn", "tempest_serpent"),
     # crystal lights

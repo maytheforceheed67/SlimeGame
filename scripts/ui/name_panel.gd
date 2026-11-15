@@ -48,6 +48,7 @@ func _ready() -> void:
 	confirm.custom_minimum_size = Vector2(0.0, 36.0)
 	confirm.pressed.connect(_submit_fields)
 	column.add_child(confirm)
+	Game.life_ended.connect(func(_life: LifeState, _cause: String) -> void: submit("", ""))
 	_family_edit.text_submitted.connect(func(_text: String) -> void: _given_edit.grab_focus())
 	_given_edit.text_submitted.connect(func(_text: String) -> void: _submit_fields())
 
