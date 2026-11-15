@@ -371,6 +371,72 @@ def check_wish_cards(skills: dict, resistances: dict, damage: dict) -> None:
             problem(f"{where}: result kind must be skill, resistance, reel_weight or nothing")
 
 
+HEX_COLOUR = re.compile(r"^#[0-9A-Fa-f]{6}$")
+TONE_MAPPERS = {"linear", "reinhard", "filmic", "aces", "agx"}
+ANTIALIASING = {"off", "fxaa", "msaa2x", "msaa4x"}
+
+
+def check_visual() -> None:
+    """The visual config and the asset manifest (docs/VISUAL_STYLE.md)."""
+    file_name = "visual_config.json"
+    root = read(file_name)
+
+    def walk(section: dict, prefix: str) -> None:
+        for key, value in section.items():
+            if key.startswith("_"):
+                continue
+            path = f"{prefix}{key}"
+            if isinstance(value, dict):
+                walk(value, path + ".")
+            elif isinstance(value, str) and value.startswith("#") and not HEX_COLOUR.match(value):
+                problem(f"{file_name}: {path} must be a #RRGGBB colour")
+            elif not isinstance(value, (str, int, float, bool)):
+                problem(f"{file_name}: {path} must be a number, a flag or text")
+            elif prefix.startswith("palette.") and not (isinstance(value, str) and HEX_COLOUR.match(value)):
+                problem(f"{file_name}: {path} must be a #RRGGBB colour")
+
+    walk(root, "")
+    renderer = root.get("renderer", {})
+    if renderer.get("tonemap") not in TONE_MAPPERS:
+        problem(f"{file_name}: renderer.tonemap must be one of {sorted(TONE_MAPPERS)}")
+    if renderer.get("antialiasing") not in ANTIALIASING:
+        problem(f"{file_name}: renderer.antialiasing must be one of {sorted(ANTIALIASING)}")
+    if root.get("quality", {}).get("tier") not in root.get("tiers", {}):
+        problem(f"{file_name}: quality.tier must name a tier")
+    for switch in ("screen_shake", "hit_stop_scale", "reduce_flashes", "short_skill_animations"):
+        if switch not in root.get("accessibility", {}):
+            problem(f"{file_name}: accessibility.{switch} is missing")
+
+    file_name = "asset_manifest.json"
+    builders = set(re.findall(r'"([a-z_]+)"', re.search(
+        r"const BUILDERS: Array\[String\] = \[(.*?)\]", (SCRIPTS / "visual" / "stand_ins.gd").read_text(encoding="utf-8"), re.S).group(1)))
+    assets = read(file_name).get("assets")
+    if not isinstance(assets, list):
+        problem(f"{file_name}: 'assets' must be a list")
+        return
+    seen: set[str] = set()
+    for index, asset in enumerate(assets):
+        asset_id = asset.get("id") if isinstance(asset, dict) else None
+        where = f"{file_name}: assets[{index}] '{asset_id}'"
+        if not isinstance(asset_id, str) or not ID_PATTERN.match(asset_id):
+            problem(f"{where}: needs a snake_case id")
+            continue
+        if asset_id in seen:
+            problem(f"{where}: duplicate id")
+        seen.add(asset_id)
+        for key in ("category", "source", "license", "target_height", "toonify", "outline_px", "cast_shadow", "clips", "placeholder"):
+            if key not in asset:
+                problem(f"{where}: missing '{key}'")
+        if asset.get("placeholder", {}).get("builder") not in builders:
+            problem(f"{where}: placeholder.builder is not a stand-in in scripts/visual/stand_ins.gd")
+        file_path = asset.get("file") or ""
+        if file_path:
+            if not asset.get("url"):
+                problem(f"{where}: a third-party file needs its source url")
+            if not (ROOT / file_path).exists():
+                print(f"note: {where}: {file_path} is not in the project yet; the stand-in will be shown")
+
+
 def check_tuning() -> None:
     file_name = "tuning.json"
     root = read(file_name)
@@ -492,6 +558,7 @@ def main() -> int:
     check_items(creatures)
     check_dialogues(skills)
     check_wish_cards(skills, resistances, damage)
+    check_visual()
     check_tuning()
     check_world(ranks, skills, damage, statuses)
     check_voice()

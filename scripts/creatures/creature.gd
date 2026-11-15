@@ -24,7 +24,9 @@ var staggered_for := 0.0
 var dead_for := 0.0
 
 var _attacker: Attacker
-var _visual: CreatureVisual
+## The body shown for this creature: a stand-in built in code, or a model
+## file if the asset manifest names one. Animation hooks are optional.
+var _visual: Node3D
 var _target: Node3D
 var _radius := 0.5
 var _hover := 0.0
@@ -60,9 +62,8 @@ func _ready() -> void:
 	shape.position.y = _radius
 	add_child(shape)
 
-	_visual = CreatureVisual.new()
+	_visual = Assets.instantiate(creature_id)
 	add_child(_visual)
-	_visual.build(data.get("model", {}))
 	if _hover > 0.0:
 		_visual.position.y = _radius
 
@@ -113,7 +114,7 @@ func take_hit(hit: Dictionary) -> float:
 		return dealt
 	Combat.apply_hit_status(vitals, hit)
 	_impulse += hit.get("knockback", Vector3.ZERO)
-	_visual.flash()
+	_show("flash")
 	var attacker: Variant = hit.get("attacker")
 	if attacker is Node3D and is_instance_valid(attacker):
 		_target = attacker
@@ -166,7 +167,7 @@ func _physics_process(delta: float) -> void:
 	if staggered_for > 0.0:
 		staggered_for -= delta
 		if staggered_for <= 0.0:
-			_visual.set_staggered(false)
+			_show("set_staggered", [false])
 	elif _attacker.is_busy():
 		move = _attacker.lunge_velocity
 		_face(_attacker.direction, delta)
@@ -187,7 +188,7 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.y -= _gravity * delta
 	move_and_slide()
-	_visual.animate(delta, clampf(move.length() / maxf(_speed, 0.1), 0.0, 1.0))
+	_show("animate", [delta, clampf(move.length() / maxf(_speed, 0.1), 0.0, 1.0)])
 
 
 func _update_target() -> void:
@@ -276,12 +277,12 @@ func _enter_stagger() -> void:
 	stagger = 0.0
 	staggered_for = Database.tune("combat", "stagger_duration", 3.5)
 	_attacker.cancel()
-	_visual.set_staggered(true)
+	_show("set_staggered", [true])
 
 
 func _on_died(_damage_type_id: String) -> void:
 	_attacker.cancel()
-	_visual.set_dead()
+	_show("set_dead")
 	_target = null
 	staggered_for = 0.0
 	remove_from_group(Combat.GROUP)
@@ -304,6 +305,13 @@ func _tick_corpse(delta: float) -> void:
 	move_and_slide()
 	if dead_for >= Database.tune("combat", "corpse_lifetime", 180.0):
 		queue_free()
+
+
+## Tells the body to show something (flash, stagger, death, movement). A body
+## that does not know the cue ignores it, so a model file need not support all.
+func _show(cue: StringName, arguments: Array = []) -> void:
+	if _visual.has_method(cue):
+		_visual.callv(cue, arguments)
 
 
 ## Everyone in range hears the Voice when a creature adapts mid-fight.

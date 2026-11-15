@@ -44,7 +44,9 @@ var _jet := 0.0
 var _jet_velocity := Vector3.ZERO
 ## Record of the species being mimicked ({} in the body's own shape).
 var _form: Dictionary = {}
-var _form_visual: CreatureVisual
+var _form_visual: Node3D
+## The body's own shape, from the asset manifest.
+var _own_model: Node3D
 
 @onready var _visual: Node3D = $Visual
 @onready var _camera_rig: CameraRig = $CameraRig
@@ -58,6 +60,8 @@ func _ready() -> void:
 	add_child(predator)
 	advisor = Advisor.new()
 	add_child(advisor)
+	_own_model = Assets.instantiate("slime")
+	_visual.add_child(_own_model)
 	add_to_group(GROUP)
 	add_to_group(Combat.GROUP)
 	Game.life_began.connect(_on_life_began)
@@ -152,12 +156,10 @@ func set_form(creature_id: String) -> bool:
 	_set_squeezed(false, true)
 	life.form_id = creature_id
 	_form = Database.get_creature(creature_id) if creature_id != "" else {}
-	for part: Node3D in [_visual.get_node("Body"), _visual.get_node("Core")]:
-		part.visible = _form.is_empty()
+	_own_model.visible = _form.is_empty()
 	if not _form.is_empty():
-		_form_visual = CreatureVisual.new()
+		_form_visual = Assets.instantiate(creature_id, {"mimic": true})
 		_visual.add_child(_form_visual)
-		_form_visual.build(_form.get("model", {}), true)
 		if float(_form.get("body", {}).get("hover_height", 0.0)) > 0.0:
 			_form_visual.position.y = _own_radius()
 		Voice.say("form_taken", {"form": str(_form.get("name", creature_id))})
@@ -320,8 +322,8 @@ func _physics_process(delta: float) -> void:
 
 	_face(attacker.direction if attacker.is_busy() else wish, delta)
 	_animate(delta)
-	if is_instance_valid(_form_visual):
-		_form_visual.animate(delta, clampf(Vector2(velocity.x, velocity.z).length() / maxf(speed, 0.1), 0.0, 1.0))
+	if is_instance_valid(_form_visual) and _form_visual.has_method("animate"):
+		_form_visual.call("animate", delta, clampf(Vector2(velocity.x, velocity.z).length() / maxf(speed, 0.1), 0.0, 1.0))
 	_camera_rig.position.y = move_toward(_camera_rig.position.y,
 			SQUEEZED_RIG_HEIGHT if _squeezed else RIG_HEIGHT, 3.0 * delta)
 
@@ -352,8 +354,7 @@ func _on_life_began(new_life: LifeState) -> void:
 		_form_visual.queue_free()
 	_form_visual = null
 	_form = {}
-	for part: Node3D in [_visual.get_node("Body"), _visual.get_node("Core")]:
-		part.visible = true
+	_own_model.visible = true
 	_apply_radius()
 
 

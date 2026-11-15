@@ -19,6 +19,8 @@ config/icon="res://icon.svg"
 [autoload]
 
 Database="*res://scripts/autoload/database.gd"
+Visual="*res://scripts/visual/visual_config.gd"
+Assets="*res://scripts/visual/asset_manager.gd"
 Voice="*res://scripts/autoload/voice_of_world.gd"
 Soul="*res://scripts/autoload/soul.gd"
 Game="*res://scripts/autoload/game.gd"

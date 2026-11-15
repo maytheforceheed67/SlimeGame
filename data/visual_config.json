@@ -1,0 +1,164 @@
+{
+  "_meta": {
+    "table": "visual_config",
+    "source": "docs/VISUAL_STYLE.md, sections 2.4, 3 and 16, translated to Godot 4",
+    "notes": [
+      "The one place for every visual tunable: colours, widths, thresholds, tier switches and accessibility. Scripts read it through the Visual autoload; none of these numbers is repeated in code.",
+      "Every value is a starting point to tune by eye. Press F4 in a debug build to edit any of them live; Save writes your changes to user://visual_overrides.json, which is laid over this file at start-up.",
+      "Colours are #RRGGBB strings. A value is addressed by its dotted path, for example palette.cave.fog.",
+      "renderer.tonemap: linear keeps flat colours exactly as authored and is the default. agx needs Godot 4.4 or newer. Godot has no Khronos Neutral tone mapper; aces is deliberately not offered as a default because it shifts hand-picked hues.",
+      "renderer.antialiasing: off, fxaa, msaa2x or msaa4x.",
+      "Consumed now (Pass 0): renderer, post, fog, lights.fill_*, palette.cave.fog, accessibility (stored). The toon, outline and tiers sections and the rest of the palette are the style document's starting values, read from Pass 1 onward."
+    ]
+  },
+  "renderer": {
+    "tonemap": "linear",
+    "exposure": 1.0,
+    "white": 1.0,
+    "antialiasing": "msaa2x"
+  },
+  "post": {
+    "bloom_enabled": true,
+    "bloom_threshold": 1.0,
+    "bloom_intensity": 0.8,
+    "bloom_strength": 1.0,
+    "bloom_bleed": 0.0,
+    "grade_saturation": 1.0,
+    "grade_brightness": 1.0,
+    "grade_contrast": 1.0,
+    "vignette_offset": 0.35,
+    "vignette_darkness": 0.45,
+    "vignette_color": "#1A1640"
+  },
+  "fog": {
+    "density": 0.018
+  },
+  "lights": {
+    "fill_color": "#7F8BD6",
+    "fill_energy": 0.5,
+    "key_color": "#FFFFFF",
+    "key_energy": 1.0,
+    "point_light_pool": 4
+  },
+  "toon": {
+    "character_shade_tint": "#8C80BF",
+    "character_band_threshold": 0.45,
+    "character_band_softness": 0.01,
+    "character_rim_start": 0.65,
+    "character_rim_soft": 0.02,
+    "character_rim_strength": 0.5,
+    "character_spec_gloss": 64.0,
+    "environment_shade_tint": "#A69ED1",
+    "environment_band_threshold": 0.45,
+    "environment_band_softness": 0.1,
+    "environment_rim_strength": 0.1,
+    "rim_color": "#8FE8FF"
+  },
+  "outline": {
+    "width_px": 2.0,
+    "slime_px": 2.5,
+    "large_px": 3.0,
+    "detail_px": 1.5,
+    "color_factor": 0.4,
+    "max_growth_distance": 25.0,
+    "fade_below_px": 12.0
+  },
+  "palette": {
+    "cave": {
+      "fog": "#2A2466",
+      "rock_lit": "#5A5FA8",
+      "rock_shade": "#2E2A66",
+      "rock_cap": "#7F8BD6",
+      "crevice": "#1A1640",
+      "moss": "#2FA39B",
+      "lake_shallow": "#4FE3E0",
+      "lake_deep": "#16357A",
+      "lake_foam": "#E6FFFF"
+    },
+    "ore": {
+      "core": "#E8FFFF",
+      "mid": "#5FE8FF",
+      "dark": "#1F7FD1",
+      "violet_light": "#B28CFF",
+      "violet_dark": "#6B3FD9",
+      "gold": "#FFD86B",
+      "mote_a": "#9FF3FF",
+      "mote_b": "#C9B6FF"
+    },
+    "herb": {
+      "leaf": "#3FD38A",
+      "shade": "#1E8F6E",
+      "tip": "#C8FFD9"
+    },
+    "slime": {
+      "body": "#4FB8FF",
+      "shade": "#2B5FD9",
+      "rim": "#BFEFFF",
+      "core": "#8FE0FF",
+      "outline": "#16307A",
+      "highlight": "#FFFFFF"
+    },
+    "veldora": {
+      "scales": "#2B2F4A",
+      "shade": "#171932",
+      "belly": "#6C6FA3",
+      "horn": "#F2C14E",
+      "horn_shade": "#B9792B",
+      "eyes": "#FFD84A",
+      "storm": "#8FE8FF",
+      "wing": "#4A3F7A",
+      "outline": "#0D0F24"
+    },
+    "seal": {
+      "glyph": "#FFE28A",
+      "barrier": "#6F5BFF",
+      "pulse": "#FFFFFF"
+    },
+    "ui": {
+      "panel": "#101426",
+      "panel_edge": "#7FE3FF",
+      "text": "#FFFFFF",
+      "text_stroke": "#0B0D1A",
+      "accent_player": "#3FD0FF",
+      "accent_ready": "#FFC531",
+      "accent_danger": "#FF3B5C",
+      "health": "#FF4D5E",
+      "health_ghost": "#FFD0D6",
+      "magicules": "#3FB6FF",
+      "stamina": "#FFC531",
+      "voice_text": "#CFF6FF",
+      "voice_window": "#0E1B2E"
+    },
+    "elements": {
+      "devour_core": "#FFFFFF",
+      "devour_mid": "#45C8FF",
+      "devour_rim": "#2B2FA8",
+      "water_core": "#FFFFFF",
+      "water_mid": "#46E0E0",
+      "water_rim": "#173A8A",
+      "lightning_core": "#FFFFFF",
+      "lightning_mid": "#7FEAFF",
+      "lightning_rim": "#2440C8",
+      "fire_core": "#FFF6C2",
+      "fire_mid": "#FF8A2A",
+      "fire_rim": "#C2203A",
+      "poison_core": "#D8FFB0",
+      "poison_mid": "#8A4FD6",
+      "poison_rim": "#1B1030"
+    }
+  },
+  "quality": {
+    "tier": "medium"
+  },
+  "tiers": {
+    "low": {"pixel_ratio": 1.0, "draw_calls": 100, "triangles": 150000, "shadow_map": 0, "outlines": "key", "bloom": false, "point_lights": 0},
+    "medium": {"pixel_ratio": 1.5, "draw_calls": 200, "triangles": 400000, "shadow_map": 1024, "outlines": "all", "bloom": true, "point_lights": 2},
+    "high": {"pixel_ratio": 2.0, "draw_calls": 500, "triangles": 1500000, "shadow_map": 2048, "outlines": "all_plus_environment", "bloom": true, "point_lights": 6}
+  },
+  "accessibility": {
+    "screen_shake": 1.0,
+    "hit_stop_scale": 1.0,
+    "reduce_flashes": false,
+    "short_skill_animations": false
+  }
+}

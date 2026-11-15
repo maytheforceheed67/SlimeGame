@@ -9,10 +9,12 @@ extends Area3D
 var _taken := false
 var _phase := 0.0
 
-@onready var _mesh: MeshInstance3D = $Mesh
+var _mesh: Node3D
 
 
 func _ready() -> void:
+	_mesh = Assets.instantiate("magicule_mote")
+	add_child(_mesh)
 	_phase = randf() * TAU
 	body_entered.connect(_on_body_entered)
 

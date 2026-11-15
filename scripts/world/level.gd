@@ -27,8 +27,17 @@ func _ready() -> void:
 	# This level's own copy, so darkening it never touches the saved scene.
 	_environment = ($WorldEnvironment.environment as Environment).duplicate()
 	$WorldEnvironment.environment = _environment
+	Visual.changed.connect(_apply_look)
+	_apply_look("")
+
+
+## Takes tone mapping, bloom, grade, fog and fill light from the visual
+## config, now and whenever a value is edited.
+func _apply_look(_path: String) -> void:
+	WorldLook.apply(_environment, get_viewport())
 	_normal_fog_density = _environment.fog_density
 	_normal_fog_color = _environment.fog_light_color
+	_sighted = true
 
 
 ## A sightless body perceives only what is close enough to touch: the world
@@ -39,6 +48,7 @@ func _process(_delta: float) -> void:
 		_environment.fog_mode = Environment.FOG_MODE_EXPONENTIAL
 		_environment.fog_density = _normal_fog_density
 		_environment.fog_light_color = _normal_fog_color
+		_environment.background_color = _normal_fog_color
 	elif not sighted:
 		var camera := get_viewport().get_camera_3d()
 		var player := get_tree().get_first_node_in_group(Player.GROUP) as Node3D
@@ -46,6 +56,7 @@ func _process(_delta: float) -> void:
 			var reach := camera.global_position.distance_to(player.global_position)
 			_environment.fog_mode = Environment.FOG_MODE_DEPTH
 			_environment.fog_light_color = Color.BLACK
+			_environment.background_color = Color.BLACK
 			_environment.fog_depth_begin = reach + 1.0
 			_environment.fog_depth_end = reach + 4.0
 	_sighted = sighted

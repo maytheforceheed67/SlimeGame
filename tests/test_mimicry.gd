@@ -16,7 +16,7 @@ func _run() -> void:
 	check(not player.set_form("black_spider"), "a species that was never analysed cannot be mimicked")
 	await tap("form_next")
 	check(life.form_id == "giant_bat" and player.in_form(), "the form button takes a recorded form")
-	check(not player.get_node("Visual/Body").visible and is_instance_valid(player._form_visual), "the slime's shape gives way to the bat's")
+	check(not player.get_node("Visual/Slime").visible and is_instance_valid(player._form_visual), "the slime's shape gives way to the bat's")
 
 	# Holding a form costs magicules: a lot for a weak body, little for a strong one.
 	check(is_equal_approx(player.form_upkeep(), 12.0), "a bat form is at the upkeep cap for a 100 EP slime")
@@ -60,7 +60,7 @@ func _run() -> void:
 	life.magicules = 3.0
 	await seconds(1.0)
 	check(life.form_id == "" and not player.in_form(), "the form drops when magicules run out")
-	check(player.get_node("Visual/Body").visible, "and the slime's own shape returns")
+	check(player.get_node("Visual/Slime").visible, "and the slime's own shape returns")
 	await seconds(1.0)
 	check(spoken().contains("Magicules exhausted"), "the Voice says so")
 

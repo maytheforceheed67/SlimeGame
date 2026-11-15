@@ -20,13 +20,13 @@ var _path_index := 0
 var _busy := false
 var _taken := false
 var _body: Node3D
-var _eye_material: StandardMaterial3D
 
 
 func _ready() -> void:
 	add_to_group(INTERACT_GROUP)
 	add_to_group(SOUND_GROUP)
-	_build_body()
+	_body = Assets.instantiate("veldora")
+	add_child(_body)
 	_build_barrier()
 
 
@@ -141,53 +141,10 @@ func _offer_swallow() -> void:
 	tween.chain().tween_callback(queue_free)
 
 
-# --- Placeholder body ----------------------------------------------------------
+# --- Body --------------------------------------------------------------------
 
-func _build_body() -> void:
-	_body = Node3D.new()
-	add_child(_body)
-	var scales := StandardMaterial3D.new()
-	scales.albedo_color = Color(0.07, 0.06, 0.1)
-	scales.roughness = 0.55
-	scales.metallic = 0.3
-	var trim := StandardMaterial3D.new()
-	trim.albedo_color = Color(0.75, 0.6, 0.2)
-	trim.emission_enabled = true
-	trim.emission = Color(0.9, 0.7, 0.2)
-	trim.emission_energy_multiplier = 0.6
-	_eye_material = StandardMaterial3D.new()
-	_eye_material.albedo_color = Color(1.0, 0.85, 0.3)
-	_eye_material.emission_enabled = true
-	_eye_material.emission = Color(1.0, 0.8, 0.25)
-	_eye_material.emission_energy_multiplier = 4.0
-
-	# Lying coiled, head raised toward whoever stands in front (-Z).
-	_sphere(Vector3(0.0, 2.2, 1.5), Vector3(5.5, 4.2, 8.0), scales)
-	_sphere(Vector3(0.0, 3.6, -2.6), Vector3(2.6, 2.8, 3.6), scales)
-	_sphere(Vector3(0.0, 5.0, -4.4), Vector3(2.0, 2.0, 3.0), scales)
-	_box(Vector3(0.0, 5.3, -6.0), Vector3(1.7, 1.3, 2.6), scales)
-	_box(Vector3(0.0, 4.9, -7.4), Vector3(1.2, 0.8, 1.2), scales)
-	for side: float in [-1.0, 1.0]:
-		_sphere(Vector3(0.88 * side, 5.75, -6.6), Vector3(0.3, 0.5, 0.7), _eye_material)
-		_cone(Vector3(0.6 * side, 6.6, -5.2), 0.28, 1.8, trim).rotation = Vector3(-0.7, 0.0, 0.25 * side)
-		var wing := _box(Vector3(3.6 * side, 4.6, 1.6), Vector3(4.4, 0.16, 5.6), scales)
-		wing.rotation = Vector3(0.1, 0.0, 0.9 * side)
-		_box(Vector3(2.4 * side, 0.7, -1.6), Vector3(1.1, 1.4, 2.2), scales)
-	for i in 5:
-		_cone(Vector3(0.0, 4.9 - i * 0.25, -1.6 + i * 1.5), 0.3, 1.2, trim)
-	for i in 4:
-		var taper := 1.0 - i * 0.2
-		_sphere(Vector3(1.4 + i * 1.3, 0.9 * taper, 5.4 + i * 0.4), Vector3(2.0, 1.7, 2.2) * taper, scales)
-
-	var glow := OmniLight3D.new()
-	glow.light_color = Color(1.0, 0.8, 0.35)
-	glow.light_energy = 1.4
-	glow.omni_range = 12.0
-	glow.position = Vector3(0.0, 5.6, -7.6)
-	add_child(glow)
-
-
-## The Infinity Prison: a shell nothing passes, drawn as a faint sphere.
+## The Infinity Prison is a shell nothing passes. Its look, like the dragon's,
+## comes from the asset manifest; its collision is his own.
 func _build_barrier() -> void:
 	var shell := StaticBody3D.new()
 	var shape := CollisionShape3D.new()
@@ -197,54 +154,4 @@ func _build_barrier() -> void:
 	shell.add_child(shape)
 	shell.position.y = 1.0
 	add_child(shell)
-
-	var material := StandardMaterial3D.new()
-	material.albedo_color = Color(0.6, 0.8, 1.0, 0.1)
-	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	material.emission_enabled = true
-	material.emission = Color(0.4, 0.65, 1.0)
-	material.emission_energy_multiplier = 0.5
-	material.cull_mode = BaseMaterial3D.CULL_DISABLED
-	material.rim_enabled = true
-	material.rim = 1.0
-	var mesh := SphereMesh.new()
-	mesh.radius = BARRIER_RADIUS
-	mesh.height = BARRIER_RADIUS * 2.0
-	mesh.material = material
-	var instance := MeshInstance3D.new()
-	instance.mesh = mesh
-	instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	shell.add_child(instance)
-
-
-func _add(mesh: Mesh, at: Vector3, material: Material) -> MeshInstance3D:
-	var instance := MeshInstance3D.new()
-	instance.mesh = mesh
-	instance.material_override = material
-	instance.position = at
-	_body.add_child(instance)
-	return instance
-
-
-func _sphere(at: Vector3, size: Vector3, material: Material) -> MeshInstance3D:
-	var mesh := SphereMesh.new()
-	mesh.radius = 0.5
-	mesh.height = 1.0
-	var instance := _add(mesh, at, material)
-	instance.scale = size
-	return instance
-
-
-func _box(at: Vector3, size: Vector3, material: Material) -> MeshInstance3D:
-	var mesh := BoxMesh.new()
-	mesh.size = size
-	return _add(mesh, at, material)
-
-
-func _cone(at: Vector3, radius: float, height: float, material: Material) -> MeshInstance3D:
-	var mesh := CylinderMesh.new()
-	mesh.top_radius = 0.0
-	mesh.bottom_radius = radius
-	mesh.height = height
-	mesh.radial_segments = 8
-	return _add(mesh, at, material)
+	shell.add_child(Assets.instantiate("veldora_seal", {"radius": BARRIER_RADIUS}))

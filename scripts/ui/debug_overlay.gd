@@ -96,7 +96,12 @@ func _erase_soul() -> void:
 
 func _build_text() -> String:
 	var lines := PackedStringArray()
-	lines.append("DEBUG   F3 hide   %d fps" % int(Engine.get_frames_per_second()))
+	lines.append("DEBUG   F3 hide   F4 visual settings   %d fps" % int(Engine.get_frames_per_second()))
+	lines.append("Draw calls %d   primitives %s   objects %d" % [
+		int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)),
+		UiStyle.format_int(int(Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME))),
+		int(Performance.get_monitor(Performance.RENDER_TOTAL_OBJECTS_IN_FRAME)),
+	])
 
 	var life := Game.life
 	if life != null:

@@ -28,6 +28,10 @@ var _failures := 0
 func _ready() -> void:
 	Soul.save_path = TEST_SOUL_PATH
 	Soul.erase()
+	# Tests see the shipped look, never a developer's saved overrides.
+	Visual.overrides_path = "user://visual_overrides_test.json"
+	Visual.reset()
+	Visual.save_overrides()
 	await _run()
 	_release_all_actions()
 	print("\n%d checks, %d failed" % [_checks, _failures])

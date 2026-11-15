@@ -25,6 +25,7 @@ const KEYS := {
 	"voice_yes": [KEY_Y],
 	"voice_no": [KEY_N],
 	"debug_overlay": [KEY_F3],
+	"debug_visual_panel": [KEY_F4],
 	"debug_add_ep": [KEY_1],
 	"debug_double_ep": [KEY_2],
 	"debug_voice_test": [KEY_3],

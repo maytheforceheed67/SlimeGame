@@ -10,6 +10,10 @@ Engine: **Godot 4.3 or newer** (GDScript, Forward+ renderer).
 - Design document: [docs/DESIGN.md](docs/DESIGN.md), the source of truth.
 - Milestone 0 plan, schemas, test checklist and open questions:
   [docs/MILESTONE_0.md](docs/MILESTONE_0.md).
+- Visual overhaul: the style brief is [docs/VISUAL_STYLE.md](docs/VISUAL_STYLE.md);
+  progress by pass is under [docs/visual/](docs/visual/) (currently
+  [Pass 0](docs/visual/PASS_0.md)). Assets to download: [ASSETS_TODO.md](ASSETS_TODO.md).
+  Credits: [CREDITS.md](CREDITS.md).
 
 ## Running it
 
@@ -43,7 +47,8 @@ soul with no past, delete it, or press **5** in a debug build.
 | Y / N | Answer a Yes/No prompt |
 | Esc | Free or capture the cursor |
 
-Debug builds only: **F3** overlay, **1** +500 EP, **2** double EP, **3** Voice
+Debug builds only: **F3** overlay, **F4** visual settings (live tuning of every
+colour and number of the look), **1** +500 EP, **2** double EP, **3** Voice
 test, **4** die (cycles the cause), **5** erase the soul's memory.
 
 ## Layout
@@ -66,6 +71,10 @@ data/                   content tables (JSON): the only place lore lives
   spin.json               reincarnation spin: origins, affinities, first life
   voice_lines.json        every line the Voice of the World and the advisor speak
   tuning.json             every global [DESIGN] number
+  visual_config.json      every visual tunable (palette, post, fog, outline, tiers...)
+  asset_manifest.json     one entry per model, texture, font and sound
+assets/                 third-party files in use (empty until packs are added)
+assets_raw/             untouched downloads; ignored by git and by Godot
 scripts/
   autoload/               singletons, loaded in this order
     database.gd             Database: loads and cross-checks data/
@@ -77,6 +86,7 @@ scripts/
   creatures/              Creature (behaviour), CreatureVisual (placeholder bodies)
   player/                 Player body and orbit camera
   skills/                 Predator and Advisor modules
+  visual/                 Visual config, asset manager, stand-ins, world look
   world/                  Level, Veldora, water, harvestables, motes, sounds
   ui/                     HUD panels and screens
   main.gd                 entry scene script
@@ -86,6 +96,9 @@ tools/
   validate_data.py        checks data/ without opening Godot
   build_sealed_cave.py    generates scenes/world/sealed_cave.tscn from a cell map
   run_tests.sh            validator plus every test scene
+  build_credits.py        writes CREDITS.md from the asset manifest
+  inspect_model.gd        prints a model file's nodes, clips and size
+  inspect_assets.sh       lists assets_raw/ and inspects its models
   capture.sh              renders a named moment to a PNG
 ```
 

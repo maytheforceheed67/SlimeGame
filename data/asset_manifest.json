@@ -1,0 +1,28 @@
+{
+  "_meta": {
+    "table": "asset_manifest",
+    "source": "docs/VISUAL_STYLE.md, section 4",
+    "notes": [
+      "One entry per logical asset. Code asks the Assets autoload for an id and never names a file.",
+      "file is a path under the project (for example assets/models/creatures/giant_bat.glb). Leave it empty for assets that are built in code by design. If a file is named but missing or broken, the stand-in is used and one warning is logged.",
+      "placeholder.builder names a procedural stand-in in scripts/visual/stand_ins.gd. A stand-in is a real model built in code, not a bare primitive.",
+      "target_height is in metres; a loaded file is scaled to it and its base dropped to y = 0. It is not applied to stand-ins, which are built to size.",
+      "toonify, outline_px, cast_shadow and palette_remap are read from Pass 1 (toon material and outlines).",
+      "source, url, license and attribution feed CREDITS.md (python3 tools/build_credits.py). Every third-party file needs all four; prefer CC0, then CC-BY with credit.",
+      "clips maps the game's animation names to the names inside the file. Fill it from tools/inspect_model.gd output, never by guessing."
+    ]
+  },
+  "assets": [
+    {"id": "slime", "category": "characters", "file": "", "source": "Original, built in code", "url": null, "license": "Original work", "attribution": null, "target_height": 0.8, "toonify": true, "outline_px": 2.5, "cast_shadow": true, "palette_remap": null, "clips": {}, "placeholder": {"builder": "slime_blob", "seed": 0}},
+    {"id": "veldora", "category": "characters", "file": "", "source": "Original, built in code", "url": null, "license": "Original work", "attribution": null, "target_height": 12.0, "toonify": true, "outline_px": 3.0, "cast_shadow": true, "palette_remap": null, "clips": {}, "placeholder": {"builder": "veldora_blocks", "seed": 0}},
+    {"id": "veldora_seal", "category": "props", "file": "", "source": "Original, built in code", "url": null, "license": "Original work", "attribution": null, "target_height": 16.0, "toonify": false, "outline_px": 0.0, "cast_shadow": false, "palette_remap": null, "clips": {}, "placeholder": {"builder": "seal_dome", "seed": 0}},
+    {"id": "giant_bat", "category": "creatures", "file": "", "source": "Original, built in code", "url": null, "license": "Original work", "attribution": null, "target_height": 1.1, "toonify": true, "outline_px": 2.0, "cast_shadow": true, "palette_remap": null, "clips": {}, "placeholder": {"builder": "creature_model", "seed": 0}},
+    {"id": "evil_centipede", "category": "creatures", "file": "", "source": "Original, built in code", "url": null, "license": "Original work", "attribution": null, "target_height": 0.6, "toonify": true, "outline_px": 2.0, "cast_shadow": true, "palette_remap": null, "clips": {}, "placeholder": {"builder": "creature_model", "seed": 0}},
+    {"id": "armorsaurus", "category": "creatures", "file": "", "source": "Original, built in code", "url": null, "license": "Original work", "attribution": null, "target_height": 1.2, "toonify": true, "outline_px": 2.0, "cast_shadow": true, "palette_remap": null, "clips": {}, "placeholder": {"builder": "creature_model", "seed": 0}},
+    {"id": "black_spider", "category": "creatures", "file": "", "source": "Original, built in code", "url": null, "license": "Original work", "attribution": null, "target_height": 1.4, "toonify": true, "outline_px": 2.0, "cast_shadow": true, "palette_remap": null, "clips": {}, "placeholder": {"builder": "creature_model", "seed": 0}},
+    {"id": "tempest_serpent", "category": "creatures", "file": "", "source": "Original, built in code", "url": null, "license": "Original work", "attribution": null, "target_height": 1.3, "toonify": true, "outline_px": 2.0, "cast_shadow": true, "palette_remap": null, "clips": {}, "placeholder": {"builder": "creature_model", "seed": 0}},
+    {"id": "hipokute_herb", "category": "props", "file": "", "source": "Original, built in code", "url": null, "license": "Original work", "attribution": null, "target_height": 0.6, "toonify": true, "outline_px": 2.0, "cast_shadow": true, "palette_remap": null, "clips": {}, "placeholder": {"builder": "herb_cones", "seed": 0}},
+    {"id": "magic_ore", "category": "props", "file": "", "source": "Original, built in code", "url": null, "license": "Original work", "attribution": null, "target_height": 0.6, "toonify": true, "outline_px": 2.0, "cast_shadow": true, "palette_remap": null, "clips": {}, "placeholder": {"builder": "ore_chunks", "seed": 0}},
+    {"id": "magicule_mote", "category": "props", "file": "", "source": "Original, built in code", "url": null, "license": "Original work", "attribution": null, "target_height": 0.36, "toonify": false, "outline_px": 0.0, "cast_shadow": false, "palette_remap": null, "clips": {}, "placeholder": {"builder": "mote_orb", "seed": 0}}
+  ]
+}

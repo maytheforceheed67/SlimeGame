@@ -13,9 +13,15 @@
 [ext_resource type="Script" path="res://scripts/ui/name_panel.gd" id="11_name"]
 [ext_resource type="Script" path="res://scripts/ui/world_veil.gd" id="12_veil"]
 [ext_resource type="Script" path="res://scripts/ui/death_screen.gd" id="13_death"]
+[ext_resource type="Script" path="res://scripts/ui/vignette.gd" id="14_vignette"]
+[ext_resource type="Script" path="res://scripts/ui/visual_panel.gd" id="15_visual"]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_hud")
+
+[node name="Vignette" type="ColorRect" parent="."]
+mouse_filter = 2
+script = ExtResource("14_vignette")
 
 [node name="Veil" type="ColorRect" parent="."]
 mouse_filter = 2
@@ -60,6 +66,10 @@ script = ExtResource("13_death")
 [node name="StatusSheet" type="Control" parent="."]
 mouse_filter = 2
 script = ExtResource("8_sheet")
+
+[node name="VisualPanel" type="Control" parent="."]
+mouse_filter = 2
+script = ExtResource("15_visual")
 
 [node name="DebugOverlay" type="Control" parent="."]
 mouse_filter = 2
