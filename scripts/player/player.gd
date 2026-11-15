@@ -42,6 +42,9 @@ var _wall_normal := Vector3.ZERO
 var _mantle := 0.0
 var _jet := 0.0
 var _jet_velocity := Vector3.ZERO
+## Record of the species being mimicked ({} in the body's own shape).
+var _form: Dictionary = {}
+var _form_visual: CreatureVisual
 
 @onready var _visual: Node3D = $Visual
 @onready var _camera_rig: CameraRig = $CameraRig
@@ -70,7 +73,11 @@ func get_vitals() -> Vitals:
 	return Game.life.vitals
 
 
+## In a Mimicry form the copy is only as strong as the body behind it:
+## power is the square root of the player's EP over the species' EP.
 func get_power() -> float:
+	if not _form.is_empty():
+		return sqrt(maxf(1.0, float(Game.life.ep)) / maxf(1.0, float(_form.get("ep", 1))))
 	return Game.get_power()
 
 
@@ -79,11 +86,11 @@ func get_lifesteal() -> float:
 
 
 func get_aim_origin() -> Vector3:
-	return global_position + Vector3(0.0, SQUEEZED_RADIUS if _squeezed else RADIUS, 0.0)
+	return global_position + Vector3(0.0, _own_radius(), 0.0)
 
 
 func get_body_radius() -> float:
-	return RADIUS
+	return _own_radius()
 
 
 func take_hit(hit: Dictionary) -> float:
@@ -123,6 +130,62 @@ func is_clinging() -> bool:
 
 func is_squeezed() -> bool:
 	return _squeezed
+
+
+func in_form() -> bool:
+	return not _form.is_empty()
+
+
+## Takes the shape of an analysed species, or returns to the body's own
+## shape with "". Mimicry is a function of Predator.
+func set_form(creature_id: String) -> bool:
+	var life := Game.life
+	if creature_id != "" and (not life.has_skill("predator") or not life.forms.has(creature_id)):
+		return false
+	if creature_id == life.form_id:
+		return true
+	if is_instance_valid(_form_visual):
+		_form_visual.queue_free()
+	_form_visual = null
+	attacker.cancel()
+	_clinging = false
+	_set_squeezed(false, true)
+	life.form_id = creature_id
+	_form = Database.get_creature(creature_id) if creature_id != "" else {}
+	for part: Node3D in [_visual.get_node("Body"), _visual.get_node("Core")]:
+		part.visible = _form.is_empty()
+	if not _form.is_empty():
+		_form_visual = CreatureVisual.new()
+		_visual.add_child(_form_visual)
+		_form_visual.build(_form.get("model", {}), true)
+		if float(_form.get("body", {}).get("hover_height", 0.0)) > 0.0:
+			_form_visual.position.y = _own_radius()
+		Voice.say("form_taken", {"form": str(_form.get("name", creature_id))})
+		Game.count("forms_taken")
+	_apply_radius()
+	return true
+
+
+## Steps through the own shape and every recorded form.
+func cycle_form() -> void:
+	var life := Game.life
+	if not life.has_skill("predator") or life.forms.is_empty():
+		return
+	var next := life.forms.find(life.form_id) + 1
+	if next >= life.forms.size():
+		set_form("")
+		Voice.say("form_released")
+	else:
+		set_form(life.forms[next])
+
+
+## Magicules per second the current form costs to hold.
+func form_upkeep() -> float:
+	if _form.is_empty():
+		return 0.0
+	var ratio := float(_form.get("ep", 0)) / maxf(1.0, float(Game.life.ep))
+	return clampf(Database.tune("predator", "form_upkeep_base", 1.5) * ratio,
+			Database.tune("predator", "form_upkeep_min", 0.2), Database.tune("predator", "form_upkeep_max", 12.0))
 
 
 func enter_water(volume: WaterVolume) -> void:
@@ -176,15 +239,27 @@ func _physics_process(delta: float) -> void:
 		wants_jump = Input.is_action_just_pressed("jump")
 		if Input.is_action_just_pressed("use_potion"):
 			Game.use_potion()
+		if Input.is_action_just_pressed("form_next"):
+			cycle_form()
+	if not _form.is_empty() and Game.is_alive():
+		life.magicules -= form_upkeep() * delta
+		if life.magicules <= 0.0:
+			life.magicules = 0.0
+			set_form("")
+			Voice.say("form_starved")
 	var wish := _camera_rig.yaw_basis() * Vector3(input.x, 0.0, input.y)
 	var swimming := in_water()
 
-	_set_squeezed(controllable and Input.is_action_pressed("squeeze") and not swimming)
-	_update_cling(controllable and Input.is_action_pressed("cling") and not swimming, life)
+	# Clinging and squeezing belong to the slime's own body.
+	var own_shape := _form.is_empty() and not swimming
+	_set_squeezed(controllable and Input.is_action_pressed("squeeze") and own_shape)
+	_update_cling(controllable and Input.is_action_pressed("cling") and own_shape, life)
 	if controllable and not predator.is_devouring() and not _squeezed and not _clinging:
 		_read_attacks(vitals)
 
 	var speed := _move_speed * vitals.speed_factor()
+	if not _form.is_empty():
+		speed = float(_form.get("stats", {}).get("speed", _move_speed)) * vitals.speed_factor()
 	if predator.is_devouring():
 		speed *= 0.4
 	if _squeezed:
@@ -223,6 +298,8 @@ func _physics_process(delta: float) -> void:
 
 	_face(attacker.direction if attacker.is_busy() else wish, delta)
 	_animate(delta)
+	if is_instance_valid(_form_visual):
+		_form_visual.animate(delta, clampf(Vector2(velocity.x, velocity.z).length() / maxf(speed, 0.1), 0.0, 1.0))
 	_camera_rig.position.y = move_toward(_camera_rig.position.y,
 			SQUEEZED_RIG_HEIGHT if _squeezed else RIG_HEIGHT, 3.0 * delta)
 
@@ -249,6 +326,13 @@ func _on_life_began(new_life: LifeState) -> void:
 	_jump_velocity = float(vitals.get("jump_velocity", 7.0))
 	_flinch = 0.0
 	_invulnerable = 0.0
+	if is_instance_valid(_form_visual):
+		_form_visual.queue_free()
+	_form_visual = null
+	_form = {}
+	for part: Node3D in [_visual.get_node("Body"), _visual.get_node("Core")]:
+		part.visible = true
+	_apply_radius()
 
 
 # --- Ways of moving ----------------------------------------------------------
@@ -261,6 +345,8 @@ func _walk(delta: float, wish: Vector3, speed: float, wants_jump: bool) -> void:
 		return
 	if not grounded:
 		velocity.y -= _gravity * delta
+		if _flies():
+			_glide(wants_jump)
 	elif wants_jump and not attacker.is_busy() and not _squeezed:
 		velocity.y = _jump_velocity
 
@@ -272,6 +358,23 @@ func _walk(delta: float, wish: Vector3, speed: float, wants_jump: bool) -> void:
 		horizontal = horizontal.move_toward(wish * speed, rate * delta)
 	velocity.x = horizontal.x
 	velocity.z = horizontal.z
+
+
+func _flies() -> bool:
+	return float(_form.get("body", {}).get("hover_height", 0.0)) > 0.0
+
+
+## Winged forms: holding jump in the air spreads the wings and slows the
+## fall; pressing it again flaps upward for stamina.
+func _glide(wants_jump: bool) -> void:
+	var life := Game.life
+	var flap_cost := Database.tune("predator", "flap_stamina", 15.0)
+	if wants_jump and life.stamina >= flap_cost:
+		life.stamina -= flap_cost
+		velocity.y = Database.tune("predator", "flap_velocity", 5.5)
+		Game.count("flaps")
+	elif Input.is_action_pressed("jump") and Game.can_control():
+		velocity.y = maxf(velocity.y, -Database.tune("predator", "glide_fall_speed", 1.0))
 
 
 ## Starts or stops clinging. A slime sticks to any wall it is pressed against
@@ -359,7 +462,20 @@ func _set_squeezed(wanted: bool, force: bool = false) -> void:
 	if not wanted and not force and not _has_headroom():
 		return
 	_squeezed = wanted
-	var radius := SQUEEZED_RADIUS if _squeezed else RADIUS
+	_apply_radius()
+
+
+## Radius of the body's current shape: flattened, its own, or a form's.
+func _own_radius() -> float:
+	if _squeezed:
+		return SQUEEZED_RADIUS
+	if _form.is_empty():
+		return RADIUS
+	return minf(float(_form.get("body", {}).get("radius", RADIUS)), Database.tune("predator", "form_max_radius", 0.8))
+
+
+func _apply_radius() -> void:
+	var radius := _own_radius()
 	(_collision.shape as SphereShape3D).radius = radius
 	_collision.position.y = radius
 
@@ -376,6 +492,15 @@ func _read_attacks(vitals: Vitals) -> void:
 	if Input.is_action_just_pressed("skill_next"):
 		Game.cycle_selected_skill()
 	if attacker.is_busy() or vitals.attacks_blocked():
+		return
+	if not _form.is_empty():
+		# A form fights with the species' own moves: first on the light
+		# button, second on the skill button.
+		var moves: Array = _form.get("attacks", [])
+		if Input.is_action_just_pressed("attack_light") and moves.size() > 0:
+			attacker.begin(moves[0], aim_direction())
+		elif Input.is_action_just_pressed("attack_skill") and moves.size() > 1:
+			attacker.begin(moves[1], aim_direction())
 		return
 	if Input.is_action_just_pressed("attack_light"):
 		var light: Variant = Database.get_race(Game.life.race_id).get("moveset", {}).get("light")

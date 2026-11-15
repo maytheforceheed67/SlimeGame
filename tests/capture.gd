@@ -134,3 +134,18 @@ func _stage_cave() -> void:
 	await shot("cave_lair")
 	await look_from(36, 39, -PI * 0.5, -0.3)
 	await shot("cave_grotto")
+
+
+func _stage_forms() -> void:
+	player._invulnerable = 9999.0
+	Game.grant_skill("predator", true)
+	Game.add_ep(9000)
+	for id: String in ["giant_bat", "black_spider", "tempest_serpent"]:
+		Game.life.forms.append(id)
+	await seconds(4.0)
+	for id: String in ["giant_bat", "black_spider", "tempest_serpent"]:
+		Game.life.magicules = Game.life.max_magicules
+		player.set_form(id)
+		await hold("move_left", 20)
+		await seconds(0.4)
+		await shot("form_" + id)

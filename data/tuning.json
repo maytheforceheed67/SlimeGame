@@ -7,6 +7,7 @@
       "power: an attacker's damage multiplier is sqrt(EP / power_reference_ep), so EP is quantity while skills and technique still matter.",
       "exposure: surviving exposure_to_resistance x max HP of one damage type earns its Resistance; each later step of the merge tree costs exposure_step_factor times more.",
       "capacity: every acquired skill reserves part of the magicule pool; skills granted at birth are free.",
+      "forms: holding a Mimicry form costs form_upkeep_base x (the species' EP / your EP) magicules per second, clamped between the min and max, so forms get cheaper as you grow. A form's attacks hit with power sqrt(your EP / the species' EP).",
       "analysis times in other tables are the unlinked times in seconds; the Great Sage link multiplies them by analysis_link_factor."
     ]
   },
@@ -59,7 +60,11 @@
     "isolation_seconds_per_item": 1.0,
     "form_upkeep_base": 1.5,
     "form_upkeep_min": 0.2,
-    "form_upkeep_max": 12.0
+    "form_upkeep_max": 12.0,
+    "form_max_radius": 0.8,
+    "flap_velocity": 5.5,
+    "flap_stamina": 15.0,
+    "glide_fall_speed": 1.0
   },
   "practice": {
     "remembered_factor": 0.15
