@@ -6,10 +6,11 @@ extends Node
 ## never the body. If a field would make a new body stronger without the
 ## player re-earning it, it does not belong here.
 
-const SAVE_PATH := "user://soul.json"
-const UNREADABLE_PATH := "user://soul.unreadable.json"
 const SAVE_VERSION := 1
 const PAST_LIVES_KEPT := 100
+
+## Where the soul is stored. Tests point this at a scratch file.
+var save_path := "user://soul.json"
 
 var lives_lived := 0
 
@@ -64,9 +65,9 @@ func erase() -> void:
 
 
 func save_to_disk() -> void:
-	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	var file := FileAccess.open(save_path, FileAccess.WRITE)
 	if file == null:
-		push_error("[Soul] cannot write %s (error %d)" % [SAVE_PATH, FileAccess.get_open_error()])
+		push_error("[Soul] cannot write %s (error %d)" % [save_path, FileAccess.get_open_error()])
 		return
 	file.store_string(JSON.stringify(_to_dictionary(), "\t"))
 	file.close()
@@ -74,13 +75,14 @@ func save_to_disk() -> void:
 
 func load_from_disk() -> void:
 	_reset()
-	if not FileAccess.file_exists(SAVE_PATH):
+	if not FileAccess.file_exists(save_path):
 		return
-	var raw := FileAccess.get_file_as_string(SAVE_PATH)
+	var raw := FileAccess.get_file_as_string(save_path)
 	var json := JSON.new()
 	if json.parse(raw) != OK or not (json.data is Dictionary):
-		push_warning("[Soul] %s is unreadable. A copy was kept as %s and the soul starts blank." % [SAVE_PATH, UNREADABLE_PATH])
-		var copy := FileAccess.open(UNREADABLE_PATH, FileAccess.WRITE)
+		var unreadable_path := save_path + ".unreadable"
+		push_warning("[Soul] %s is unreadable. A copy was kept as %s and the soul starts blank." % [save_path, unreadable_path])
+		var copy := FileAccess.open(unreadable_path, FileAccess.WRITE)
 		if copy != null:
 			copy.store_string(raw)
 			copy.close()
