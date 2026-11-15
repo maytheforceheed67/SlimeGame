@@ -11,7 +11,10 @@ signal fell_out_of_world
 @export var turn_rate := 12.0
 @export var fall_limit := -40.0
 
+const GROUP := "player"
+
 var attacker: Attacker
+var predator: Predator
 
 var _move_speed := 5.5
 var _jump_velocity := 7.0
@@ -29,6 +32,9 @@ var _invulnerable := 0.0
 func _ready() -> void:
 	attacker = Attacker.new()
 	add_child(attacker)
+	predator = Predator.new()
+	add_child(predator)
+	add_to_group(GROUP)
 	add_to_group(Combat.GROUP)
 	Game.life_began.connect(_on_life_began)
 
@@ -116,7 +122,10 @@ func _physics_process(delta: float) -> void:
 		var input := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 		wish = _camera_rig.yaw_basis() * Vector3(input.x, 0.0, input.y)
 		wants_jump = Input.is_action_just_pressed("jump")
-		_read_attacks(vitals)
+		if Input.is_action_just_pressed("use_potion"):
+			Game.use_potion()
+		if not predator.is_devouring():
+			_read_attacks(vitals)
 
 	var grounded := is_on_floor()
 	if not grounded:
@@ -125,6 +134,8 @@ func _physics_process(delta: float) -> void:
 		velocity.y = _jump_velocity
 
 	var speed := _move_speed * (vitals.speed_factor() if vitals != null else 1.0)
+	if predator.is_devouring():
+		speed *= 0.4
 	var horizontal := Vector3(velocity.x, 0.0, velocity.z) - _impulse
 	if attacker.lunge_velocity != Vector3.ZERO:
 		horizontal = attacker.lunge_velocity

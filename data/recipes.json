@@ -1,0 +1,13 @@
+{
+  "_meta": {
+    "table": "recipes",
+    "source": "Design document, sections 9.1 and 15",
+    "notes": [
+      "learned_from is the analysis that unlocks the recipe: 'item:<id>' or 'species:<id>'.",
+      "inputs and output map item ids to counts. Synthesis happens inside the Stomach, so it needs Predator."
+    ]
+  },
+  "recipes": [
+    {"id": "healing_potion", "name": "Healing Potion", "inputs": {"hipokute_herb": 1}, "output": {"healing_potion": 1}, "learned_from": "item:hipokute_herb", "label": "CANON"}
+  ]
+}

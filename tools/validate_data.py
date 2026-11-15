@@ -268,6 +268,31 @@ def check_creatures(ranks: dict, skills: dict, resistances: dict, damage: dict, 
     return creatures
 
 
+def check_items(creatures: dict) -> None:
+    item_file, recipe_file = "items.json", "recipes.json"
+    items = by_id(read(item_file), "items", item_file)
+    for item_id, item in items.items():
+        if item.get("kind") not in ("material", "resource", "harmful", "consumable"):
+            problem(f"{item_file}: '{item_id}' has an unknown kind")
+    recipes = by_id(read(recipe_file), "recipes", recipe_file)
+    for recipe_id, recipe in recipes.items():
+        where = f"{recipe_file}: '{recipe_id}'"
+        for side in ("inputs", "output"):
+            parts = recipe.get(side)
+            if not isinstance(parts, dict) or not parts:
+                problem(f"{where}: needs {side}")
+                continue
+            for item_id, amount in parts.items():
+                need(items, item_id, f"{where} {side}")
+                if not isinstance(amount, int) or amount <= 0:
+                    problem(f"{where}: {side} amounts must be positive integers")
+        source = str(recipe.get("learned_from", ""))
+        kind, _, subject = source.partition(":")
+        table = {"item": items, "species": creatures}.get(kind)
+        if table is None or subject not in table:
+            problem(f"{where}: learned_from must be 'item:<id>' or 'species:<id>'")
+
+
 def check_tuning() -> None:
     file_name = "tuning.json"
     root = read(file_name)
@@ -385,7 +410,8 @@ def main() -> int:
     ranks, _danger = check_ranks()
     resistances, damage, statuses = check_resistances()
     skills = check_skills(damage, statuses)
-    check_creatures(ranks, skills, resistances, damage, statuses)
+    creatures = check_creatures(ranks, skills, resistances, damage, statuses)
+    check_items(creatures)
     check_tuning()
     check_world(ranks, skills, damage, statuses)
     check_voice()

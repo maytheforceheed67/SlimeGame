@@ -5,6 +5,7 @@
 [ext_resource type="Script" path="res://scripts/ui/voice_panel.gd" id="3_voice"]
 [ext_resource type="Script" path="res://scripts/ui/debug_overlay.gd" id="4_debug"]
 [ext_resource type="Script" path="res://scripts/ui/world_overlay.gd" id="5_world"]
+[ext_resource type="Script" path="res://scripts/ui/predator_panel.gd" id="6_predator"]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_hud")
@@ -20,6 +21,10 @@ script = ExtResource("5_world")
 [node name="StatusPanel" type="Control" parent="."]
 mouse_filter = 2
 script = ExtResource("2_status")
+
+[node name="PredatorPanel" type="Control" parent="."]
+mouse_filter = 2
+script = ExtResource("6_predator")
 
 [node name="VoicePanel" type="Control" parent="."]
 mouse_filter = 2

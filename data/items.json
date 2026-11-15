@@ -1,0 +1,19 @@
+{
+  "_meta": {
+    "table": "items",
+    "source": "Design document, sections 9.1 and 15 (Sealed Cave rows)",
+    "notes": [
+      "kind 'material' is something found in the world; 'resource' is fuel for skills; 'harmful' is what Isolation converts to magicules; 'consumable' is used from the Stomach.",
+      "ep is the magicules absorbed when one is devoured. analysis_time is the unlinked analysis time in seconds.",
+      "The hipokute herb's analysis time mirrors canon in miniature: about fifty units unlinked, about one once Analysis is linked to Parallel Processing.",
+      "model describes the placeholder shape of a harvestable node in the world."
+    ]
+  },
+  "items": [
+    {"id": "hipokute_herb", "name": "Hipokute Herb", "kind": "material", "label": "CANON", "ep": 5, "analysis_time": 50, "description": "A healing herb that only grows where magicules are dense.", "model": {"kind": "herb", "color": "4fd68a"}},
+    {"id": "magic_ore", "name": "Magic Ore", "kind": "material", "label": "CANON", "ep": 20, "analysis_time": 40, "description": "Ordinary rock soaked in magicules until it changed.", "model": {"kind": "ore", "color": "8f7bff"}},
+    {"id": "water", "name": "Water", "kind": "resource", "label": "DESIGN", "ep": 0, "description": "Stored water. Fuel for water skills."},
+    {"id": "toxin", "name": "Toxin", "kind": "harmful", "label": "DESIGN", "ep": 0, "isolation_magicules": 15, "description": "Swallowed poison and other harmful matter, quarantined until Isolation breaks it down."},
+    {"id": "healing_potion", "name": "Healing Potion", "kind": "consumable", "label": "CANON", "ep": 0, "heal_fraction": 0.6, "description": "Hipokute extract, synthesised inside the Stomach."}
+  ]
+}

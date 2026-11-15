@@ -9,6 +9,7 @@ signal life_ended(ended_life: LifeState, damage_type_id: String)
 signal ep_changed(ep: int, delta: int)
 signal rank_changed(old_rank: Dictionary, new_rank: Dictionary)
 signal skills_changed
+signal stomach_changed
 ## A hit landed somewhere in the world (for damage numbers).
 signal hit_landed(world_position: Vector3, amount: float, damage_type_id: String, on_player: bool)
 signal creature_died(creature: Creature)
@@ -133,6 +134,73 @@ func spend_magicules(amount: float) -> bool:
 	if life == null or life.magicules < amount:
 		return false
 	life.magicules -= amount
+	return true
+
+
+# --- Stomach -----------------------------------------------------------------
+
+func add_item(item_id: String, amount: int = 1) -> void:
+	if life == null or amount <= 0:
+		return
+	life.stomach[item_id] = life.item_count(item_id) + amount
+	stomach_changed.emit()
+
+
+## Removes items if the Stomach holds that many. Returns whether it did.
+func remove_item(item_id: String, amount: int = 1) -> bool:
+	if life == null or life.item_count(item_id) < amount:
+		return false
+	life.stomach[item_id] = life.item_count(item_id) - amount
+	if life.item_count(item_id) <= 0:
+		life.stomach.erase(item_id)
+	stomach_changed.emit()
+	return true
+
+
+func can_craft(recipe_id: String) -> bool:
+	if life == null or not life.recipes.has(recipe_id):
+		return false
+	var inputs: Dictionary = Database.get_recipe(recipe_id).get("inputs", {})
+	for item_id: String in inputs:
+		if life.item_count(item_id) < int(inputs[item_id]):
+			return false
+	return true
+
+
+## Synthesises a known recipe inside the Stomach. Returns whether it did.
+func craft(recipe_id: String) -> bool:
+	if not can_craft(recipe_id):
+		return false
+	var recipe := Database.get_recipe(recipe_id)
+	var inputs: Dictionary = recipe.get("inputs", {})
+	for item_id: String in inputs:
+		remove_item(item_id, int(inputs[item_id]))
+	var output: Dictionary = recipe.get("output", {})
+	for item_id: String in output:
+		add_item(item_id, int(output[item_id]))
+	count("crafted")
+	return true
+
+
+## Potions ready to drink, counting those the Stomach could synthesise now.
+func potions_available() -> int:
+	if life == null:
+		return 0
+	var ready := life.item_count("healing_potion")
+	if life.recipes.has("healing_potion"):
+		ready += life.item_count("hipokute_herb")
+	return ready
+
+
+## Drinks a healing potion, synthesising one first if needed.
+func use_potion() -> bool:
+	if not is_alive() or life.vitals.hp >= life.vitals.max_hp:
+		return false
+	if life.item_count("healing_potion") <= 0 and not craft("healing_potion"):
+		return false
+	remove_item("healing_potion")
+	life.vitals.heal(life.vitals.max_hp * float(Database.get_item("healing_potion").get("heal_fraction", 0.5)))
+	count("potions_used")
 	return true
 
 

@@ -16,6 +16,7 @@ var _magicule_bar: ProgressBar
 var _magicule_label: Label
 var _status_label: Label
 var _skill_label: Label
+var _item_label: Label
 
 
 func _ready() -> void:
@@ -43,8 +44,10 @@ func _ready() -> void:
 	_magicule_label = _bar_caption(column, _magicule_bar)
 	_status_label = UiStyle.label(13, UiStyle.WARNING_COLOR)
 	_skill_label = UiStyle.label(13, UiStyle.MUTED_COLOR)
+	_item_label = UiStyle.label(13, UiStyle.MUTED_COLOR)
 	column.add_child(_status_label)
 	column.add_child(_skill_label)
+	column.add_child(_item_label)
 
 
 func _process(_delta: float) -> void:
@@ -83,6 +86,14 @@ func _process(_delta: float) -> void:
 	_skill_label.visible = life.selected_skill != ""
 	if life.selected_skill != "":
 		_skill_label.text = "Skill: %s" % Database.skill_name(life.selected_skill)
+
+	var carried := PackedStringArray()
+	if Game.potions_available() > 0:
+		carried.append("Potions %d" % Game.potions_available())
+	if life.item_count("water") > 0:
+		carried.append("Water %d" % life.item_count("water"))
+	_item_label.text = "   ".join(carried)
+	_item_label.visible = not carried.is_empty()
 
 
 func _bar(color: Color) -> ProgressBar:

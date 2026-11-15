@@ -32,6 +32,8 @@ var sub_functions: Dictionary = {}
 var fusions: Dictionary = {}
 
 var creatures: Dictionary = {}
+var items: Dictionary = {}
+var recipes: Dictionary = {}
 
 var races: Dictionary = {}
 var regions: Dictionary = {}
@@ -78,6 +80,8 @@ func reload() -> void:
 				sub_functions[str(function.get("id", ""))] = skill_id
 	fusions = _by_id(_read("fusions.json"), "fusions", "fusions.json")
 	creatures = _by_id(_read("creatures.json"), "creatures", "creatures.json")
+	items = _by_id(_read("items.json"), "items", "items.json")
+	recipes = _by_id(_read("recipes.json"), "recipes", "recipes.json")
 
 	var race_file := _read("races.json")
 	races = _by_id(race_file, "races", "races.json")
@@ -190,6 +194,25 @@ func capacity_cost(skill_id: String) -> int:
 
 func get_creature(creature_id: String) -> Dictionary:
 	return creatures.get(creature_id, {})
+
+
+func get_item(item_id: String) -> Dictionary:
+	return items.get(item_id, {})
+
+
+func item_name(item_id: String) -> String:
+	return str(get_item(item_id).get("name", item_id))
+
+
+func get_recipe(recipe_id: String) -> Dictionary:
+	return recipes.get(recipe_id, {})
+
+
+## Display name of an analysis subject, given its kind ("species" or "item").
+func subject_name(kind: String, id: String) -> String:
+	if kind == "species":
+		return str(get_creature(id).get("name", id))
+	return item_name(id)
 
 
 func get_status(status_id: String) -> Dictionary:
@@ -348,6 +371,14 @@ func _cross_check() -> void:
 		if devour is Dictionary:
 			for gain: Variant in devour.get("skills", []):
 				_need(skills, gain.get("skill"), "creatures.json: '%s' devour skill" % id)
+
+	for id: String in recipes:
+		var recipe: Dictionary = recipes[id]
+		for side: String in ["inputs", "output"]:
+			var parts: Variant = recipe.get(side, {})
+			if parts is Dictionary:
+				for item_id: String in parts:
+					_need(items, item_id, "recipes.json: '%s' %s" % [id, side])
 
 	var fusion_inputs: Dictionary = skills.duplicate()
 	fusion_inputs.merge(sub_functions)

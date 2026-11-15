@@ -58,6 +58,46 @@ func record_death(life: LifeState, damage_type_id: String, imprint_resistance: S
 	save_to_disk()
 
 
+## Whether a past or present life has fully analysed this subject.
+## `kind` is "species" or "item".
+func knows(kind: String, id: String) -> bool:
+	return (codex.get(_codex_section(kind), {}) as Dictionary).has(id)
+
+
+## Records a finished analysis in the codex. Knowledge is saved at once: it
+## belongs to the soul even if this life ends badly.
+func record_analysis(kind: String, id: String, life_number: int) -> void:
+	var section: Dictionary = codex.get(_codex_section(kind), {})
+	var entry: Dictionary = section.get(id, {"first_life": life_number, "times": 0})
+	entry["times"] = int(entry.get("times", 0)) + 1
+	section[id] = entry
+	codex[_codex_section(kind)] = section
+	save_to_disk()
+
+
+func record_recipe(recipe_id: String, life_number: int) -> void:
+	var section: Dictionary = codex.get("recipes", {})
+	if not section.has(recipe_id):
+		section[recipe_id] = {"first_life": life_number}
+		codex["recipes"] = section
+		save_to_disk()
+
+
+## Remembers a fact that is not an analysis: a lesson, a place, a meeting.
+func remember(topic: String, life_number: int) -> void:
+	if not lore.has(topic):
+		lore[topic] = {"first_life": life_number}
+		save_to_disk()
+
+
+func remembers(topic: String) -> bool:
+	return lore.has(topic)
+
+
+func _codex_section(kind: String) -> String:
+	return "species" if kind == "species" else "materials"
+
+
 ## Wipes all memory and overwrites the save file.
 func erase() -> void:
 	_reset()
