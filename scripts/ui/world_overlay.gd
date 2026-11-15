@@ -50,14 +50,41 @@ func _draw() -> void:
 		_text(camera.unproject_position(world), str(number["text"]), 18, color)
 
 
+## How clearly a creature's plate shows: 0 hidden, 1 in plain view. A
+## creature behind rock is hidden unless the body senses heat (Heat Source
+## Perception), which shows living things through walls, dimly.
+func plate_visibility(camera: Camera3D, creature: Creature) -> float:
+	var world := creature.global_position + Vector3(0.0, creature.nameplate_height(), 0.0)
+	var distance := camera.global_position.distance_to(world)
+	if distance > PLATE_RANGE:
+		return 0.0
+	var fade := clampf((PLATE_RANGE - distance) / 6.0, 0.0, 1.0)
+	if Combat.has_line_of_sight(creature, camera.global_position, creature.get_aim_origin()):
+		return fade
+	if creature.is_corpse() or distance > _heat_sense_range():
+		return 0.0
+	return fade * 0.55
+
+
+## Range of the body's heat sense, or 0 without one.
+func _heat_sense_range() -> float:
+	var reach := 0.0
+	if Game.life == null:
+		return reach
+	for skill_id in Game.life.skills:
+		var passive: Variant = Database.get_skill(skill_id).get("passive")
+		if passive is Dictionary and str(passive.get("sense", "")) == "heat":
+			reach = maxf(reach, float(passive.get("sense_range", 0.0)))
+	return reach
+
+
 func _draw_plate(camera: Camera3D, creature: Creature) -> void:
 	var world := creature.global_position + Vector3(0.0, creature.nameplate_height(), 0.0)
 	if camera.is_position_behind(world):
 		return
-	var distance := camera.global_position.distance_to(world)
-	if distance > PLATE_RANGE:
+	var alpha := plate_visibility(camera, creature)
+	if alpha <= 0.0:
 		return
-	var alpha := clampf((PLATE_RANGE - distance) / 6.0, 0.0, 1.0)
 	var at := camera.unproject_position(world)
 
 	if creature.is_corpse():

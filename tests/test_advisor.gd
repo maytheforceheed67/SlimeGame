@@ -44,6 +44,20 @@ func _run() -> void:
 	check(spoken().contains("1,200 EP") and spoken().contains("Devouring yields Ultra Sound Waves, Drain"),
 			"and reports what devouring would yield")
 	check(readouts.size() == 1 and readouts[0]["title"] == "Giant Bat", "the scan readout is published for the HUD")
+
+	# Nameplates need a line of sight, unless the body senses heat.
+	var overlay: Control = main.get_node("HUD/WorldOverlay")
+	var camera := get_viewport().get_camera_3d()
+	var hidden := Creature.create("giant_bat")
+	main.add_child(hidden)
+	hidden.global_position = player.global_position + Vector3(12.0, 1.0, -20.0)
+	hidden.set_physics_process(false)
+	await frames(5)
+	check(overlay.plate_visibility(camera, bat) > 0.9, "a creature in plain view shows its nameplate")
+	check(overlay.plate_visibility(camera, hidden) == 0.0, "a creature behind rock does not")
+	Game.grant_skill("heat_source_perception")
+	check(overlay.plate_visibility(camera, hidden) > 0.0, "Heat Source Perception senses it through the wall")
+	hidden.queue_free()
 	bat.queue_free()
 
 	# The link upgrade is offered when the first analysis starts.
